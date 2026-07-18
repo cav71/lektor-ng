@@ -1,3 +1,3 @@
 __version__ = "@version@"
-__hash__ = "@rev@"
+__hash__ = "@sha@"
 
