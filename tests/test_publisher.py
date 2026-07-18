@@ -16,16 +16,16 @@ from subprocess import run
 
 import pytest
 
-from lektor.publisher import _CompatURLStr
-from lektor.publisher import _ssh_command
-from lektor.publisher import _ssh_key_file
-from lektor.publisher import Command
-from lektor.publisher import GithubPagesPublisher
-from lektor.publisher import GitRepo
-from lektor.publisher import publish
-from lektor.publisher import Publisher
-from lektor.publisher import PublishError
-from lektor.utils import locate_executable
+from lektor_ng.publisher import _CompatURLStr
+from lektor_ng.publisher import _ssh_command
+from lektor_ng.publisher import _ssh_key_file
+from lektor_ng.publisher import Command
+from lektor_ng.publisher import GithubPagesPublisher
+from lektor_ng.publisher import GitRepo
+from lektor_ng.publisher import publish
+from lektor_ng.publisher import Publisher
+from lektor_ng.publisher import PublishError
+from lektor_ng.utils import locate_executable
 
 
 def test_ssh_key_file():

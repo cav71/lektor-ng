@@ -6,11 +6,11 @@ from urllib.parse import parse_qsl
 from urllib.parse import urlsplit
 from weakref import ref as weakref
 
-from lektor.constants import PRIMARY_ALT
-from lektor.context import ignore_url_unaffecting_dependencies
-from lektor.reporter import reporter
-from lektor.utils import is_path_child_of
-from lektor.utils import join_path
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.context import ignore_url_unaffecting_dependencies
+from lektor_ng.reporter import reporter
+from lektor_ng.utils import is_path_child_of
+from lektor_ng.utils import join_path
 
 
 if TYPE_CHECKING:

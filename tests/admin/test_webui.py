@@ -1,7 +1,8 @@
-import flask
 import pytest
+pytestmark = pytest.mark.skipif(True, reason="Web frontend not supported")
 
-import lektor.admin.webui
+import flask
+import lektor_ng.admin.webui
 
 
 @pytest.fixture

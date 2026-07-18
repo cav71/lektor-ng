@@ -8,15 +8,15 @@ from pathlib import Path
 import pytest
 from pytest import approx
 
-from lektor.imagetools.exif import _combine_make
-from lektor.imagetools.exif import _to_altitude
-from lektor.imagetools.exif import _to_degrees
-from lektor.imagetools.exif import _to_flash_description
-from lektor.imagetools.exif import _to_float
-from lektor.imagetools.exif import _to_focal_length
-from lektor.imagetools.exif import _to_rational
-from lektor.imagetools.exif import _to_string
-from lektor.imagetools.exif import read_exif
+from lektor_ng.imagetools.exif import _combine_make
+from lektor_ng.imagetools.exif import _to_altitude
+from lektor_ng.imagetools.exif import _to_degrees
+from lektor_ng.imagetools.exif import _to_flash_description
+from lektor_ng.imagetools.exif import _to_float
+from lektor_ng.imagetools.exif import _to_focal_length
+from lektor_ng.imagetools.exif import _to_rational
+from lektor_ng.imagetools.exif import _to_string
+from lektor_ng.imagetools.exif import read_exif
 
 
 HERE = Path(__file__).parent

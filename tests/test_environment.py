@@ -8,8 +8,8 @@ from pathlib import Path
 import pytest
 
 import lektor.context
-from lektor.db import Pad
-from lektor.environment import Environment
+from lektor_ng.db import Pad
+from lektor_ng.environment import Environment
 
 
 @pytest.fixture

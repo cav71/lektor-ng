@@ -3,9 +3,9 @@ from typing import NamedTuple
 
 import pytest
 
-from lektor.quickstart import get_default_author
-from lektor.quickstart import get_default_author_email
-from lektor.utils import locate_executable
+from lektor_ng.quickstart import get_default_author
+from lektor_ng.quickstart import get_default_author_email
+from lektor_ng.utils import locate_executable
 
 
 class struct_passwd(NamedTuple):

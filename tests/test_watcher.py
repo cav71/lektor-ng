@@ -14,10 +14,10 @@ from pathlib import Path
 import pytest
 from watchfiles import Change
 
-from lektor.environment import Environment
-from lektor.project import Project
-from lektor.watcher import watch_project
-from lektor.watcher import WatchFilter
+from lektor_ng.environment import Environment
+from lektor_ng.project import Project
+from lektor_ng.watcher import watch_project
+from lektor_ng.watcher import WatchFilter
 
 
 RunInThread = Callable[[Callable[[], None]], None]

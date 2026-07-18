@@ -9,21 +9,21 @@ from urllib.parse import urlsplit
 
 import pytest
 
-from lektor.utils import atomic_open
-from lektor.utils import build_url
-from lektor.utils import create_temp
-from lektor.utils import deprecated
-from lektor.utils import is_path_child_of
-from lektor.utils import join_path
-from lektor.utils import magic_split_ext
-from lektor.utils import make_relative_url
-from lektor.utils import parse_path
-from lektor.utils import secure_url
-from lektor.utils import slugify
-from lektor.utils import split_camel_case
-from lektor.utils import unique_everseen
-from lektor.utils import untrusted_to_os_path
-from lektor.utils import Url
+from lektor_ng.utils import atomic_open
+from lektor_ng.utils import build_url
+from lektor_ng.utils import create_temp
+from lektor_ng.utils import deprecated
+from lektor_ng.utils import is_path_child_of
+from lektor_ng.utils import join_path
+from lektor_ng.utils import magic_split_ext
+from lektor_ng.utils import make_relative_url
+from lektor_ng.utils import parse_path
+from lektor_ng.utils import secure_url
+from lektor_ng.utils import slugify
+from lektor_ng.utils import split_camel_case
+from lektor_ng.utils import unique_everseen
+from lektor_ng.utils import untrusted_to_os_path
+from lektor_ng.utils import Url
 
 
 @pytest.mark.parametrize(

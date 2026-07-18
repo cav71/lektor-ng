@@ -11,12 +11,12 @@ from typing import TYPE_CHECKING
 from werkzeug.serving import is_running_from_reloader
 from werkzeug.serving import run_simple
 
-from lektor.admin import WebAdmin
-from lektor.builder import Builder
-from lektor.db import Database
-from lektor.reporter import CliReporter
-from lektor.utils import process_extra_flags
-from lektor.watcher import watch_project
+from lektor_ng.admin import WebAdmin
+from lektor_ng.builder import Builder
+from lektor_ng.db import Database
+from lektor_ng.reporter import CliReporter
+from lektor_ng.utils import process_extra_flags
+from lektor_ng.watcher import watch_project
 
 
 if TYPE_CHECKING:

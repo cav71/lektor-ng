@@ -5,7 +5,7 @@ from pathlib import Path
 
 
 translations = {}
-for file in resources.files("lektor").joinpath("translations").iterdir():
+for file in resources.files("lektor_ng").joinpath("translations").iterdir():
     filename = Path(file.name)
     if filename.suffix == ".json" and file.is_file():
         lang = filename.stem

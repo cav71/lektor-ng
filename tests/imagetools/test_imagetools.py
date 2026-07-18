@@ -2,8 +2,8 @@ from pathlib import Path
 
 import pytest
 
-from lektor.imagetools import compute_dimensions
-from lektor.imagetools import get_quality
+from lektor_ng.imagetools import compute_dimensions
+from lektor_ng.imagetools import get_quality
 
 
 HERE = Path(__file__).parent

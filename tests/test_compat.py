@@ -5,7 +5,7 @@ from urllib.parse import urlsplit
 import pytest
 from werkzeug import urls as werkzeug_urls
 
-from lektor.compat import _CompatURL
+from lektor_ng.compat import _CompatURL
 
 
 @pytest.mark.parametrize(

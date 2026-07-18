@@ -5,19 +5,19 @@ import pytest
 from markupsafe import Markup
 
 import lektor.markdown
-from lektor.context import Context
-from lektor.markdown import controller_class
-from lektor.markdown import get_controller
-from lektor.markdown import make_markdown
-from lektor.markdown import Markdown
-from lektor.markdown import markdown_to_html
-from lektor.markdown import MISTUNE_VERSION
-from lektor.markdown.controller import get_renderer_context
-from lektor.markdown.controller import RendererContext
-from lektor.markdown.controller import RendererHelper
-from lektor.markdown.controller import require_ctx
-from lektor.markdown.controller import UnknownPluginError
-from lektor.pluginsystem import Plugin
+from lektor_ng.context import Context
+from lektor_ng.markdown import controller_class
+from lektor_ng.markdown import get_controller
+from lektor_ng.markdown import make_markdown
+from lektor_ng.markdown import Markdown
+from lektor_ng.markdown import markdown_to_html
+from lektor_ng.markdown import MISTUNE_VERSION
+from lektor_ng.markdown.controller import get_renderer_context
+from lektor_ng.markdown.controller import RendererContext
+from lektor_ng.markdown.controller import RendererHelper
+from lektor_ng.markdown.controller import require_ctx
+from lektor_ng.markdown.controller import UnknownPluginError
+from lektor_ng.pluginsystem import Plugin
 
 
 @pytest.fixture

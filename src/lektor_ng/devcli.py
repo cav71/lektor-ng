@@ -4,9 +4,9 @@ import sys
 
 import click
 
-from lektor.cli_utils import AliasedGroup
-from lektor.cli_utils import extraflag
-from lektor.cli_utils import pass_context
+from lektor_ng.cli_utils import AliasedGroup
+from lektor_ng.cli_utils import extraflag
+from lektor_ng.cli_utils import pass_context
 
 
 try:

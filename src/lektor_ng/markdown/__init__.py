@@ -8,14 +8,14 @@ from weakref import ref as weakref
 
 from markupsafe import Markup
 
-from lektor.markdown.controller import ControllerCache
-from lektor.markdown.controller import FieldOptions
-from lektor.markdown.controller import MarkdownController
-from lektor.markdown.controller import Meta
-from lektor.markdown.controller import RenderResult
-from lektor.sourceobj import SourceObject
-from lektor.utils import deprecated
-from lektor.utils import DeprecatedWarning
+from lektor_ng.markdown.controller import ControllerCache
+from lektor_ng.markdown.controller import FieldOptions
+from lektor_ng.markdown.controller import MarkdownController
+from lektor_ng.markdown.controller import Meta
+from lektor_ng.markdown.controller import RenderResult
+from lektor_ng.sourceobj import SourceObject
+from lektor_ng.utils import deprecated
+from lektor_ng.utils import DeprecatedWarning
 
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -26,9 +26,9 @@ controller_class: type[MarkdownController]
 
 MISTUNE_VERSION = metadata.version("mistune")
 if MISTUNE_VERSION.startswith("0."):
-    from lektor.markdown.mistune0 import MarkdownController0 as controller_class
+    from lektor_ng.markdown.mistune0 import MarkdownController0 as controller_class
 elif MISTUNE_VERSION.startswith("2."):
-    from lektor.markdown.mistune2 import MarkdownController2 as controller_class
+    from lektor_ng.markdown.mistune2 import MarkdownController2 as controller_class
 else:  # pragma: no cover
     raise ImportError("Unsupported version of mistune")
 

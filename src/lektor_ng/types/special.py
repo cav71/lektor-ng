@@ -1,6 +1,6 @@
-from lektor.types.primitives import SingleInputType
-from lektor.utils import slugify
-from lektor.utils import Url
+from lektor_ng.types.primitives import SingleInputType
+from lektor_ng.utils import slugify
+from lektor_ng.utils import Url
 
 
 class SortKeyType(SingleInputType):

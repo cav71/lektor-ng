@@ -9,10 +9,10 @@ from pathlib import Path
 from inifile import IniFile
 from werkzeug.utils import cached_property
 
-from lektor.environment import Environment
-from lektor.utils import comma_delimited
-from lektor.utils import get_cache_dir
-from lektor.utils import untrusted_to_os_path
+from lektor_ng.environment import Environment
+from lektor_ng.utils import comma_delimited
+from lektor_ng.utils import get_cache_dir
+from lektor_ng.utils import untrusted_to_os_path
 
 
 class Project:

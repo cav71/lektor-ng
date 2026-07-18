@@ -3,13 +3,13 @@ import shutil
 
 import pytest
 
-from lektor.builder import Builder
-from lektor.context import Context
-from lektor.db import Database
-from lektor.db import Siblings
-from lektor.environment import Environment
-from lektor.project import Project
-from lektor.reporter import Reporter
+from lektor_ng.builder import Builder
+from lektor_ng.context import Context
+from lektor_ng.db import Database
+from lektor_ng.db import Siblings
+from lektor_ng.environment import Environment
+from lektor_ng.project import Project
+from lektor_ng.reporter import Reporter
 
 
 @pytest.fixture(scope="function")

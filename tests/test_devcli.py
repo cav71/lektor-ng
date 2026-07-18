@@ -6,7 +6,7 @@ from iniconfig import IniConfig
 from inifile import IniFile
 
 import lektor.quickstart
-from lektor.cli import cli
+from lektor_ng.cli import cli
 
 
 @pytest.fixture(scope="session")

@@ -7,10 +7,10 @@ from urllib.parse import urlsplit
 from inifile import IniFile
 from werkzeug.utils import cached_property
 
-from lektor.constants import PRIMARY_ALT
-from lektor.i18n import get_i18n_block
-from lektor.utils import bool_from_string
-from lektor.utils import secure_url
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.i18n import get_i18n_block
+from lektor_ng.utils import bool_from_string
+from lektor_ng.utils import secure_url
 
 
 DEFAULT_CONFIG = {

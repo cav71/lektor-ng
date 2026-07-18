@@ -1,7 +1,7 @@
 import inspect
 from pathlib import Path
 
-from lektor.project import Project
+from lektor_ng.project import Project
 
 
 def test_Project_get_output_path(tmp_path: Path) -> None:

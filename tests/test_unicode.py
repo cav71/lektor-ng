@@ -1,9 +1,9 @@
 import pytest
 
-from lektor.build_programs import BuildError
-from lektor.builder import Builder
-from lektor.project import Project
-from lektor.reporter import BufferReporter
+from lektor_ng.build_programs import BuildError
+from lektor_ng.builder import Builder
+from lektor_ng.project import Project
+from lektor_ng.reporter import BufferReporter
 
 
 @pytest.fixture

@@ -7,16 +7,16 @@ from urllib.parse import urlencode
 
 import pytest
 
-from lektor.admin import WebAdmin
-from lektor.admin.context import LektorContext
-from lektor.admin.utils import eventstream
-from lektor.builder import Builder
-from lektor.constants import PRIMARY_ALT
-from lektor.db import Database
-from lektor.editor import EditorSession
-from lektor.environment import Environment
-from lektor.project import Project
-from lektor.publisher import PublishError
+from lektor_ng.admin import WebAdmin
+from lektor_ng.admin.context import LektorContext
+from lektor_ng.admin.utils import eventstream
+from lektor_ng.builder import Builder
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.db import Database
+from lektor_ng.editor import EditorSession
+from lektor_ng.environment import Environment
+from lektor_ng.project import Project
+from lektor_ng.publisher import PublishError
 
 
 def write_text(path, text):

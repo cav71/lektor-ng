@@ -12,21 +12,21 @@ import PIL
 import pytest
 from pytest import approx
 
-from lektor.context import Context
-from lektor.db import Image
-from lektor.imagetools.thumbnail import _compute_cropbox
-from lektor.imagetools.thumbnail import _convert_icc_profile_to_srgb
-from lektor.imagetools.thumbnail import _create_artifact
-from lektor.imagetools.thumbnail import _create_thumbnail
-from lektor.imagetools.thumbnail import _get_thumbnail_url_path
-from lektor.imagetools.thumbnail import compute_dimensions
-from lektor.imagetools.thumbnail import CropBox
-from lektor.imagetools.thumbnail import get_image_info
-from lektor.imagetools.thumbnail import ImageSize
-from lektor.imagetools.thumbnail import make_image_thumbnail
-from lektor.imagetools.thumbnail import Thumbnail
-from lektor.imagetools.thumbnail import ThumbnailMode
-from lektor.imagetools.thumbnail import ThumbnailParams
+from lektor_ng.context import Context
+from lektor_ng.db import Image
+from lektor_ng.imagetools.thumbnail import _compute_cropbox
+from lektor_ng.imagetools.thumbnail import _convert_icc_profile_to_srgb
+from lektor_ng.imagetools.thumbnail import _create_artifact
+from lektor_ng.imagetools.thumbnail import _create_thumbnail
+from lektor_ng.imagetools.thumbnail import _get_thumbnail_url_path
+from lektor_ng.imagetools.thumbnail import compute_dimensions
+from lektor_ng.imagetools.thumbnail import CropBox
+from lektor_ng.imagetools.thumbnail import get_image_info
+from lektor_ng.imagetools.thumbnail import ImageSize
+from lektor_ng.imagetools.thumbnail import make_image_thumbnail
+from lektor_ng.imagetools.thumbnail import Thumbnail
+from lektor_ng.imagetools.thumbnail import ThumbnailMode
+from lektor_ng.imagetools.thumbnail import ThumbnailParams
 
 
 HERE = Path(__file__).parent

@@ -7,16 +7,16 @@ from itertools import chain
 
 import click
 
-from lektor.cli_utils import AliasedGroup
-from lektor.cli_utils import echo_json
-from lektor.cli_utils import extraflag
-from lektor.cli_utils import pass_context
-from lektor.cli_utils import pruneflag
-from lektor.cli_utils import ResolvedPath
-from lektor.cli_utils import validate_language
-from lektor.devcli import cli as devcli
-from lektor.project import Project
-from lektor.utils import secure_url
+from lektor_ng.cli_utils import AliasedGroup
+from lektor_ng.cli_utils import echo_json
+from lektor_ng.cli_utils import extraflag
+from lektor_ng.cli_utils import pass_context
+from lektor_ng.cli_utils import pruneflag
+from lektor_ng.cli_utils import ResolvedPath
+from lektor_ng.cli_utils import validate_language
+from lektor_ng.devcli import cli as devcli
+from lektor_ng.project import Project
+from lektor_ng.utils import secure_url
 
 
 version = metadata.version("Lektor")

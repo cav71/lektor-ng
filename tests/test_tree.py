@@ -5,9 +5,9 @@ from inspect import cleandoc
 
 import pytest
 
-from lektor.constants import PRIMARY_ALT
-from lektor.db import Tree
-from lektor.project import Project
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.db import Tree
+from lektor_ng.project import Project
 
 
 # pylint: disable-next=wrong-import-order

@@ -6,11 +6,11 @@ from pathlib import Path
 
 import pytest
 
-from lektor.builder import Builder
-from lektor.cli import cli
-from lektor.devserver import run_server
-from lektor.project import Project
-from lektor.publisher import publish
+from lektor_ng.builder import Builder
+from lektor_ng.cli import cli
+from lektor_ng.devserver import run_server
+from lektor_ng.project import Project
+from lektor_ng.publisher import publish
 
 
 def test_build_abort_in_existing_nonempty_dir(project_cli_runner):

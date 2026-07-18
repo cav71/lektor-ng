@@ -7,8 +7,8 @@ from typing import TYPE_CHECKING
 
 from flask import Blueprint
 
-from lektor.admin.utils import eventstream
-from lektor.reporter import reporter
+from lektor_ng.admin.utils import eventstream
+from lektor_ng.reporter import reporter
 
 
 if TYPE_CHECKING:

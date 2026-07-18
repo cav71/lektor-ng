@@ -3,17 +3,17 @@ import os
 
 from inifile import IniFile
 
-from lektor.constants import PRIMARY_ALT
-from lektor.environment.expressions import Expression
-from lektor.environment.expressions import FormatExpression
-from lektor.i18n import generate_i18n_kvs
-from lektor.i18n import get_i18n_block
-from lektor.pagination import Pagination
-from lektor.reporter import reporter
-from lektor.types import builtin_types
-from lektor.types.base import RawValue
-from lektor.utils import bool_from_string
-from lektor.utils import slugify
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.environment.expressions import Expression
+from lektor_ng.environment.expressions import FormatExpression
+from lektor_ng.i18n import generate_i18n_kvs
+from lektor_ng.i18n import get_i18n_block
+from lektor_ng.pagination import Pagination
+from lektor_ng.reporter import reporter
+from lektor_ng.types import builtin_types
+from lektor_ng.types.base import RawValue
+from lektor_ng.utils import bool_from_string
+from lektor_ng.utils import slugify
 
 
 class ChildConfig:

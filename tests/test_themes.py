@@ -4,12 +4,12 @@ import textwrap
 
 import pytest
 
-from lektor.assets import Asset
-from lektor.builder import Builder
-from lektor.db import Database
-from lektor.environment import Environment
-from lektor.project import Project
-from lektor.reporter import Reporter
+from lektor_ng.assets import Asset
+from lektor_ng.builder import Builder
+from lektor_ng.db import Database
+from lektor_ng.environment import Environment
+from lektor_ng.project import Project
+from lektor_ng.reporter import Reporter
 
 
 sep = os.path.sep

@@ -4,7 +4,7 @@ from jinja2 import Undefined
 from werkzeug.local import LocalProxy
 from werkzeug.local import LocalStack
 
-from lektor.reporter import reporter
+from lektor_ng.reporter import reporter
 
 
 _ctx_stack = LocalStack()

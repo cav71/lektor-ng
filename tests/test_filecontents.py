@@ -1,6 +1,6 @@
 import pytest
 
-from lektor.filecontents import FileContents
+from lektor_ng.filecontents import FileContents
 
 
 def test_FileContents_is_deprecated():

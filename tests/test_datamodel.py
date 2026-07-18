@@ -2,10 +2,10 @@ import re
 
 import pytest
 
-from lektor.datamodel import ChildConfig
-from lektor.datamodel import DataModel
-from lektor.datamodel import PaginationConfig
-from lektor.reporter import BufferReporter
+from lektor_ng.datamodel import ChildConfig
+from lektor_ng.datamodel import DataModel
+from lektor_ng.datamodel import PaginationConfig
+from lektor_ng.reporter import BufferReporter
 
 
 @pytest.fixture

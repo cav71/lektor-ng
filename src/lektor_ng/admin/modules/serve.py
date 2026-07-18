@@ -20,13 +20,13 @@ from werkzeug.exceptions import NotFound
 from werkzeug.security import safe_join
 from werkzeug.utils import append_slash_redirect
 
-from lektor.admin.context import get_lektor_context
-from lektor.admin.context import LektorApp
-from lektor.admin.context import LektorContext
-from lektor.assets import Asset
-from lektor.assets import Directory
-from lektor.constants import PRIMARY_ALT
-from lektor.db import Record
+from lektor_ng.admin.context import get_lektor_context
+from lektor_ng.admin.context import LektorApp
+from lektor_ng.admin.context import LektorContext
+from lektor_ng.assets import Asset
+from lektor_ng.assets import Directory
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.db import Record
 
 
 if TYPE_CHECKING:

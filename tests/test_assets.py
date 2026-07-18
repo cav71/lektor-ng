@@ -4,11 +4,11 @@ from pathlib import Path
 
 import pytest
 
-from lektor.assets import Directory
-from lektor.assets import File
-from lektor.assets import get_asset
-from lektor.assets import get_asset_root
-from lektor.project import Project
+from lektor_ng.assets import Directory
+from lektor_ng.assets import File
+from lektor_ng.assets import get_asset
+from lektor_ng.assets import get_asset_root
+from lektor_ng.project import Project
 
 
 def write_text(path, text):

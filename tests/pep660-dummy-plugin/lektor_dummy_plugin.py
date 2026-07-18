@@ -1,6 +1,6 @@
 """Dummy test plugin"""
 
-from lektor.pluginsystem import Plugin
+from lektor_ng.pluginsystem import Plugin
 
 
 class DummyPlugin(Plugin):

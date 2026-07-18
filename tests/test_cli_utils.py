@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from lektor.cli_utils import ResolvedPath
+from lektor_ng.cli_utils import ResolvedPath
 
 
 @pytest.mark.parametrize("file_exists", [True, False])

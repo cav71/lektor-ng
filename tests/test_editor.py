@@ -1,8 +1,8 @@
 import pytest
 
-from lektor.editor import BadEdit
-from lektor.editor import make_editor_session
-from lektor.editor import MutableEditorData
+from lektor_ng.editor import BadEdit
+from lektor_ng.editor import make_editor_session
+from lektor_ng.editor import MutableEditorData
 
 
 @pytest.mark.parametrize(

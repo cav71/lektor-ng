@@ -12,13 +12,13 @@ from unittest import mock
 
 import pytest
 
-from lektor.cli import cli
-from lektor.context import Context
-from lektor.packages import add_package_to_project
-from lektor.pluginsystem import _check_dist_name
-from lektor.pluginsystem import get_plugin
-from lektor.pluginsystem import Plugin
-from lektor.pluginsystem import PluginController
+from lektor_ng.cli import cli
+from lektor_ng.context import Context
+from lektor_ng.packages import add_package_to_project
+from lektor_ng.pluginsystem import _check_dist_name
+from lektor_ng.pluginsystem import get_plugin
+from lektor_ng.pluginsystem import Plugin
+from lektor_ng.pluginsystem import PluginController
 
 
 class DummyPlugin(Plugin):

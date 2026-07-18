@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import watchfiles
 
-from lektor.utils import get_cache_dir
+from lektor_ng.utils import get_cache_dir
 
 
 if TYPE_CHECKING:

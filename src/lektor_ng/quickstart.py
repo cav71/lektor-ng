@@ -14,8 +14,8 @@ import click
 from jinja2 import Environment
 from jinja2 import PackageLoader
 
-from lektor.utils import locate_executable
-from lektor.utils import slugify
+from lektor_ng.utils import locate_executable
+from lektor_ng.utils import slugify
 
 
 pwd = import_module("pwd") if os.name != "nt" else None

@@ -14,9 +14,9 @@ from weakref import WeakKeyDictionary
 
 from werkzeug.utils import cached_property
 
-from lektor.context import Context
-from lektor.context import get_ctx
-from lektor.sourceobj import SourceObject
+from lektor_ng.context import Context
+from lektor_ng.context import get_ctx
+from lektor_ng.sourceobj import SourceObject
 
 
 if TYPE_CHECKING:  # pragma: no cover

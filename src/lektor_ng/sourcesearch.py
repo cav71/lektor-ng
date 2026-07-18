@@ -1,7 +1,7 @@
 import sqlite3
 from collections.abc import Sized
 
-from lektor.constants import PRIMARY_ALT
+from lektor_ng.constants import PRIMARY_ALT
 
 
 def _iter_parents(path):

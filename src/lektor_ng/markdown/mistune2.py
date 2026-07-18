@@ -10,10 +10,10 @@ from typing import TypedDict
 
 import mistune.util
 
-from lektor.markdown.controller import MarkdownController
-from lektor.markdown.controller import RendererHelper
-from lektor.markdown.controller import UnknownPluginError
-from lektor.utils import unique_everseen
+from lektor_ng.markdown.controller import MarkdownController
+from lektor_ng.markdown.controller import RendererHelper
+from lektor_ng.markdown.controller import UnknownPluginError
+from lektor_ng.utils import unique_everseen
 
 
 def escape(text: str) -> str:

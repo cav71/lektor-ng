@@ -4,7 +4,7 @@ import hashlib
 import mimetypes
 import os
 
-from lektor.utils import deprecated
+from lektor_ng.utils import deprecated
 
 
 class FileContents:

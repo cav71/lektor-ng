@@ -2,7 +2,7 @@ import inspect
 
 import pytest
 
-from lektor.environment.config import Config
+from lektor_ng.environment.config import Config
 
 
 def test_custom_attachment_types(env):

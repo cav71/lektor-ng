@@ -4,10 +4,10 @@ from jinja2 import is_undefined
 from jinja2 import TemplateNotFound
 from markupsafe import Markup
 
-from lektor.constants import PRIMARY_ALT
-from lektor.context import get_ctx
-from lektor.metaformat import tokenize
-from lektor.types.base import Type
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.context import get_ctx
+from lektor_ng.metaformat import tokenize
+from lektor_ng.types.base import Type
 
 
 _block_re = re.compile(r"^####\s*([^#]*?)\s*####\s*$")

@@ -17,16 +17,16 @@ from typing import IO
 
 import click
 
-from lektor.build_programs import builtin_build_programs
-from lektor.buildfailures import FailureController
-from lektor.constants import PRIMARY_ALT
-from lektor.context import Context
-from lektor.reporter import reporter
-from lektor.sourcesearch import find_files
-from lektor.utils import create_temp
-from lektor.utils import fs_enc
-from lektor.utils import process_extra_flags
-from lektor.utils import prune_file_and_folder
+from lektor_ng.build_programs import builtin_build_programs
+from lektor_ng.buildfailures import FailureController
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.context import Context
+from lektor_ng.reporter import reporter
+from lektor_ng.sourcesearch import find_files
+from lektor_ng.utils import create_temp
+from lektor_ng.utils import fs_enc
+from lektor_ng.utils import process_extra_flags
+from lektor_ng.utils import prune_file_and_folder
 
 
 def create_tables(con):

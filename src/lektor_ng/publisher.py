@@ -33,11 +33,11 @@ from warnings import warn
 
 from werkzeug.datastructures import MultiDict
 
-from lektor.compat import werkzeug_urls_URL
-from lektor.exception import LektorException
-from lektor.utils import bool_from_string
-from lektor.utils import locate_executable
-from lektor.utils import portable_popen
+from lektor_ng.compat import werkzeug_urls_URL
+from lektor_ng.exception import LektorException
+from lektor_ng.utils import bool_from_string
+from lektor_ng.utils import locate_executable
+from lektor_ng.utils import portable_popen
 
 
 if TYPE_CHECKING:  # pragma: no cover

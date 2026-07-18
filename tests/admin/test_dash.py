@@ -4,7 +4,7 @@ import pytest
 from werkzeug.exceptions import NotFound
 from werkzeug.test import Client
 
-from lektor.admin.webui import make_app
+from lektor_ng.admin.webui import make_app
 
 
 @pytest.fixture

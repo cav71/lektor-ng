@@ -3,7 +3,7 @@ from os.path import join
 
 import pytest
 
-from lektor.publisher import RsyncPublisher
+from lektor_ng.publisher import RsyncPublisher
 
 
 def test_get_server(env):

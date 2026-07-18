@@ -1,7 +1,7 @@
 from warnings import warn
 
-from lektor.markdown import Markdown
-from lektor.types.base import Type
+from lektor_ng.markdown import Markdown
+from lektor_ng.types.base import Type
 
 
 class MarkdownDescriptor:

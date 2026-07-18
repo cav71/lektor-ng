@@ -6,13 +6,13 @@ from wsgiref.util import shift_path_info
 from flask import Flask
 from flask import request
 
-from lektor.admin.context import LektorApp
-from lektor.admin.context import LektorInfo
-from lektor.admin.modules import api
-from lektor.admin.modules import dash
-from lektor.admin.modules import livereload
-from lektor.admin.modules import serve
-from lektor.environment import Environment
+from lektor_ng.admin.context import LektorApp
+from lektor_ng.admin.context import LektorInfo
+from lektor_ng.admin.modules import api
+from lektor_ng.admin.modules import dash
+from lektor_ng.admin.modules import livereload
+from lektor_ng.admin.modules import serve
+from lektor_ng.environment import Environment
 
 
 if TYPE_CHECKING:

@@ -9,14 +9,14 @@ from flask import Flask
 from flask import g
 from werkzeug.utils import cached_property
 
-from lektor.builder import Builder
-from lektor.buildfailures import FailureController
-from lektor.db import Database
-from lektor.db import Pad
-from lektor.db import Tree
-from lektor.environment import Environment
-from lektor.environment.config import Config
-from lektor.reporter import CliReporter
+from lektor_ng.builder import Builder
+from lektor_ng.buildfailures import FailureController
+from lektor_ng.db import Database
+from lektor_ng.db import Pad
+from lektor_ng.db import Tree
+from lektor_ng.environment import Environment
+from lektor_ng.environment.config import Config
+from lektor_ng.reporter import CliReporter
 
 
 if TYPE_CHECKING:

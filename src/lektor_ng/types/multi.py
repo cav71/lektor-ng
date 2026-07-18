@@ -1,10 +1,10 @@
 import traceback
 
-from lektor.constants import PRIMARY_ALT
-from lektor.environment.expressions import Expression
-from lektor.environment.expressions import FormatExpression
-from lektor.i18n import get_i18n_block
-from lektor.types.base import Type
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.environment.expressions import Expression
+from lektor_ng.environment.expressions import FormatExpression
+from lektor_ng.i18n import get_i18n_block
+from lektor_ng.types.base import Type
 
 
 def _reflow_and_split_labels(labels):

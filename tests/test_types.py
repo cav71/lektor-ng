@@ -6,11 +6,11 @@ import pytest
 from markupsafe import escape
 from markupsafe import Markup
 
-from lektor.context import Context
-from lektor.datamodel import Field
-from lektor.types.base import BadValue
-from lektor.types.base import Undefined
-from lektor.types.formats import MarkdownDescriptor
+from lektor_ng.context import Context
+from lektor_ng.datamodel import Field
+from lektor_ng.types.base import BadValue
+from lektor_ng.types.base import Undefined
+from lektor_ng.types.formats import MarkdownDescriptor
 
 
 class DummySource:

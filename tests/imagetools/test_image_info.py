@@ -8,9 +8,9 @@ from xml.sax import saxutils
 import PIL
 import pytest
 
-from lektor.imagetools.image_info import _parse_svg_units_px
-from lektor.imagetools.image_info import _save_position
-from lektor.imagetools.image_info import get_image_info
+from lektor_ng.imagetools.image_info import _parse_svg_units_px
+from lektor_ng.imagetools.image_info import _save_position
+from lektor_ng.imagetools.image_info import get_image_info
 
 
 EXIF_ORIENTATION_TAG = 0x0112

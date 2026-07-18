@@ -10,7 +10,7 @@ from warnings import warn
 from werkzeug import urls as werkzeug_urls
 from werkzeug.datastructures import MultiDict
 
-from lektor.utils import DeprecatedWarning
+from lektor_ng.utils import DeprecatedWarning
 
 
 __all__ = ["werkzeug_urls_URL"]

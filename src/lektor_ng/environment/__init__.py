@@ -10,26 +10,26 @@ import babel.dates
 import jinja2
 from jinja2.loaders import split_template_path
 
-from lektor.constants import PRIMARY_ALT
-from lektor.context import config_proxy
-from lektor.context import get_asset_url
-from lektor.context import get_ctx
-from lektor.context import get_locale
-from lektor.context import site_proxy
-from lektor.context import url_to
-from lektor.environment.config import Config
-from lektor.environment.config import DEFAULT_CONFIG  # noqa - reexport
-from lektor.environment.config import ServerInfo  # noqa - reexport
-from lektor.environment.config import update_config_from_ini  # noqa - reexport
-from lektor.environment.expressions import Expression  # noqa - reexport
-from lektor.environment.expressions import FormatExpression  # noqa - reexport
-from lektor.markdown import Markdown
-from lektor.packages import load_packages
-from lektor.pluginsystem import initialize_plugins
-from lektor.pluginsystem import PluginController
-from lektor.publisher import builtin_publishers
-from lektor.utils import format_lat_long
-from lektor.utils import tojson_filter
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.context import config_proxy
+from lektor_ng.context import get_asset_url
+from lektor_ng.context import get_ctx
+from lektor_ng.context import get_locale
+from lektor_ng.context import site_proxy
+from lektor_ng.context import url_to
+from lektor_ng.environment.config import Config
+from lektor_ng.environment.config import DEFAULT_CONFIG  # noqa - reexport
+from lektor_ng.environment.config import ServerInfo  # noqa - reexport
+from lektor_ng.environment.config import update_config_from_ini  # noqa - reexport
+from lektor_ng.environment.expressions import Expression  # noqa - reexport
+from lektor_ng.environment.expressions import FormatExpression  # noqa - reexport
+from lektor_ng.markdown import Markdown
+from lektor_ng.packages import load_packages
+from lektor_ng.pluginsystem import initialize_plugins
+from lektor_ng.pluginsystem import PluginController
+from lektor_ng.publisher import builtin_publishers
+from lektor_ng.utils import format_lat_long
+from lektor_ng.utils import tojson_filter
 
 
 if TYPE_CHECKING:

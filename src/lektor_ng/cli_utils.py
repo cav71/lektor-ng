@@ -8,9 +8,9 @@ from typing import Any
 
 import click
 
-from lektor.i18n import get_default_lang
-from lektor.i18n import is_valid_language
-from lektor.project import Project
+from lektor_ng.i18n import get_default_lang
+from lektor_ng.i18n import is_valid_language
+from lektor_ng.project import Project
 
 
 def echo_json(data):

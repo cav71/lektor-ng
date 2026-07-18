@@ -21,18 +21,18 @@ from flask import make_response
 from flask import request
 from flask import Response
 
-from lektor.admin.context import get_lektor_context
-from lektor.admin.context import LektorContext
-from lektor.admin.utils import eventstream
-from lektor.constants import PRIMARY_ALT
-from lektor.datamodel import DataModel
-from lektor.db import Record
-from lektor.environment.config import Config
-from lektor.environment.config import ServerInfo
-from lektor.publisher import publish
-from lektor.publisher import PublishError
-from lektor.utils import cleanup_path
-from lektor.utils import is_valid_id
+from lektor_ng.admin.context import get_lektor_context
+from lektor_ng.admin.context import LektorContext
+from lektor_ng.admin.utils import eventstream
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.datamodel import DataModel
+from lektor_ng.db import Record
+from lektor_ng.environment.config import Config
+from lektor_ng.environment.config import ServerInfo
+from lektor_ng.publisher import publish
+from lektor_ng.publisher import PublishError
+from lektor_ng.utils import cleanup_path
+from lektor_ng.utils import is_valid_id
 
 
 bp = Blueprint("api", __name__, url_prefix="/admin/api")

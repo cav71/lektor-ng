@@ -5,11 +5,11 @@ from typing import ClassVar
 
 import mistune  # type: ignore[import]
 
-from lektor.markdown.controller import MarkdownController
-from lektor.markdown.controller import Meta  # FIXME: move this?
-from lektor.markdown.controller import RendererHelper
-from lektor.sourceobj import SourceObject
-from lektor.utils import deprecated
+from lektor_ng.markdown.controller import MarkdownController
+from lektor_ng.markdown.controller import Meta  # FIXME: move this?
+from lektor_ng.markdown.controller import RendererHelper
+from lektor_ng.sourceobj import SourceObject
+from lektor_ng.utils import deprecated
 
 
 def escape(text: str) -> str:

@@ -12,7 +12,7 @@ from subprocess import run
 import pytest
 
 import lektor
-from lektor.markdown import MISTUNE_VERSION
+from lektor_ng.markdown import MISTUNE_VERSION
 
 
 ignored = set()

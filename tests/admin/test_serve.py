@@ -13,17 +13,17 @@ import flask
 import pytest
 from werkzeug.exceptions import NotFound
 
-from lektor.admin.context import LektorContext
-from lektor.admin.modules import livereload
-from lektor.admin.modules import serve
-from lektor.admin.webui import LektorApp
-from lektor.admin.webui import LektorInfo
-from lektor.assets import Asset
-from lektor.builder import Artifact
-from lektor.buildfailures import FailureController
-from lektor.db import Record
-from lektor.environment import Environment
-from lektor.project import Project
+from lektor_ng.admin.context import LektorContext
+from lektor_ng.admin.modules import livereload
+from lektor_ng.admin.modules import serve
+from lektor_ng.admin.webui import LektorApp
+from lektor_ng.admin.webui import LektorInfo
+from lektor_ng.assets import Asset
+from lektor_ng.builder import Artifact
+from lektor_ng.buildfailures import FailureController
+from lektor_ng.db import Record
+from lektor_ng.environment import Environment
+from lektor_ng.project import Project
 
 
 @pytest.fixture(scope="session")

@@ -2,10 +2,10 @@ from pathlib import Path
 
 import pytest
 
-from lektor.builder import Builder
-from lektor.builder import FileInfo
-from lektor.project import Project
-from lektor.reporter import NullReporter
+from lektor_ng.builder import Builder
+from lektor_ng.builder import FileInfo
+from lektor_ng.project import Project
+from lektor_ng.reporter import NullReporter
 
 
 def get_child_sources(prog):

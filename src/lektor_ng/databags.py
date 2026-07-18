@@ -5,11 +5,11 @@ from collections import OrderedDict
 
 from inifile import IniFile
 
-from lektor.context import get_ctx
-from lektor.utils import decode_flat_data
-from lektor.utils import iter_dotted_path_prefixes
-from lektor.utils import merge
-from lektor.utils import resolve_dotted_value
+from lektor_ng.context import get_ctx
+from lektor_ng.utils import decode_flat_data
+from lektor_ng.utils import iter_dotted_path_prefixes
+from lektor_ng.utils import merge
+from lektor_ng.utils import resolve_dotted_value
 
 
 def load_databag(filename):

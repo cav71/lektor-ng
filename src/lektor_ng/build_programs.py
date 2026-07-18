@@ -2,12 +2,12 @@ import os
 import shutil
 from itertools import chain
 
-from lektor.assets import Directory
-from lektor.assets import File
-from lektor.constants import PRIMARY_ALT
-from lektor.db import Attachment
-from lektor.db import Page
-from lektor.exception import LektorException
+from lektor_ng.assets import Directory
+from lektor_ng.assets import File
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.db import Attachment
+from lektor_ng.db import Page
+from lektor_ng.exception import LektorException
 
 
 class BuildError(LektorException):

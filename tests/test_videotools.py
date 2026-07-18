@@ -3,10 +3,10 @@ from datetime import timedelta
 
 import pytest
 
-from lektor.utils import locate_executable
-from lektor.videotools import Dimensions
-from lektor.videotools import get_ffmpeg_quality
-from lektor.videotools import get_timecode
+from lektor_ng.utils import locate_executable
+from lektor_ng.videotools import Dimensions
+from lektor_ng.videotools import get_ffmpeg_quality
+from lektor_ng.videotools import get_timecode
 
 
 has_ffmpeg = locate_executable("ffmpeg")

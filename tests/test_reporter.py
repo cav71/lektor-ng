@@ -2,9 +2,9 @@ from functools import partial
 
 import pytest
 
-from lektor.build_programs import FileAssetBuildProgram
-from lektor.builder import Builder
-from lektor.reporter import describe_build_func
+from lektor_ng.build_programs import FileAssetBuildProgram
+from lektor_ng.builder import Builder
+from lektor_ng.reporter import describe_build_func
 
 
 @pytest.fixture

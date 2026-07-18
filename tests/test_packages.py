@@ -10,12 +10,12 @@ from subprocess import run
 import pytest
 from pytest_mock import MockerFixture
 
-from lektor.environment import Environment
-from lektor.packages import load_packages
-from lektor.packages import Requirements
-from lektor.packages import update_cache
-from lektor.packages import VirtualEnv
-from lektor.project import Project
+from lektor_ng.environment import Environment
+from lektor_ng.packages import load_packages
+from lektor_ng.packages import Requirements
+from lektor_ng.packages import update_cache
+from lektor_ng.packages import VirtualEnv
+from lektor_ng.project import Project
 
 
 @pytest.fixture(scope="module")

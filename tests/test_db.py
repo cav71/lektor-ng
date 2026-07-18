@@ -5,15 +5,15 @@ from datetime import date
 
 import pytest
 
-from lektor.context import Context
-from lektor.db import Database
-from lektor.db import F
-from lektor.db import get_alts
-from lektor.db import Image
-from lektor.db import Query
-from lektor.db import Video
-from lektor.filecontents import FileContents
-from lektor.metaformat import serialize
+from lektor_ng.context import Context
+from lektor_ng.db import Database
+from lektor_ng.db import F
+from lektor_ng.db import get_alts
+from lektor_ng.db import Image
+from lektor_ng.db import Query
+from lektor_ng.db import Video
+from lektor_ng.filecontents import FileContents
+from lektor_ng.metaformat import serialize
 
 
 def test_root(pad):

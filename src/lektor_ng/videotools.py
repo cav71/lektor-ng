@@ -5,12 +5,12 @@ import subprocess
 from collections import namedtuple
 from datetime import timedelta
 
-from lektor.imagetools import Thumbnail
-from lektor.imagetools import ThumbnailMode
-from lektor.reporter import reporter
-from lektor.utils import get_dependent_url
-from lektor.utils import locate_executable
-from lektor.utils import portable_popen
+from lektor_ng.imagetools import Thumbnail
+from lektor_ng.imagetools import ThumbnailMode
+from lektor_ng.reporter import reporter
+from lektor_ng.utils import get_dependent_url
+from lektor_ng.utils import locate_executable
+from lektor_ng.utils import portable_popen
 
 
 THUMBNAIL_FORMATS = frozenset(["jpg", "jpeg", "png"])

@@ -4,8 +4,8 @@ import sys
 
 import pytest
 
-from lektor.buildfailures import BuildFailure
-from lektor.buildfailures import FailureController
+from lektor_ng.buildfailures import BuildFailure
+from lektor_ng.buildfailures import FailureController
 
 
 @pytest.fixture

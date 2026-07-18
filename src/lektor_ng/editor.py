@@ -13,14 +13,14 @@ from contextlib import suppress
 from functools import wraps
 from itertools import chain
 
-from lektor.constants import PRIMARY_ALT
-from lektor.metaformat import serialize
-from lektor.utils import atomic_open
-from lektor.utils import cleanup_path
-from lektor.utils import increment_filename
-from lektor.utils import is_valid_id
-from lektor.utils import parse_path
-from lektor.utils import secure_filename
+from lektor_ng.constants import PRIMARY_ALT
+from lektor_ng.metaformat import serialize
+from lektor_ng.utils import atomic_open
+from lektor_ng.utils import cleanup_path
+from lektor_ng.utils import increment_filename
+from lektor_ng.utils import is_valid_id
+from lektor_ng.utils import parse_path
+from lektor_ng.utils import secure_filename
 
 
 implied_keys = {"_id", "_path", "_gid", "_alt", "_source_alt", "_attachment_for"}

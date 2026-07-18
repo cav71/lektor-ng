@@ -14,9 +14,9 @@ from typing import TYPE_CHECKING
 
 from werkzeug.utils import cached_property
 
-from lektor.sourceobj import SourceObject
-from lektor.utils import deprecated
-from lektor.utils import DeprecatedWarning
+from lektor_ng.sourceobj import SourceObject
+from lektor_ng.utils import deprecated
+from lektor_ng.utils import DeprecatedWarning
 
 
 if TYPE_CHECKING:
