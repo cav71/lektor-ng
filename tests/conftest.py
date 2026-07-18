@@ -20,6 +20,10 @@ from lektor_ng.project import Project
 from lektor_ng.reporter import BufferReporter
 from lektor_ng.utils import locate_executable
 
+@pytest.fixture(scope="session")
+def top_path():
+    return Path(__file__).parent.parent
+
 
 @pytest.fixture(scope="session")
 def data_path():
@@ -28,6 +32,11 @@ def data_path():
     Current this data lives in the ``tests`` directory.
     """
     return Path(__file__).parent
+
+
+@pytest.fixture(scope="session")
+def example_path(top_path):
+    return top_path / "example"
 
 
 @pytest.fixture(scope="session", autouse=True)
