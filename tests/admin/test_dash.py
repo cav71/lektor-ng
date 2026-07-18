@@ -26,7 +26,7 @@ def app(env, ui_lang, tmp_path, admin_path, app_prefix):
 @pytest.mark.parametrize("app_prefix", [None, "prefix"])
 def test_dash(app, ui_lang, mocker, admin_path, app_prefix):
     render_template = mocker.patch(
-        "lektor.admin.modules.dash.render_template",
+        "lektor_ng.admin.modules.dash.render_template",
         return_value="RENDERED",
     )
     script_name = f"/{app_prefix}" if app_prefix else ""
