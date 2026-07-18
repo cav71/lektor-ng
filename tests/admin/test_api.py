@@ -444,7 +444,7 @@ def test_publish(test_client, mocker):
         yield "line1"
         raise PublishError("wups")
 
-    mocker.patch("lektor.admin.modules.api.publish", side_effect=dummy_publish)
+    mocker.patch("lektor_ng.admin.modules.api.publish", side_effect=dummy_publish)
 
     resp = test_client.get("/admin/api/publish?server=production")
     assert resp.status_code == 200
