@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lektor-ng"
-version = "0.0.7"
+version = "0.0.0"
 
 description = "A fork of a static content management system (Lektor)."
 
@@ -31,7 +31,6 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
@@ -40,7 +39,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 
 dependencies = [
     "Babel",
