@@ -1,0 +1,11 @@
+from lektor.pluginsystem import Plugin
+
+
+class ${plugin_class}(Plugin):
+    name = ${plugin_name|pprint}
+    description = "Add your description here."
+
+    def on_process_template_context(self, context, **extra):
+        def test_function():
+            return f"Value from plugin {self.name}"
+        context["test_function"] = test_function
