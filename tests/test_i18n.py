@@ -1,6 +1,6 @@
 import importlib
 
-import lektor.i18n
+import lektor_ng.i18n
 
 
 EXPECTED_LANGS = {
@@ -22,12 +22,12 @@ EXPECTED_LANGS = {
 
 
 def test_translations_loaded():
-    known_langs = set(lektor.i18n.KNOWN_LANGUAGES)
+    known_langs = set(lektor_ng.i18n.KNOWN_LANGUAGES)
     assert known_langs == EXPECTED_LANGS
 
 
 def test_loading_i18n_triggers_no_warnings(recwarn):
-    importlib.reload(lektor.i18n)
+    importlib.reload(lektor_ng.i18n)
     for warning in recwarn.list:
         print(warning)  # debugging: display warnings on stdout
     assert len(recwarn) == 0
