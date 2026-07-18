@@ -20,7 +20,7 @@ from lektor_ng.compat import _CompatURL
     ],
 )
 def test_deprecated_attr(name, expected_value, replacement):
-    lektor_compat = importlib.import_module("lektor.compat")
+    lektor_compat = importlib.import_module("lektor_ng.compat")
     with pytest.deprecated_call(match=f"use {replacement} instead") as warnings:
         value = getattr(lektor_compat, name)
     assert value is expected_value
@@ -28,7 +28,7 @@ def test_deprecated_attr(name, expected_value, replacement):
 
 
 def test_missing_attr():
-    lektor_compat = importlib.import_module("lektor.compat")
+    lektor_compat = importlib.import_module("lektor_ng.compat")
     with pytest.raises(AttributeError):
         _ = lektor_compat.MISSING
 
