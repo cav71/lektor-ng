@@ -47,8 +47,8 @@ def shell_cmd(ctx, extra_flags):
     import code
 
     from lektor.builder import Builder
-    from lektor.db import F
-    from lektor.db import Tree
+    from lektor_ng.db import F
+    from lektor_ng.db import Tree
 
     banner = (
         f"Python {sys.version} on {sys.platform}\n"

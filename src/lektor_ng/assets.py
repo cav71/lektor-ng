@@ -22,7 +22,7 @@ from lektor_ng.utils import DeprecatedWarning
 if TYPE_CHECKING:
     from _typeshed import StrPath
 
-    from lektor.db import Pad
+    from lektor_ng.db import Pad
 
 
 def get_asset_root(pad: Pad, asset_roots: Iterable[StrPath]) -> Directory:

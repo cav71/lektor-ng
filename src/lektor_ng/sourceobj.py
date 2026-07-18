@@ -14,7 +14,7 @@ from lektor_ng.utils import join_path
 
 
 if TYPE_CHECKING:
-    from lektor.db import Pad
+    from lektor_ng.db import Pad
 
 
 class SourceObject:

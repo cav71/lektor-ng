@@ -5,7 +5,7 @@ import pytest
 from iniconfig import IniConfig
 from inifile import IniFile
 
-import lektor.quickstart
+import lektor_ng.quickstart
 from lektor_ng.cli import cli
 
 
@@ -29,7 +29,7 @@ def can_symlink(tmp_path_factory):
 def default_author(mocker):
     author = "J. Random Hacker"
     mocker.patch.object(
-        lektor.quickstart, "get_default_author", spec=True, return_value=author
+        lektor_ng.quickstart, "get_default_author", spec=True, return_value=author
     )
     return author
 
@@ -38,7 +38,7 @@ def default_author(mocker):
 def default_author_email(mocker):
     email = "jrh@example.org"
     mocker.patch.object(
-        lektor.quickstart, "get_default_author_email", spec=True, return_value=email
+        lektor_ng.quickstart, "get_default_author_email", spec=True, return_value=email
     )
     return email
 
@@ -98,14 +98,14 @@ def test_new_plugin(project_cli_runner):
     assert setup.get("metadata", "author_email") == "author@email.com"
     assert setup.get("options", "py_modules") == "lektor_plugin_name"
     assert (
-        setup.get("options.entry_points", "lektor.plugins")
+        setup.get("options.entry_points", "lektor_ng.plugins")
         == "plugin-name = lektor_plugin_name:PluginNamePlugin"
     )
 
     # plugin.py
     plugin_expected = textwrap.dedent(
         """
-        from lektor.pluginsystem import Plugin
+        from lektor_ng.pluginsystem import Plugin
 
 
         class PluginNamePlugin(Plugin):

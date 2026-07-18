@@ -223,8 +223,8 @@ class Environment:
             loader=jinja2.FileSystemLoader(template_paths),
         )
 
-        from lektor.db import F  # pylint: disable=import-outside-toplevel
-        from lektor.db import get_alts  # pylint: disable=import-outside-toplevel
+        from lektor_ng.db import F  # pylint: disable=import-outside-toplevel
+        from lektor_ng.db import get_alts  # pylint: disable=import-outside-toplevel
 
         def latlongformat(latlong, secs=True):
             lat, lon = latlong
@@ -255,7 +255,7 @@ class Environment:
         )
 
         # pylint: disable=import-outside-toplevel
-        from lektor.types import builtin_types
+        from lektor_ng.types import builtin_types
 
         self.types = builtin_types.copy()
 
@@ -277,7 +277,7 @@ class Environment:
         if load_plugins:
             self.load_plugins()
         # pylint: disable=import-outside-toplevel
-        from lektor.db import siblings_resolver
+        from lektor_ng.db import siblings_resolver
 
         self.virtualpathresolver("siblings")(siblings_resolver)
 
@@ -305,7 +305,7 @@ class Environment:
 
     def new_pad(self):
         """Convenience function to create a database and pad."""
-        from lektor.db import Database  # pylint: disable=import-outside-toplevel
+        from lektor_ng.db import Database  # pylint: disable=import-outside-toplevel
 
         return Database(self).new_pad()
 

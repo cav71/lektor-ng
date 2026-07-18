@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-import lektor.context
+import lektor_ng.context
 from lektor_ng.db import Pad
 from lektor_ng.environment import Environment
 
@@ -18,7 +18,7 @@ def scratch_project_data(scratch_project_data):
     data = {"_model": "page", "title": "Subpage", "body": "Subpage body"}
     subpage_lr = scratch_project_data / "content/sub-page/contents.lr"
     subpage_lr.parent.mkdir()
-    subpage_lr.write_text("".join(lektor.metaformat.serialize(data.items())))
+    subpage_lr.write_text("".join(lektor_ng.metaformat.serialize(data.items())))
 
     testbag_ini = scratch_project_data / "databags/testbag.ini"
     testbag_ini.parent.mkdir()
@@ -47,7 +47,7 @@ def source_path():
 def bogus_context(scratch_pad, source_path):
     # Construct a Context that has a source, without going through all
     # all the steps necessary to construct an Artifact.
-    with lektor.context.Context(pad=scratch_pad) as ctx:
+    with lektor_ng.context.Context(pad=scratch_pad) as ctx:
         if source_path is not None:
             ctx.source = scratch_pad.get(source_path)
         yield
@@ -142,7 +142,7 @@ def test_dateformat_filter(render_string):
 def test_datetimeformat_filter_not_inlined(pad):
     template = pad.env.jinja_env.from_string("{{ 1678749806 | datetimeformat }}")
     en_date = template.render()
-    with lektor.context.Context(pad=pad) as ctx:
+    with lektor_ng.context.Context(pad=pad) as ctx:
         ctx.source = pad.get("/", alt="de")
         de_date = template.render()
     assert en_date != de_date
@@ -208,5 +208,5 @@ def test_bag_gets_site_from_lektor_context(
     scratch_env: Environment, scratch_pad: Pad
 ) -> None:
     template = scratch_env.jinja_env.from_string("{{ bag('testbag.foo') }}")
-    with lektor.context.Context(pad=scratch_pad):
+    with lektor_ng.context.Context(pad=scratch_pad):
         assert template.render() == "bar"
