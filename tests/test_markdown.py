@@ -4,7 +4,7 @@ import threading
 import pytest
 from markupsafe import Markup
 
-import lektor.markdown
+import lektor_ng.markdown
 from lektor_ng.context import Context
 from lektor_ng.markdown import controller_class
 from lektor_ng.markdown import get_controller
@@ -218,9 +218,9 @@ def test_markdown_controller_resolve_plugin_raises_typeerror(markdown_controller
 def improved_renderer():
     # pylint: disable=import-outside-toplevel
     if MISTUNE_VERSION.startswith("2."):
-        from lektor.markdown.mistune2 import ImprovedRenderer
+        from lektor_ng.markdown.mistune2 import ImprovedRenderer
     else:
-        from lektor.markdown.mistune0 import ImprovedRenderer
+        from lektor_ng.markdown.mistune0 import ImprovedRenderer
     return ImprovedRenderer()
 
 
@@ -476,10 +476,10 @@ def test_field_options_integration(record, field_options):
 #
 def test_deprecated_ImprovedRenderer(improved_renderer):
     with pytest.deprecated_call(
-        match=r"lektor\.markdown\.ImprovedRenderer\b.* deprecated"
+        match=r"lektor_ng\.markdown\.ImprovedRenderer\b.* deprecated"
     ) as warnings:
         # pylint: disable-next=import-outside-toplevel,no-name-in-module
-        from lektor.markdown import ImprovedRenderer
+        from lektor_ng.markdown import ImprovedRenderer
     assert all(w.filename == __file__ for w in warnings)
     assert isinstance(improved_renderer, ImprovedRenderer)
 
@@ -489,7 +489,7 @@ def test_deprecated_ImprovedRenderer(improved_renderer):
 def test_deprecated_ImprovedRenderer_record(record):
     with pytest.deprecated_call():
         # pylint: disable-next=import-outside-toplevel,no-name-in-module
-        from lektor.markdown import ImprovedRenderer
+        from lektor_ng.markdown import ImprovedRenderer
     improved_renderer = ImprovedRenderer()
 
     with pytest.deprecated_call(
@@ -503,7 +503,7 @@ def test_deprecated_ImprovedRenderer_record(record):
 def test_deprecated_ImprovedRenderer_meta(renderer_context):
     with pytest.deprecated_call():
         # pylint: disable-next=import-outside-toplevel,no-name-in-module
-        from lektor.markdown import ImprovedRenderer
+        from lektor_ng.markdown import ImprovedRenderer
     improved_renderer = ImprovedRenderer()
 
     with pytest.deprecated_call(
@@ -515,24 +515,24 @@ def test_deprecated_ImprovedRenderer_meta(renderer_context):
 
 def test_deprecated_MarkdownConfig(improved_renderer):
     with pytest.deprecated_call(
-        match=r"lektor\.markdown\.MarkdownConfig\b.* deprecated"
+        match=r"lektor_ng\.markdown\.MarkdownConfig\b.* deprecated"
     ) as warnings:
-        config = lektor.markdown.MarkdownConfig()
+        config = lektor_ng.markdown.MarkdownConfig()
     assert all(w.filename == __file__ for w in warnings)
     assert config.renderer_base is type(improved_renderer)
 
 
 def test_deprecated_escape(improved_renderer):
     with pytest.deprecated_call(
-        match=r"lektor\.markdown\.escape\b.* deprecated"
+        match=r"lektor_ng\.markdown\.escape\b.* deprecated"
     ) as warnings:
-        assert lektor.markdown.escape("<") == "&lt;"
+        assert lektor_ng.markdown.escape("<") == "&lt;"
     assert all(w.filename == __file__ for w in warnings)
 
 
 def test_getattr_raises():
     with pytest.raises(AttributeError, match="no attribute 'goober'"):
-        _ = lektor.markdown.goober
+        _ = lektor_ng.markdown.goober
 
 
 def test_dir():
@@ -546,7 +546,7 @@ def test_dir():
         "make_markdown",
         "markdown_to_html",
     }
-    assert expected.issubset(dir(lektor.markdown))
+    assert expected.issubset(dir(lektor_ng.markdown))
 
 
 def test_deprecated_make_markdown(env):
@@ -579,7 +579,7 @@ def test_legacy_plugin(env, record, field_options):
 
         def on_markdown_config(self, config, **extra):
             # pylint: disable-next=import-outside-toplevel,no-name-in-module
-            from lektor.markdown import escape
+            from lektor_ng.markdown import escape
 
             class LegacyRendererMixin:
                 def link(self, link, title, text):

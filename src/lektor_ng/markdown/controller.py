@@ -20,7 +20,7 @@ from lektor_ng.sourceobj import SourceObject
 
 
 if TYPE_CHECKING:  # pragma: no cover
-    from lektor.environment import Environment
+    from lektor_ng.environment import Environment
 
 
 @dataclass

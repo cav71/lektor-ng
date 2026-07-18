@@ -33,9 +33,9 @@ if TYPE_CHECKING:
     from flask.typing import ResponseReturnValue
     from flask.typing import ResponseValue
 
-    from lektor.builder import Artifact
-    from lektor.buildfailures import BuildFailure
-    from lektor.sourceobj import SourceObject
+    from lektor_ng.builder import Artifact
+    from lektor_ng.buildfailures import BuildFailure
+    from lektor_ng.sourceobj import SourceObject
 
 
 bp = Blueprint("serve", __name__)

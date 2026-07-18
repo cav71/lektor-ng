@@ -28,7 +28,7 @@ from lektor_ng.project import Project
 
 @pytest.fixture(scope="session")
 def dummy_app():
-    app = flask.Flask("lektor.admin")
+    app = flask.Flask("lektor_ng.admin")
     app.config["SERVER_NAME"] = "example.org"
     return app
 

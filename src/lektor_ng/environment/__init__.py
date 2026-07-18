@@ -35,9 +35,9 @@ from lektor_ng.utils import tojson_filter
 if TYPE_CHECKING:
     from typing import Literal
 
-    from lektor.assets import Asset
-    from lektor.build_programs import BuildProgram
-    from lektor.sourceobj import SourceObject
+    from lektor_ng.assets import Asset
+    from lektor_ng.build_programs import BuildProgram
+    from lektor_ng.sourceobj import SourceObject
 
 
 def _prevent_inlining(wrapped):
