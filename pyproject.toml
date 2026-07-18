@@ -72,6 +72,7 @@ lektor-ng = "lektor.cli:main"
 dev = [                         # generally useful during development
     "pytest>=6",
     "pytest-click",
+    "pytest-cov",
     "pytest-mock",
     "coverage[toml]",
     "iniconfig",
