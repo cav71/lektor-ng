@@ -77,7 +77,7 @@ class LektorApp(Flask):
         lektor_info: LektorInfo,
         **kwargs: Any,
     ) -> None:
-        Flask.__init__(self, "lektor.admin", **kwargs)
+        Flask.__init__(self, "lektor_ng.admin", **kwargs)
         self.lektor_info = lektor_info
 
 
