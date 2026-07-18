@@ -3,7 +3,9 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "lektor"
+name = "lektor-ng"
+version = "0.0.7"
+
 description = "A fork of a static content management system (Lektor)."
 
 authors = [
@@ -64,7 +66,7 @@ optional-dependencies.ipython = [
 ]
 
 [project.scripts]
-lektor = "lektor.cli:main"
+lektor-ng = "lektor.cli:main"
 
 [dependency-groups]
 dev = [                         # generally useful during development
