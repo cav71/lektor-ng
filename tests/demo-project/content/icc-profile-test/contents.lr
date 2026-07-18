@@ -1,0 +1,7 @@
+_model: page
+---
+title: Colorspace Test
+---
+_template: icc-profile-test.html
+---
+body: 
