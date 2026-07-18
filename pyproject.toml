@@ -12,7 +12,7 @@ authors = [
     { name = "A. Cavallo", email = "a.cavallo@cavallinux.eu" },
 ]
 
-license = "BSD"
+license = "BSD-3-Clause"
 
 license-files = [
     "licenses/LICENSE",
