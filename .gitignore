@@ -1,0 +1,17 @@
+# MacOS
+.DS_Store
+
+# System, editor and IDE files
+*.swp
+*.swo
+
+# Python
+*.pyc
+*.pyd
+*.pyo
+*.egg-info
+__pycache__/
+
+# Venv
+.venv/
+.envrc
