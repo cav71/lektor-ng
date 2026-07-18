@@ -49,7 +49,7 @@ def temporary_lektor_cache(tmp_path_factory):
         return str(cache_dir)
 
     mp = MonkeyPatch()
-    mp.setattr(lektor.project, "get_cache_dir", get_cache_dir)
+    mp.setattr(lektor_ng.project, "get_cache_dir", get_cache_dir)
     yield cache_dir
     mp.undo()
 
@@ -59,13 +59,13 @@ def restore_import_state():
     """Save `sys.path`, and `sys.modules` state on test
     entry, restore after test completion.
 
-    Any test which constructs a `lektor.environment.Environment` instance
+    Any test which constructs a `lektor_ng.environment.Environment` instance
     or which runs any of the Lektor CLI commands should use this fixture
     to ensure that alterations made to `sys.path` do not interfere with
     other tests.
 
     Lektor's private package cache is added to `sys.path` by
-    `lektor.packages.load_packages`.  This happens, for example,
+    `lektor_ng.packages.load_packages`.  This happens, for example,
     whenever a Lektor `Environment` is constructed (unless
     `load_plugins=False` is specified.)  Since all tests are run
     within an single invocation of the python interpreter, this can

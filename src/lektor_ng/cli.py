@@ -17,9 +17,7 @@ from lektor_ng.cli_utils import validate_language
 from lektor_ng.devcli import cli as devcli
 from lektor_ng.project import Project
 from lektor_ng.utils import secure_url
-
-
-version = metadata.version("Lektor")
+from lektor_ng.version import get_version
 
 
 @click.group(cls=AliasedGroup)
@@ -34,7 +32,7 @@ version = metadata.version("Lektor")
     callback=validate_language,
     help="The UI language to use (overrides autodetection).",
 )
-@click.version_option(prog_name="Lektor", version=version)
+@click.version_option(prog_name="Lektor", version=get_version())
 @pass_context
 def cli(ctx, project=None, language=None):
     """The lektor management application.
