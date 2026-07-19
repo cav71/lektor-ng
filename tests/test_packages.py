@@ -61,13 +61,13 @@ def test_VirtualEnv_uses_symlinks(nested_venv: VirtualEnv) -> None:
 
 @pytest.mark.requiresinternet
 @pytest.mark.slowtest
-def test_VirtualEnv_run_pip_install(tmp_path: Path) -> None:
+def test_VirtualEnv_run_pip_install(tmp_path: Path, data_path) -> None:
     # XXX: slow test
     venv = VirtualEnv(tmp_path)
     venv.create()
 
     # install a dummy plugin
-    plugin_path = Path(__file__).parent / "pep660-dummy-plugin"
+    plugin_path = data_path / "pep660-dummy-plugin"
     dummy_plugin_path = os.fspath(plugin_path.resolve())
     venv.run_pip_install(f"--editable={dummy_plugin_path}")
 
@@ -155,7 +155,7 @@ def test_update_cache_installs_requirements(
 ) -> None:
     venv_path = tmp_path / "cache"
     venv_path.mkdir()
-    VirtualEnv = mocker.patch("lektor.packages.VirtualEnv")
+    VirtualEnv = mocker.patch("lektor_ng.packages.VirtualEnv")
     update_cache(venv_path, {"foo": "42"}, tmp_path / "packages")
     assert mocker.call().run_pip_install("foo==42") in VirtualEnv.mock_calls
     hash_file = venv_path / "lektor-requirements-hash.txt"
@@ -170,7 +170,7 @@ def test_update_cache_skips_install_if_up_to_date(
     venv_path.joinpath("lektor-requirements-hash.txt").write_text(
         "a44f078eab8bc1aa1ddfd111d63e24ff65131b4b\n"
     )
-    VirtualEnv = mocker.patch("lektor.packages.VirtualEnv")
+    VirtualEnv = mocker.patch("lektor_ng.packages.VirtualEnv")
     update_cache(venv_path, {"foo": "42"}, tmp_path / "packages")
     assert VirtualEnv.mock_calls == []
 

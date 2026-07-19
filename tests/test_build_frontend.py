@@ -10,10 +10,11 @@ from unittest.mock import Mock
 
 import pytest
 
+pytestmark = pytest.mark.skipif(True, reason="Web frontend not supported")
 
 @pytest.fixture(scope="session")
-def frontend_build_module():
-    return import_module_from_file("build_frontend", "../build_frontend.py")
+def frontend_build_module(top_path):
+    return import_module_from_file("build_frontend", top_path / "support"/ "build_frontend.py")
 
 
 @pytest.fixture

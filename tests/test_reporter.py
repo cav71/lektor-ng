@@ -30,7 +30,7 @@ def test_describe_build_func_BuildProgram(pad, build_state):
     build_program = FileAssetBuildProgram(pad.get_asset("static/demo.css"), build_state)
     build_func = build_program.build_artifact
     assert (
-        describe_build_func(build_func) == "lektor.build_programs.FileAssetBuildProgram"
+        describe_build_func(build_func) == "lektor_ng.build_programs.FileAssetBuildProgram"
     )
 
 
