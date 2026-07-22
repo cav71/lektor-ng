@@ -28,7 +28,7 @@ class Generator:
     def __init__(self, base):
         self.question = 0
         self.jinja_env = Environment(
-            loader=PackageLoader("lektor", os.path.join("quickstart-templates", base)),
+            loader=PackageLoader("lektor_ng", os.path.join("quickstart-templates", base)),
             line_statement_prefix="%%",
             line_comment_prefix="##",
             variable_start_string="${",

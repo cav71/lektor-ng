@@ -117,8 +117,8 @@ def build_cmd(
     If the build fails the exit code will be `1` otherwise `0`.  This can be
     used by external scripts to only deploy on successful build for instance.
     """
-    from lektor.builder import Builder
-    from lektor.reporter import CliReporter
+    from lektor_ng.builder import Builder
+    from lektor_ng.reporter import CliReporter
 
     if output_path is None:
         output_path = ctx.get_default_output_path()
@@ -130,7 +130,7 @@ def build_cmd(
     with CliReporter(env, verbosity=verbosity):
         builds = ["first"]
         if watch:
-            from lektor.watcher import watch_project
+            from lektor_ng.watcher import watch_project
 
             click.secho("Watching for file system changes", fg="cyan")
             builds = chain(
@@ -181,8 +181,8 @@ def clean_cmd(ctx, *, output_path, verbosity, extra_flags):
     If not build folder is provided, the default build folder of the project
     in the Lektor cache is used.
     """
-    from lektor.builder import Builder
-    from lektor.reporter import CliReporter
+    from lektor_ng.builder import Builder
+    from lektor_ng.reporter import CliReporter
 
     if output_path is None:
         output_path = ctx.get_default_output_path()
@@ -244,8 +244,8 @@ def deploy_cmd(ctx, *, server, output_path, extra_flags, **credentials):
 
     For more information see the deployment chapter in the documentation.
     """
-    from lektor.publisher import publish
-    from lektor.publisher import PublishError
+    from lektor_ng.publisher import publish
+    from lektor_ng.publisher import PublishError
 
     if output_path is None:
         output_path = ctx.get_default_output_path()
@@ -332,7 +332,7 @@ def server_cmd(ctx, *, host, port, output_path, prune, verbosity, extra_flags, b
     works, but also at the same time serve up the website on a local
     HTTP server.
     """
-    from lektor.devserver import run_server
+    from lektor_ng.devserver import run_server
 
     if output_path is None:
         output_path = ctx.get_default_output_path()
@@ -597,7 +597,7 @@ def plugins_reinstall_cmd(ctx):
 @pass_context
 def quickstart_cmd(ctx, **options):
     """Starts a new empty project with a minimum boilerplate."""
-    from lektor.quickstart import project_quickstart
+    from lektor_ng.quickstart import project_quickstart
 
     project_quickstart(options)
 
@@ -610,8 +610,8 @@ def main(as_module=False):
     name = None
 
     if as_module:
-        name = "python -m lektor"
-        sys.argv = ["-m", "lektor"] + args
+        name = "python -m lektor_ng"
+        sys.argv = ["-m", "lektor_ng"] + args
 
     cli.main(args=args, prog_name=name)
 
