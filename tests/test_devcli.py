@@ -98,7 +98,7 @@ def test_new_plugin(project_cli_runner):
     assert setup.get("metadata", "author_email") == "author@email.com"
     assert setup.get("options", "py_modules") == "lektor_plugin_name"
     assert (
-        setup.get("options.entry_points", "lektor_ng.plugins")
+        setup.get("options.entry_points", "lektor.plugins")
         == "plugin-name = lektor_plugin_name:PluginNamePlugin"
     )
 

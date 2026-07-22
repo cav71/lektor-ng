@@ -1,4 +1,4 @@
-from lektor.pluginsystem import Plugin
+from lektor_ng.pluginsystem import Plugin
 
 
 class ${plugin_class}(Plugin):

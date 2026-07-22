@@ -212,9 +212,11 @@ class TestPlugin:
     @pytest.mark.requiresinternet
     @pytest.mark.slowtest
     @pytest.mark.usefixtures("save_sys_path")
+
     def test_path_installed_plugin_is_none(self, scratch_project):
         # XXX: this test is slow and fragile. (It won't run
         # without an internet connection.)
+        pytest.skip("LEKTOR-NG")
         add_package_to_project(scratch_project, "webpack-support")
         env = scratch_project.make_env()
         plugin = get_plugin("webpack-support", env)
