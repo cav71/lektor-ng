@@ -83,7 +83,7 @@ def test_build(project_cli_runner):
 
 
 def test_build_extra_flag(project_cli_runner, mocker):
-    mock_builder = mocker.patch("lektor.builder.Builder")
+    mock_builder = mocker.patch("lektor_ng.builder.Builder")
     mock_builder.return_value.build_all.return_value = 0
     result = project_cli_runner.invoke(cli, ["build", "-f", "webpack"])
     assert result.exit_code == 0
@@ -91,7 +91,7 @@ def test_build_extra_flag(project_cli_runner, mocker):
 
 
 def test_deploy_extra_flag(project_cli_runner, mocker):
-    mock_publish = mocker.patch("lektor.publisher.publish")
+    mock_publish = mocker.patch("lektor_ng.publisher.publish")
     result = project_cli_runner.invoke(cli, ["deploy", "-f", "draft"])
     assert result.exit_code == 0
     assert mock_publish.call_args[1]["extra_flags"] == ("draft",)

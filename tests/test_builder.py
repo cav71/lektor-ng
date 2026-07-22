@@ -117,7 +117,7 @@ def test_basic_artifact_current_test(pad, builder, reporter):
         (
             "build-func",
             {
-                "func": "lektor.build_programs.PageBuildProgram",
+                "func": "lektor_ng.build_programs.PageBuildProgram",
             },
         ),
         (
@@ -168,7 +168,7 @@ def test_basic_artifact_current_test(pad, builder, reporter):
         (
             "build-func",
             {
-                "func": "lektor.build_programs.PageBuildProgram",
+                "func": "lektor_ng.build_programs.PageBuildProgram",
             },
         ),
         (

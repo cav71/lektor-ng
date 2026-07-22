@@ -105,7 +105,7 @@ class Context:
     def get_env(self, extra_flags=None):
         if self._env is not None:
             return self._env
-        from lektor.environment import Environment
+        from lektor_ng.environment import Environment
 
         env = Environment(
             self.get_project(), load_plugins=False, extra_flags=extra_flags
