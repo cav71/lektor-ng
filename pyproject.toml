@@ -46,7 +46,6 @@ dependencies = [
     "Babel",
     "click>=6.0",
     "Flask",
-    "inifile>=0.4.1",
     "Jinja2>=3.0",
     "MarkupSafe",
     "marshmallow",

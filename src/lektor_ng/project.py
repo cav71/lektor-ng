@@ -6,9 +6,9 @@ import sys
 from enum import Enum
 from pathlib import Path
 
-from inifile import IniFile
 from werkzeug.utils import cached_property
 
+from lektor_ng.inifile import IniFile
 from lektor_ng.environment import Environment
 from lektor_ng.utils import comma_delimited
 from lektor_ng.utils import get_cache_dir

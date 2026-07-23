@@ -3,7 +3,7 @@ import textwrap
 
 import pytest
 from iniconfig import IniConfig
-from inifile import IniFile
+from lektor_ng.inifile import IniFile
 
 import lektor_ng.quickstart
 from lektor_ng.cli import cli

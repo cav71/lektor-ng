@@ -1,7 +1,6 @@
 import errno
 import os
 
-from inifile import IniFile
 
 from lektor_ng.constants import PRIMARY_ALT
 from lektor_ng.environment.expressions import Expression
@@ -14,6 +13,7 @@ from lektor_ng.types import builtin_types
 from lektor_ng.types.base import RawValue
 from lektor_ng.utils import bool_from_string
 from lektor_ng.utils import slugify
+from lektor_ng.inifile import IniFile
 
 
 class ChildConfig:

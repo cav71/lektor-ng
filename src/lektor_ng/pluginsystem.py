@@ -8,11 +8,11 @@ from importlib import metadata
 from pathlib import Path
 from weakref import ref as weakref
 
-from inifile import IniFile
 
 from lektor_ng.context import get_ctx
 from lektor_ng.utils import process_extra_flags
 from lektor_ng.utils import split_camel_case
+from lektor_ng.inifile import IniFile
 
 
 def get_plugin(plugin_id_or_class, env=None):

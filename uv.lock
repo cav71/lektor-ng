@@ -340,12 +340,6 @@ wheels = [
 ]
 
 [[package]]
-name = "inifile"
-version = "0.4.1"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/08/ed/5ab7861ba731202ad484e22b1114af6a4016e33c34ea111f99b193a9e2a2/inifile-0.4.1.tar.gz", hash = "sha256:d9e5eb4708ebf13353c4cfce798ad47890a8bcc5fbae04630223d15d79f55e96", size = 7421, upload-time = "2021-10-15T09:30:25.681Z" }
-
-[[package]]
 name = "ipython"
 version = "9.15.0"
 source = { registry = "https://pypi.org/simple" }
@@ -431,7 +425,6 @@ dependencies = [
     { name = "build" },
     { name = "click" },
     { name = "flask" },
-    { name = "inifile" },
     { name = "jinja2" },
     { name = "markupsafe" },
     { name = "marshmallow" },
@@ -471,7 +464,6 @@ requires-dist = [
     { name = "build" },
     { name = "click", specifier = ">=6.0" },
     { name = "flask" },
-    { name = "inifile", specifier = ">=0.4.1" },
     { name = "ipython", marker = "extra == 'ipython'" },
     { name = "jinja2", specifier = ">=3.0" },
     { name = "markupsafe" },
