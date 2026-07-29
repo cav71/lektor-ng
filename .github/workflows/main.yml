@@ -25,7 +25,7 @@ env:
       "run_number": "${{ github.run_number }}",
       "ref_name": "${{ github.ref_name }}"
     }
-  TARGETPY: "3.13"
+  TARGETPY: "3.14"
   TARGETOS: "ubuntu-latest"
 
 
@@ -80,6 +80,7 @@ jobs:
             tests
 
       - name: Packaging
+        if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
         shell: bash
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
