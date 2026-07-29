@@ -52,6 +52,7 @@ jobs:
           echo "=== GITHUB_DUMP ==="
           echo "$GITHUB_DUMP" | python -m json.tool 
           echo "=== END GITHUB_DUMP ==="
+          set
 
       # https://github.com/actions/setup-python
       - name: Setup Python toolchain for ${{ matrix.python-version }}
