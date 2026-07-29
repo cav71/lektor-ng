@@ -69,18 +69,20 @@ lektor-ng = "lektor.cli:main"
 
 [dependency-groups]
 dev = [                         # generally useful during development
-    "pytest>=6",
+    "coverage[toml]",
+    "hatchling",
+    "iniconfig",
+    "iniconfig",
+    "pylint==4.0.4",
     "pytest-click",
     "pytest-cov",
     "pytest-html",
     "pytest-mock",
-    "coverage[toml]",
-    "iniconfig",
-    "hatchling",
-    "pylint==4.0.4",
-    "pytest>=6",
     "pytest-mock",
-    "iniconfig",
+    "pytest>=6",
+    "pytest>=6",
+    "ruff",
+    "mypy",
 ]
 
 [tool.hatch.build]

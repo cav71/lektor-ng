@@ -10,19 +10,44 @@ from __future__ import annotations
 import argparse
 import contextlib
 import dataclasses as dc
+import functools
 import json
 import logging
+import os
 import re
 import shutil
 import subprocess
 import sys
-from pathlib import Path
-from typing import Callable, Generator, Literal
 import tomllib
-import urllib.request
 import urllib.error
+import urllib.request
+from collections.abc import Callable, Generator
+from pathlib import Path
+from typing import Literal
 
 log = logging.getLogger(__name__)
+
+
+CACHEDIR: Path | None = None
+ReleaseMode = Literal["beta", "release", "post"]
+
+
+def cache(name: bool | None | str = None):
+    def _cache(fn):
+        @functools.wraps(fn)
+        def _cache1(*args, **kwargs):
+            nonlocal name
+            if name is False:
+                return fn(*args, **kwargs)
+            name = fn.__name__ if name in {True, None, ""} else name
+            if CACHEDIR and (path := (CACHEDIR / name)).exists():
+                return json.loads(path.read_text())
+            data = fn(*args, **kwargs)
+            if CACHEDIR:
+                (CACHEDIR / name).write_text(json.dumps(data))
+            return data
+        return _cache1
+    return _cache
 
 
 @dc.dataclass
@@ -69,7 +94,7 @@ class GData:
     name: str  # acbox
     sha: str  # 33eebf59f98adc51ee62f4db4a9ced2cb84bdaa2
     version: str
-    mode: Literal["beta", "release"]
+    mode: ReleaseMode
     number: int | None
 
     # ref: str  # refs/heads/beta/0.0.2
@@ -90,6 +115,8 @@ class GData:
             return f"{self.version}b{self.number}"
         elif self.mode == "release":
             return self.version
+        elif self.mode == "post":
+            return f"{self.version}.post{self.number}"
         else:
             raise RuntimeError(f"cannot process {self.mode}")
 
@@ -119,7 +146,7 @@ def backups() -> Generator[Callable[[Path | str], tuple[Path, Path]], None, None
 
 def parse_ref(
     ref: str, default_branch: str
-) -> tuple[Literal["beta", "release", "main"], str | None]:
+) -> tuple[ReleaseMode, str | None]:
     # ref is:
     #   refs/heads/beta/0.0.0
     #   refs/heads/main
@@ -135,6 +162,7 @@ def parse_ref(
     raise RuntimeError(f"cannot parse {ref=}")
 
 
+@cache("pypi-data")
 def get_pypi_data(name):
     url = f"https://pypi.org/pypi/{name}/json"
     try:
@@ -142,7 +170,8 @@ def get_pypi_data(name):
             if response.status != 200:
                 return None
             return json.loads(response.read().decode("utf-8"))
-    except urllib.error.HTTPError:
+    except urllib.error.HTTPError as exc:
+        log.debug("cannot find '%s': %s", name, exc)
         return None
 
 
@@ -153,19 +182,32 @@ def replacer(path: Path, variables: dict) -> None:
     path.write_text(txt)
 
 
-def process_checkout(git: Git, mode: Literal["beta", "release"]) -> GData:
+def process_checkout(git: Git, mode: ReleaseMode) -> GData:
     pyproject = tomllib.loads(Path("pyproject.toml").read_text())
     pypi = get_pypi_data(pyproject["project"]["name"])
+
+    # derive number
+    if pypi:
+        pass
+    else:
+        number = os.getenv("GITHUB_RUN_NUMBER", 0)
+    # run number GITHUB_RUN_NUMBER
+        pass
+
+    # mode beta: 0.0.0b123
+    # mode release: 0.0.0
+    # mode post: 0.0.0.post123
     return GData(
         name=pyproject["project"]["name"],
         sha=git.sha(),
         version=pyproject["project"]["version"],
         mode=mode,
-        number=0 if pypi is None else 9999,
+        number=number
     )
 
 
 def parse_arguments():
+    global CACHEDIR
     parser = argparse.ArgumentParser()
 
     parser.add_argument(
@@ -175,6 +217,8 @@ def parse_arguments():
         "-q", "--quiet", dest="loglevel", action="append_const", const=-1
     )
     parser.add_argument("-n", "--dry-run", dest="dryrun", action="store_true")
+    parser.add_argument("-c", "--cache", type=Path)
+    parser.add_argument("--dump", action="store_true")
 
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--github", action="store_const", dest="source", const="github")
@@ -182,9 +226,12 @@ def parse_arguments():
         "--checkout", action="store_const", dest="source", const="checkout"
     )
 
-    parser.add_argument("mode", choices=["beta", "release"])
+    parser.add_argument("mode", choices=ReleaseMode.__args__)
     parser.add_argument("paths", nargs="*", type=Path)
     args = parser.parse_args()
+
+    if CACHEDIR := args.cache:
+        CACHEDIR.mkdir(parents=True, exist_ok=True)
 
     args.loglevel = max(min(sum(args.loglevel or [0]), 1), -1)
     logging.basicConfig(
@@ -212,9 +259,13 @@ def main() -> None:
 
     if args.source == "checkout":
         gdata = process_checkout(git, mode=args.mode)
-        print(gdata.version_string())
     else:
         raise RuntimeError(f"not implemented {args.source}")
+
+    if args.dump:
+        print(f"{gdata=}")
+        print(f"version_string: {gdata.version_string()}")
+        return
 
     log.info("creating [%s] from '%s'", args.mode, args.source)
     pyproject = Path("pyproject.toml")
@@ -224,16 +275,16 @@ def main() -> None:
         log.info("fixing %s", pyproject)
         save(pyproject)
         lines = pyproject.read_text().split("\n")
-        lineno = [
+        lineno = next(
             i for i, line in enumerate(lines) if re.search(r"^\s*version\s*=", line)
-        ][0]
+        )
         lines[lineno] = f'version = "{gdata.version_string()}"'
         pyproject.write_text("\n".join(lines))
 
         # replace @version@ and @hash@
         for path in args.paths:
             save(path)
-            replacer(path, dict(version=gdata.version_string(), sha=gdata.sha))
+            replacer(path, {"version": gdata.version_string(), "sha": gdata.sha})
 
         # building wheel
         log.info("building wheel package")
