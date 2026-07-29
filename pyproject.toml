@@ -78,8 +78,6 @@ dev = [                         # generally useful during development
     "pytest-cov",
     "pytest-html",
     "pytest-mock",
-    "pytest-mock",
-    "pytest>=6",
     "pytest>=6",
     "ruff",
     "mypy",
