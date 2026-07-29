@@ -40,7 +40,7 @@ jobs:
     steps:
       # https://github.com/actions/checkout
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # WARNING!! this is important
           fetch-depth: 0
@@ -55,13 +55,13 @@ jobs:
 
       # https://github.com/actions/setup-python
       - name: Setup Python toolchain for ${{ matrix.python-version }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
 
       # https://github.com/astral-sh/setup-uv
       - name: Install uv
-        uses: astral-sh/setup-uv@v8.3.2
+        uses: astral-sh/setup-uv@v9
 
       - name: Python dependencies
         shell: bash
