@@ -1,9 +1,9 @@
-name: Main-build
+name: Release-build
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - v*
 
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
@@ -30,11 +30,11 @@ env:
 
 
 jobs:
-  main:
+  tags:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        os: [ubuntu-latest]
+        python-version: ["3.14"]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -65,41 +65,3 @@ jobs:
           python support/builder.py --dump beta
           python support/builder.py --dump release
           python support/builder.py --dump post
-
-      # https://github.com/astral-sh/setup-uv
-      - name: Install uv
-        uses: astral-sh/setup-uv@v9.0.0
-
-      - name: Python dependencies
-        shell: bash
-        run: |
-          uv sync --no-managed-python
-
-      - name: Run Python checks (tests)
-        shell: bash
-        env:
-          OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
-        run: |
-          uv run pytest -vvs -l \
-              --cov=${{ env.PACKAGE }} \
-              --cov-report=html:$OUTDIR/coverage --cov-report=xml:$OUTDIR/coverage.xml \
-              --junitxml=$OUTDIR/junit/junit.xml --html=$OUTDIR/junit/junit.html --self-contained-html \
-            tests
-
-      - name: Packaging
-        if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
-        shell: bash
-        env:
-          OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
-        run: |
-            uv run ./support/builder.py --checkout beta
-            mkdir -p $OUTDIR && cp dist/*.whl $OUTDIR
-
-      - name: Archive artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: qa-results-${{ matrix.python-version }}-${{ matrix.os }}
-          path: |
-            build/qa-${{ matrix.python-version }}-${{ matrix.os}}
-        # Use always() to always run this step to publish test results when there are test failures
-        if: always()
