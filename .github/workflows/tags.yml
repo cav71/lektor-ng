@@ -33,8 +33,8 @@ jobs:
   tags:
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        python-version: ["3.14"]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -59,9 +59,13 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      # https://github.com/astral-sh/setup-uv
+      - name: Install uv
+        uses: astral-sh/setup-uv@v9.0.0
+
       - name: Run builder --dump
         shell: bash
         run: |
-          python support/builder.py --dump beta
-          python support/builder.py --dump release
-          python support/builder.py --dump post
+          uv run support/builder.py --dump beta
+          uv run support/builder.py --dump release
+          uv run support/builder.py --dump post
