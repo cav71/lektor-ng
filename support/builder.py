@@ -338,8 +338,6 @@ def main() -> None:
     log.info("loading pypi data for '%s'", name)
     pypi : Releases = pypi_parse_releases(name) or {}
     if args.mode in {"beta", "post"}:
-        if not pypi:
-            args.error(f"cannot find next number for {args.mode}, no pypi data")
         last = max(pypi.get(f"{args.mode}s", {}).get(gdata.version, [-1]))
         gdata.number = last + 1
     if (version := gdata.version_string()) in pypi.get("versions", []):
