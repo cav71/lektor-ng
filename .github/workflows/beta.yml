@@ -46,12 +46,12 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Dump ENV
-        shell: bash
-        run: |
-          echo "=== GITHUB_DUMP ==="
-          echo "$GITHUB_DUMP" | python -m json.tool 
-          echo "=== END GITHUB_DUMP ==="
+      # - name: Dump ENV
+      #   shell: bash
+      #   run: |
+      #     echo "=== GITHUB_DUMP ==="
+      #     echo "$GITHUB_DUMP" | python -m json.tool 
+      #     echo "=== END GITHUB_DUMP ==="
 
       # https://github.com/actions/setup-python
       - name: Setup Python toolchain for ${{ matrix.python-version }}
@@ -85,7 +85,7 @@ jobs:
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
-            uv run ./support/builder.py trans
+            uv run ./support/builder.py beta
             mkdir -p $OUTDIR && cp dist/*.whl $OUTDIR
 
       - name: Archive artifacts
