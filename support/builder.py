@@ -33,6 +33,7 @@ class Releases(TypedDict):
     releases: list[str]
     betas: dict[str, list[int]]
     posts: dict[str, list[int]]
+    category: dict[str, dict[str, str]]
 
 
 log = logging.getLogger(__name__)
@@ -212,22 +213,27 @@ def pypi_parse_releases(name: str, data: dict[str, Any] | None = None) -> Releas
         "betas": collections.defaultdict(list),
         "posts": collections.defaultdict(list),
         "versions": [],
+        "category": {}
     }
+    seen = set()
     for version in (data or {}).get("releases", []):
+        kind = None
         for expr, key in exprs.items():
-            if not (match := expr.search(version)):
-                continue
-            if key == "releases":
-                releases[key].append(match.group("version"))
-            else:
-                releases[key][match.group("version")].append(int(match.group("number")))
-            releases["versions"].append(version)
+            if match := expr.search(version):
+                kind = key
+                break
+        else:
+            raise RuntimeError(f"cannot identify {version=}")
+
+        if kind == "releases":
+            releases[key].append(match.group("version"))
+        else:
+            releases[key][match.group("version")].append(int(match.group("number")))
+
+        releases["versions"].append(version)
+        releases["category"][version] = kind
+
     return releases
-
-
-def pypi_verify(gdata: GData, pypi: Release) -> str:
-    breakpoint()
-    pass
 
 
 def replacer(path: Path, variables: dict) -> None:
@@ -328,16 +334,15 @@ def main() -> None:
         git
     )
 
+
     name = args.pyproject["project"]["name"]
     log.info("loading pypi data for '%s'", name)
     pypi = pypi_parse_releases(name) or {}
-
     if args.mode in {"beta", "post"}:
         last = max(pypi.get(f"{args.mode}s", {}).get(gdata.version, [-1]))
         gdata.number = last + 1
-
-    if gdata.version_string() in pypi["versions"]:
-        log.warning("version '%s' already present in pypi", gdata.version_string())
+    if (version := gdata.version_string()) in pypi.get("versions", []):
+        args.error(f"version '{version}' already present in pypi")
 
     if args.dump:
         print(f"{gdata=}")
