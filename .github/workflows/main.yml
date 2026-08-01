@@ -92,7 +92,7 @@ jobs:
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
-            uv run ./support/builder.py --checkout beta
+            uv run ./support/builder.py trans
             mkdir -p $OUTDIR && cp dist/*.whl $OUTDIR
 
       - name: Archive artifacts

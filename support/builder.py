@@ -46,6 +46,7 @@ class ReleaseMode(StrEnum):
     BETA = auto()
     RELEASE = auto()
     POST = auto()
+    TRANS = auto()
 
 
 def relative_to(path: Path | None, cwd: Path | None = None) -> Path | None:
@@ -138,12 +139,14 @@ class GData:
         return self.sha[:7]
 
     def version_string(self):
-        if self.mode == "beta":
+        if self.mode == ReleaseMode.BETA:
             return f"{self.version}b{self.number}"
-        elif self.mode == "release":
+        elif self.mode == ReleaseMode.RELEASE:
             return self.version
-        elif self.mode == "post":
+        elif self.mode == ReleaseMode.POST:
             return f"{self.version}.post{self.number}"
+        elif self.mode == ReleaseMode.TRANS:
+            return f"{self.version}.x{self.sha[:7]}"
         else:
             raise RuntimeError(f"cannot process {self.mode}")
 
