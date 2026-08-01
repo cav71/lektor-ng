@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import contextlib
+import collections
 import dataclasses as dc
 import functools
 import json
@@ -17,19 +18,41 @@ import os
 import re
 import shutil
 import subprocess
+from enum import StrEnum, auto
 import sys
 import tomllib
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Generator
 from pathlib import Path
-from typing import Literal
+from typing import Any, Literal, TypedDict
+
+
+class Releases(TypedDict):
+    versions: list[str]
+    releases: list[str]
+    betas: dict[str, list[int]]
+    posts: dict[str, list[int]]
+
 
 log = logging.getLogger(__name__)
 
 
 CACHEDIR: Path | None = None
-ReleaseMode = Literal["beta", "release", "post"]
+
+class ReleaseMode(StrEnum):
+    BETA = auto()
+    RELEASE = auto()
+    POST = auto()
+
+
+def relative_to(path: Path | None, cwd: Path | None = None) -> Path | None:
+    if not path:
+        return None
+    path = path.resolve()
+    with contextlib.suppress(ValueError):
+        return path.relative_to(cwd or Path.cwd())
+    return path
 
 
 def cache(name: bool | None | str = None):
@@ -95,7 +118,7 @@ class GData:
     sha: str  # 33eebf59f98adc51ee62f4db4a9ced2cb84bdaa2
     version: str
     mode: ReleaseMode
-    number: int | None
+    number: int | None = None
 
     # ref: str  # refs/heads/beta/0.0.2
     # rev: str  # 33eebf5
@@ -163,7 +186,7 @@ def parse_ref(
 
 
 @cache("pypi-data")
-def get_pypi_data(name):
+def pypi_fetch_data(name):
     url = f"https://pypi.org/pypi/{name}/json"
     try:
         with urllib.request.urlopen(url) as response:
@@ -171,8 +194,40 @@ def get_pypi_data(name):
                 return None
             return json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as exc:
-        log.debug("cannot find '%s': %s", name, exc)
+        log.debug("unable to pypi lookup '%s': %s", name, exc)
         return None
+
+
+def pypi_parse_releases(name: str, data: dict[str, Any] | None = None) -> Releases | None:
+    if not (data := data or pypi_fetch_data(name)):
+        return None
+    exprs = {
+        re.compile(r"^(?P<version>\d+([.]\d+)*)$"): "releases",
+        re.compile(r"^(?P<version>\d+([.]\d+)*)b(?P<number>\d+)$"): "betas",
+        re.compile(r"^(?P<version>\d+([.]\d+)*)[.]post(?P<number>\d+)$"): "posts",
+    }
+
+    releases = {
+        "releases": [],
+        "betas": collections.defaultdict(list),
+        "posts": collections.defaultdict(list),
+        "versions": [],
+    }
+    for version in (data or {}).get("releases", []):
+        for expr, key in exprs.items():
+            if not (match := expr.search(version)):
+                continue
+            if key == "releases":
+                releases[key].append(match.group("version"))
+            else:
+                releases[key][match.group("version")].append(int(match.group("number")))
+            releases["versions"].append(version)
+    return releases
+
+
+def pypi_verify(gdata: GData, pypi: Release) -> str:
+    breakpoint()
+    pass
 
 
 def replacer(path: Path, variables: dict) -> None:
@@ -182,27 +237,21 @@ def replacer(path: Path, variables: dict) -> None:
     path.write_text(txt)
 
 
-def process_checkout(git: Git, mode: ReleaseMode) -> GData:
-    pyproject = tomllib.loads(Path("pyproject.toml").read_text())
-    pypi = get_pypi_data(pyproject["project"]["name"])
+def process_checkout(
+    mode: ReleaseMode,
+    pyproject: dict[str, Any],
+    gitdump: dict[str, Any] | None = None,
+    git: Git | None = None) -> GData:
 
-    # derive number
-    if pypi:
-        pass
-    else:
-        number = os.getenv("GITHUB_RUN_NUMBER", 0)
-    # run number GITHUB_RUN_NUMBER
-        pass
+    name = pyproject["project"]["name"]
+    version = pyproject["project"]["version"]
+    sha = (gitdump or {}).get("sha") or git.sha()
 
-    # mode beta: 0.0.0b123
-    # mode release: 0.0.0
-    # mode post: 0.0.0.post123
     return GData(
-        name=pyproject["project"]["name"],
-        sha=git.sha(),
-        version=pyproject["project"]["version"],
-        mode=mode,
-        number=number
+        name=name,
+        sha=sha,
+        version=version,
+        mode=str(mode),
     )
 
 
@@ -210,40 +259,55 @@ def parse_arguments():
     global CACHEDIR
     parser = argparse.ArgumentParser()
 
-    parser.add_argument(
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument(
         "-v", "--verbose", dest="loglevel", action="append_const", const=1
     )
-    parser.add_argument(
+    group.add_argument(
         "-q", "--quiet", dest="loglevel", action="append_const", const=-1
     )
     parser.add_argument("-n", "--dry-run", dest="dryrun", action="store_true")
     parser.add_argument("-c", "--cache", type=Path)
     parser.add_argument("--dump", action="store_true")
+    parser.add_argument("--pyproject", type=Path, default=Path("pyproject.toml"))
+    parser.add_argument("--gitdump", default=os.getenv("GITHUB_DUMP"))
 
-    group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("--github", action="store_const", dest="source", const="github")
-    group.add_argument(
-        "--checkout", action="store_const", dest="source", const="checkout"
-    )
-
-    parser.add_argument("mode", choices=ReleaseMode.__args__)
-    parser.add_argument("paths", nargs="*", type=Path)
+    parser.add_argument("mode", choices=list(map(str, ReleaseMode)))
+    parser.add_argument("paths", nargs="*", type=lambda p: relative_to(Path(p)))
     args = parser.parse_args()
+    args.error = parser.error
 
-    if CACHEDIR := args.cache:
+    # CACHE
+    if CACHEDIR := relative_to(args.cache):
+        log.info("using cachedir '%s'", CACHEDIR)
         CACHEDIR.mkdir(parents=True, exist_ok=True)
 
+    # LOG
     args.loglevel = max(min(sum(args.loglevel or [0]), 1), -1)
     logging.basicConfig(
         level={-1: logging.WARNING, 0: logging.INFO, 1: logging.DEBUG}[args.loglevel]
     )
 
-    args.error = parser.error
+    # PYPROJECT
+    args.pyprojectpath = relative_to(args.pyproject.resolve())
+    if not args.pyprojectpath.exists():
+        args.error(f"file not present {args.pyprojectpath}")
+    try:
+        log.info("loading pyproject from '%s'", args.pyprojectpath)
+        args.pyproject = tomllib.loads(args.pyprojectpath.read_text())
+    except tomllib.TOMLDecodeError:
+        args.error(f"cannot parse pyproject file {args.pyprojectpath}")
+
+    # GITDUMP
+    args.gitdump = json.loads(args.gitdump) if args.gitdump else None
+    log.info("%sloading github data from GITHUB_DUMP or --gitdump", "" if args.gitdump else "not ")
+
     return args
 
 
 def main() -> None:
     args = parse_arguments()
+
 
     workdir = Path.cwd()
     runc = Runner(verbose=args.loglevel > 0)
@@ -257,39 +321,51 @@ def main() -> None:
     log.info("git client using worktree %s", git.worktree)
     log.info("current working dir '%s'", workdir)
 
-    if args.source == "checkout":
-        gdata = process_checkout(git, mode=args.mode)
-    else:
-        raise RuntimeError(f"not implemented {args.source}")
+    gdata = process_checkout(
+        args.mode,
+        args.pyproject,
+        args.gitdump,
+        git
+    )
+
+    name = args.pyproject["project"]["name"]
+    log.info("loading pypi data for '%s'", name)
+    pypi = pypi_parse_releases(name) or {}
+
+    if args.mode in {"beta", "post"}:
+        last = max(pypi.get(f"{args.mode}s", {}).get(gdata.version, [-1]))
+        gdata.number = last + 1
+
+    if gdata.version_string() in pypi["versions"]:
+        log.warning("version '%s' already present in pypi", gdata.version_string())
 
     if args.dump:
         print(f"{gdata=}")
         print(f"version_string: {gdata.version_string()}")
         return
 
-    log.info("creating [%s] from '%s'", args.mode, args.source)
-    pyproject = Path("pyproject.toml")
-
+    log.info("gdata (%s) = %s", gdata.version_string(), gdata)
     with backups() as save:
         # fix pyproject
-        log.info("fixing %s", pyproject)
-        save(pyproject)
-        lines = pyproject.read_text().split("\n")
+        log.debug("fixing %s", args.pyprojectpath)
+        save(args.pyprojectpath)
+        lines = args.pyprojectpath.read_text().split("\n")
         lineno = next(
             i for i, line in enumerate(lines) if re.search(r"^\s*version\s*=", line)
         )
         lines[lineno] = f'version = "{gdata.version_string()}"'
-        pyproject.write_text("\n".join(lines))
+        args.pyprojectpath.write_text("\n".join(lines))
 
         # replace @version@ and @hash@
         for path in args.paths:
+            log.debug("fixing %s", path)
             save(path)
             replacer(path, {"version": gdata.version_string(), "sha": gdata.sha})
 
         # building wheel
-        log.info("building wheel package")
+        log.info("building wheel package in %s", args.pyprojectpath.parent)
         if not args.dryrun:
-            runc([sys.executable, "-m", "build", "."], verbose=True)
+            runc([sys.executable, "-m", "build", args.pyprojectpath.parent], verbose=True)
 
 
 if __name__ == "__main__":
