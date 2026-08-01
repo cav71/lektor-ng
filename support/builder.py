@@ -8,8 +8,8 @@
 from __future__ import annotations
 
 import argparse
-import contextlib
 import collections
+import contextlib
 import dataclasses as dc
 import functools
 import json
@@ -18,14 +18,14 @@ import os
 import re
 import shutil
 import subprocess
-from enum import StrEnum, auto
 import sys
 import tomllib
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Generator
+from enum import StrEnum, auto
 from pathlib import Path
-from typing import Any, Literal, TypedDict
+from typing import Any, TypedDict
 
 
 class Releases(TypedDict):
@@ -40,6 +40,7 @@ log = logging.getLogger(__name__)
 
 
 CACHEDIR: Path | None = None
+
 
 class ReleaseMode(StrEnum):
     BETA = auto()
@@ -70,7 +71,9 @@ def cache(name: bool | None | str = None):
             if CACHEDIR:
                 (CACHEDIR / name).write_text(json.dumps(data))
             return data
+
         return _cache1
+
     return _cache
 
 
@@ -168,22 +171,20 @@ def backups() -> Generator[Callable[[Path | str], tuple[Path, Path]], None, None
             shutil.move(backup, original)
 
 
-def parse_ref(
-    ref: str, default_branch: str
-) -> tuple[ReleaseMode, str | None]:
-    # ref is:
-    #   refs/heads/beta/0.0.0
-    #   refs/heads/main
-    #   refs/tags/v0.0.0
-    # returns -> (kind, branch_version)
-
-    if match := re.search(r"refs/tags/v(?P<version>\d+([.]\d+)*)", ref):
-        return ("release", match.group("version"))
-    elif match := re.search(r"refs/heads/beta/(?P<version>\d+([.]\d+)*)", ref):
-        return ("beta", match.group("version"))
-    elif ref == f"refs/heads/{default_branch}":
-        return ("main", None)
-    raise RuntimeError(f"cannot parse {ref=}")
+# def parse_ref(ref: str, default_branch: str) -> tuple[ReleaseMode, str | None]:
+#     # ref is:
+#     #   refs/heads/beta/0.0.0
+#     #   refs/heads/main
+#     #   refs/tags/v0.0.0
+#     # returns -> (kind, branch_version)
+# 
+#     if match := re.search(r"refs/tags/v(?P<version>\d+([.]\d+)*)", ref):
+#         return ("release", match.group("version"))
+#     elif match := re.search(r"refs/heads/beta/(?P<version>\d+([.]\d+)*)", ref):
+#         return ("beta", match.group("version"))
+#     elif ref == f"refs/heads/{default_branch}":
+#         return ("main", None)
+#     raise RuntimeError(f"cannot parse {ref=}")
 
 
 @cache("pypi-data")
@@ -199,7 +200,9 @@ def pypi_fetch_data(name):
         return None
 
 
-def pypi_parse_releases(name: str, data: dict[str, Any] | None = None) -> Releases | None:
+def pypi_parse_releases(
+    name: str, data: dict[str, Any] | None = None
+) -> Releases | None:
     if not (data := data or pypi_fetch_data(name)):
         return None
     exprs = {
@@ -208,14 +211,13 @@ def pypi_parse_releases(name: str, data: dict[str, Any] | None = None) -> Releas
         re.compile(r"^(?P<version>\d+([.]\d+)*)[.]post(?P<number>\d+)$"): "posts",
     }
 
-    releases = {
+    releases : Releases = {
         "releases": [],
         "betas": collections.defaultdict(list),
         "posts": collections.defaultdict(list),
         "versions": [],
-        "category": {}
+        "category": {},
     }
-    seen = set()
     for version in (data or {}).get("releases", []):
         kind = None
         for expr, key in exprs.items():
@@ -247,11 +249,12 @@ def process_checkout(
     mode: ReleaseMode,
     pyproject: dict[str, Any],
     gitdump: dict[str, Any] | None = None,
-    git: Git | None = None) -> GData:
+    git: Git | None = None,
+) -> GData:
 
     name = pyproject["project"]["name"]
     version = pyproject["project"]["version"]
-    sha = (gitdump or {}).get("sha") or git.sha()
+    sha = (gitdump or {}).get("sha") or (git.sha() if git else None)
 
     return GData(
         name=name,
@@ -306,14 +309,16 @@ def parse_arguments():
 
     # GITDUMP
     args.gitdump = json.loads(args.gitdump) if args.gitdump else None
-    log.info("%sloading github data from GITHUB_DUMP or --gitdump", "" if args.gitdump else "not ")
+    log.info(
+        "%sloading github data from GITHUB_DUMP or --gitdump",
+        "" if args.gitdump else "not ",
+    )
 
     return args
 
 
 def main() -> None:
     args = parse_arguments()
-
 
     workdir = Path.cwd()
     runc = Runner(verbose=args.loglevel > 0)
@@ -327,18 +332,14 @@ def main() -> None:
     log.info("git client using worktree %s", git.worktree)
     log.info("current working dir '%s'", workdir)
 
-    gdata = process_checkout(
-        args.mode,
-        args.pyproject,
-        args.gitdump,
-        git
-    )
-
+    gdata = process_checkout(args.mode, args.pyproject, args.gitdump, git)
 
     name = args.pyproject["project"]["name"]
     log.info("loading pypi data for '%s'", name)
-    pypi = pypi_parse_releases(name) or {}
+    pypi : Releases = pypi_parse_releases(name) or {}
     if args.mode in {"beta", "post"}:
+        if not pypi:
+            args.error(f"cannot find next number for {args.mode}, no pypi data")
         last = max(pypi.get(f"{args.mode}s", {}).get(gdata.version, [-1]))
         gdata.number = last + 1
     if (version := gdata.version_string()) in pypi.get("versions", []):
@@ -370,7 +371,9 @@ def main() -> None:
         # building wheel
         log.info("building wheel package in %s", args.pyprojectpath.parent)
         if not args.dryrun:
-            runc([sys.executable, "-m", "build", args.pyprojectpath.parent], verbose=True)
+            runc(
+                [sys.executable, "-m", "build", args.pyprojectpath.parent], verbose=True
+            )
 
 
 if __name__ == "__main__":
