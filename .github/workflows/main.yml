@@ -66,9 +66,9 @@ jobs:
       - name: Run builder --dump
         shell: bash
         run: |
-          uv run support/builder.py --dump beta
-          uv run support/builder.py --dump release
-          uv run support/builder.py --dump post
+          uv run support/builder.py -n --dump beta
+          uv run support/builder.py -n --dump release
+          uv run support/builder.py -n --dump post
 
       - name: Python dependencies
         shell: bash
