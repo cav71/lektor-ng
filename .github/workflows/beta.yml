@@ -63,9 +63,36 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v9.0.0
 
-      - name: Run builder --dump
+      - name: Python dependencies
         shell: bash
         run: |
-          uv run support/builder.py --dump beta
-          uv run support/builder.py --dump release
-          uv run support/builder.py --dump post
+          uv sync --no-managed-python
+
+      - name: Run Python checks (tests)
+        shell: bash
+        env:
+          OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+        run: |
+          uv run pytest -vvs -l \
+              --cov=${{ env.PACKAGE }} \
+              --cov-report=html:$OUTDIR/coverage --cov-report=xml:$OUTDIR/coverage.xml \
+              --junitxml=$OUTDIR/junit/junit.xml --html=$OUTDIR/junit/junit.html --self-contained-html \
+            tests
+
+      - name: Packaging
+        if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
+        shell: bash
+        env:
+          OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+        run: |
+            uv run ./support/builder.py trans
+            mkdir -p $OUTDIR && cp dist/*.whl $OUTDIR
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: qa-results-${{ matrix.python-version }}-${{ matrix.os }}
+          path: |
+            build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+        # Use always() to always run this step to publish test results when there are test failures
+        if: always()
