@@ -84,12 +84,12 @@ jobs:
               --junitxml=$OUTDIR/junit/junit.xml --html=$OUTDIR/junit/junit.html --self-contained-html \
             tests
 
-      - name: Create wheel (only on ${{matrix.os}}, ${{matrix.python-version}})
+      - name: Create wheel (only on ${{ env.TARGETPY }}, ${{ env.TARGETOS }})
         if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
-          uv run support/builder.py beta
+          uv run support/builder.py beta src/lektor_ng/__init__.py
           mv dist $OUTDIR
 
       - name: Archive artifacts
