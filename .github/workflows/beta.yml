@@ -33,12 +33,11 @@ jobs:
   betas:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        #os: [ubuntu-latest, macos-latest, windows-latest]
+        #python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        os: [ubuntu-latest]
+        python-version: ["3.10", "3.14"]
     runs-on: ${{ matrix.os }}
-    environment: pypi
-    permissions:
-      id-token: write
 
     steps:
       # https://github.com/actions/checkout
@@ -93,6 +92,32 @@ jobs:
         # Use always() to always run this step to publish test results when there are test failures
         if: always()
 
-      - name: Publish package distributions to PyPI
-        if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
-        uses: pypa/gh-action-pypi-publish@release/v1
+  pypi-publish:
+    name: upload release to PyPI
+    runs-on: ubuntu-latest
+    needs: betas
+    # Specifying a GitHub environment is optional, but strongly encouraged
+    environment: pypi
+    permissions:
+      # IMPORTANT: this permission is mandatory for Trusted Publishing
+      id-token: write
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: qa-results-${{ matrix.python-version }}-${{ matrix.os }}
+          path: |
+            build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+
+      - name: Packaging
+        run: |
+          ls -l
+      # retrieve your distributions here
+      # - name: Packaging
+      #   run: |
+      #     echo "Shell $SHELL"
+      #     echo "I'm in $(pwd)"
+      #     ls -l
+      #     python ./support/builder.py beta
+      # - name: Publish package distributions to PyPI
+      #   uses: pypa/gh-action-pypi-publish@release/v1
