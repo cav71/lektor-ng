@@ -8,13 +8,13 @@
 # ]
 # ///
 
-from pathlib import Path
-import re
 import argparse
 import json
 import logging
-import yaml
+import re
 from pathlib import Path
+
+import yaml
 from distlib.version import NormalizedVersion, UnsupportedVersionError
 from github import Github
 
@@ -30,11 +30,13 @@ def parse_args():
     args = parser.parse_args()
 
     args.loglevel = max(min(sum(args.loglevel or [0]), 1), -1)
-    logging.basicConfig(level={
-        -1: logging.WARNING,
-        0: logging.INFO,
-        1: logging.DEBUG,
-    }[args.loglevel])
+    logging.basicConfig(
+        level={
+            -1: logging.WARNING,
+            0: logging.INFO,
+            1: logging.DEBUG,
+        }[args.loglevel]
+    )
 
     return args
 
@@ -87,15 +89,12 @@ def main():
 
     for repo in repotags:
         repotags[repo] = [
-            NormalizedVersion(t) for t in repotags[repo]
-            if re.search(r"^\d+$", t) or
-            re.search(r"^\d+([.]0+)*$", t)
+            NormalizedVersion(t) for t in repotags[repo] if re.search(r"^\d+$", t) or re.search(r"^\d+([.]0+)*$", t)
         ]
         repotags[repo].sort()
 
     for repo, tags in repotags.items():
         print(repo, tags[-1])
-
 
 
 if __name__ == "__main__":
