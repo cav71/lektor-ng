@@ -81,7 +81,7 @@ jobs:
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
-          uv run support/builder.py beta src/lektor_ng/__init__.py
+          uv run support/builder.py beta src/lektor_ng/__init__.py README.md
           mv dist $OUTDIR
 
       # https://github.com/codecov/codecov-action
