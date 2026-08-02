@@ -101,6 +101,6 @@ jobs:
     steps:
       # retrieve your distributions here
       - name: Packaging
-        run: uv run ./support/builder.py beta
+        run: python ./support/builder.py beta
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
