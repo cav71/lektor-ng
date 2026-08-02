@@ -73,6 +73,7 @@ jobs:
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
+          mkdir -p ${OUTDIR}
           echo "$GITHUB_DUMP" > ${OUTDIR}/github.json
           uv run pytest -vvs -l \
               --cov=${{ env.PACKAGE }} \
