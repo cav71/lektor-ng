@@ -39,7 +39,7 @@ jobs:
 
     steps:
       # https://github.com/actions/checkout
-      - name: Checkout ${{ matrix.os }}
+      - name: Checkout
         uses: actions/checkout@v7
         with:
           # WARNING!! this is important
@@ -105,10 +105,8 @@ jobs:
     name: upload beta to PyPI
     runs-on: ubuntu-latest
     needs: betas
-    # Specifying a GitHub environment is optional, but strongly encouraged
     environment: pypi
     permissions:
-      # IMPORTANT: this permission is mandatory for Trusted Publishing
       id-token: write
     steps:
       - name: Download Build Artifact
