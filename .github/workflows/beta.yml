@@ -105,13 +105,14 @@ jobs:
       - name: Download Build Artifact
         uses: actions/download-artifact@v8
         with:
-          name: qa-results-${{ matrix.python-version }}-${{ matrix.os }}
+          name: qa-results-${{ env.TARGETPY }}-${{ env.TARGETOS }}
           path: |
             build/qa-${{ env.TARGETPY }}-${{ env.TARGETOS }}
 
       - name: Packaging
         run: |
           ls -l
+          find .
       # retrieve your distributions here
       # - name: Packaging
       #   run: |
