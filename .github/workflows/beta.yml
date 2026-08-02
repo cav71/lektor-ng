@@ -105,7 +105,12 @@ jobs:
         run: |
           echo "Shell $SHELL"
           echo "I'm in $(pwd)"
+          echo "Here"
           ls -l
+          echo "Parent"
+          ls -l ..
+          echo "Grand Parent"
+          ls -l ../..
           python ./support/builder.py beta
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
