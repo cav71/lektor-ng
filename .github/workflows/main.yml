@@ -8,7 +8,7 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
-  PACKAGE: ${{ github.event.repository.name }}
+  PACKAGE: lektor_ng
   PYTHONPATH: src
   GITHUB_DUMP: |
     {
