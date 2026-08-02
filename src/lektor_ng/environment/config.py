@@ -8,10 +8,8 @@ from werkzeug.utils import cached_property
 
 from lektor_ng.constants import PRIMARY_ALT
 from lektor_ng.i18n import get_i18n_block
-from lektor_ng.utils import bool_from_string
-from lektor_ng.utils import secure_url
 from lektor_ng.inifile import IniFile
-
+from lektor_ng.utils import bool_from_string, secure_url
 
 DEFAULT_CONFIG = {
     "EPHEMERAL_RECORD_CACHE_SIZE": 500,
@@ -204,21 +202,13 @@ class Config:
 
     def get_alternative_url_prefixes(self):
         """Returns a list of alternative url prefixes by length."""
-        items = [
-            (v["url_prefix"].lstrip("/"), k)
-            for k, v in self.values["ALTERNATIVES"].items()
-            if v["url_prefix"]
-        ]
+        items = [(v["url_prefix"].lstrip("/"), k) for k, v in self.values["ALTERNATIVES"].items() if v["url_prefix"]]
         items.sort(key=lambda x: -len(x[0]))
         return items
 
     def get_alternative_url_suffixes(self):
         """Returns a list of alternative url suffixes by length."""
-        items = [
-            (v["url_suffix"].rstrip("/"), k)
-            for k, v in self.values["ALTERNATIVES"].items()
-            if v["url_suffix"]
-        ]
+        items = [(v["url_suffix"].rstrip("/"), k) for k, v in self.values["ALTERNATIVES"].items() if v["url_suffix"]]
         items.sort(key=lambda x: -len(x[0]))
         return items
 
@@ -241,9 +231,7 @@ class Config:
             return True
 
         cfg = self.values["ALTERNATIVES"].get(primary)
-        if not (cfg["url_prefix"] or "").lstrip("/") and not (
-            cfg["url_suffix"] or ""
-        ).rstrip("/"):
+        if not (cfg["url_prefix"] or "").lstrip("/") and not (cfg["url_suffix"] or "").rstrip("/"):
             return True
 
         return False

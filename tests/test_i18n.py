@@ -2,7 +2,6 @@ import importlib
 
 import lektor_ng.i18n
 
-
 EXPECTED_LANGS = {
     "ca",
     "en",

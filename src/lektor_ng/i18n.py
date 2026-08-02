@@ -3,7 +3,6 @@ import os
 from importlib import resources
 from pathlib import Path
 
-
 translations = {}
 for file in resources.files("lektor_ng").joinpath("translations").iterdir():
     filename = Path(file.name)
@@ -58,9 +57,7 @@ def get_i18n_block(inifile_or_dict, key, pop=False):
             # treatment.
             rv["en"] = inifile_or_dict.pop(k) if pop else inifile_or_dict[k]
         elif k.startswith(key + "["):
-            rv[k[len(key) + 1 : -1]] = (
-                inifile_or_dict.pop(k) if pop else inifile_or_dict[k]
-            )
+            rv[k[len(key) + 1 : -1]] = inifile_or_dict.pop(k) if pop else inifile_or_dict[k]
     return rv
 
 

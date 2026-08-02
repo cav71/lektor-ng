@@ -11,26 +11,29 @@ import jinja2
 from jinja2.loaders import split_template_path
 
 from lektor_ng.constants import PRIMARY_ALT
-from lektor_ng.context import config_proxy
-from lektor_ng.context import get_asset_url
-from lektor_ng.context import get_ctx
-from lektor_ng.context import get_locale
-from lektor_ng.context import site_proxy
-from lektor_ng.context import url_to
-from lektor_ng.environment.config import Config
-from lektor_ng.environment.config import DEFAULT_CONFIG  # noqa - reexport
-from lektor_ng.environment.config import ServerInfo  # noqa - reexport
-from lektor_ng.environment.config import update_config_from_ini  # noqa - reexport
-from lektor_ng.environment.expressions import Expression  # noqa - reexport
-from lektor_ng.environment.expressions import FormatExpression  # noqa - reexport
+from lektor_ng.context import (
+    config_proxy,
+    get_asset_url,
+    get_ctx,
+    get_locale,
+    site_proxy,
+    url_to,
+)
+from lektor_ng.environment.config import (
+    DEFAULT_CONFIG,  # noqa - reexport
+    Config,
+    ServerInfo,  # noqa - reexport
+    update_config_from_ini,  # noqa - reexport
+)
+from lektor_ng.environment.expressions import (
+    Expression,  # noqa - reexport
+    FormatExpression,  # noqa - reexport
+)
 from lektor_ng.markdown import Markdown
 from lektor_ng.packages import load_packages
-from lektor_ng.pluginsystem import initialize_plugins
-from lektor_ng.pluginsystem import PluginController
+from lektor_ng.pluginsystem import PluginController, initialize_plugins
 from lektor_ng.publisher import builtin_publishers
-from lektor_ng.utils import format_lat_long
-from lektor_ng.utils import tojson_filter
-
+from lektor_ng.utils import format_lat_long, tojson_filter
 
 if TYPE_CHECKING:
     from typing import Literal
@@ -99,9 +102,7 @@ def _dates_filter(name, wrapped):
             return str(arg)
 
         if not isinstance(format, str):
-            raise TypeError(
-                f"The 'format' parameter to '{name}' should be a str, not {format!r}"
-            )
+            raise TypeError(f"The 'format' parameter to '{name}' should be a str, not {format!r}")
 
         locale = kwargs.get("locale")
         if locale is None:
@@ -131,9 +132,7 @@ def _markdown_filter(
     """A jinja filter that converts markdown text to HTML."""
     ctx = get_ctx()
     source_obj = ctx.source if ctx is not None else None
-    return Markdown(
-        source, source_obj, field_options={**kw, "resolve_links": resolve_links}
-    )
+    return Markdown(source, source_obj, field_options={**kw, "resolve_links": resolve_links})
 
 
 # Special files that should always be ignored.
@@ -197,10 +196,7 @@ class Environment:
         self.project = project
         self.root_path = os.path.abspath(project.tree)
 
-        self.theme_paths = [
-            os.path.join(self.root_path, "themes", theme)
-            for theme in self.project.themes
-        ]
+        self.theme_paths = [os.path.join(self.root_path, "themes", theme) for theme in self.project.themes]
 
         if not self.theme_paths:
             # load the directories in the themes directory as the themes
@@ -212,10 +208,7 @@ class Environment:
             except OSError:
                 pass
 
-        template_paths = [
-            os.path.join(path, "templates")
-            for path in [self.root_path] + self.theme_paths
-        ]
+        template_paths = [os.path.join(path, "templates") for path in [self.root_path] + self.theme_paths]
 
         self.jinja_env = CustomJinjaEnvironment(
             autoescape=self.select_jinja_autoescape,
@@ -223,8 +216,10 @@ class Environment:
             loader=jinja2.FileSystemLoader(template_paths),
         )
 
-        from lektor_ng.db import F  # pylint: disable=import-outside-toplevel
-        from lektor_ng.db import get_alts  # pylint: disable=import-outside-toplevel
+        from lektor_ng.db import (
+            F,  # pylint: disable=import-outside-toplevel
+            get_alts,  # pylint: disable=import-outside-toplevel
+        )
 
         def latlongformat(latlong, secs=True):
             lat, lon = latlong
@@ -335,9 +330,7 @@ class Environment:
         ctx = self.make_default_tmpl_values(pad, this, values, alt, template=name)
         return self.jinja_env.get_or_select_template(name).render(ctx)
 
-    def make_default_tmpl_values(
-        self, pad=None, this=None, values=None, alt=None, template=None
-    ):
+    def make_default_tmpl_values(self, pad=None, this=None, values=None, alt=None, template=None):
         values = dict(values or ())
 
         # If not provided, pick the alt from the provided "this" object.
@@ -363,9 +356,7 @@ class Environment:
             values["this"] = this
         if alt is not None:
             values["alt"] = alt
-        self.plugin_controller.emit(
-            "process-template-context", context=values, template=template
-        )
+        self.plugin_controller.emit("process-template-context", context=values, template=template)
         return values
 
     @staticmethod
@@ -383,14 +374,10 @@ class Environment:
 
     # -- methods for the plugin system
 
-    def add_build_program(
-        self, cls: type[SourceObject], program: type[BuildProgram]
-    ) -> None:
+    def add_build_program(self, cls: type[SourceObject], program: type[BuildProgram]) -> None:
         self.build_programs.append((cls, program))
 
-    def add_asset_type(
-        self, asset_cls: type[Asset], build_program: type[BuildProgram]
-    ) -> None:
+    def add_asset_type(self, asset_cls: type[Asset], build_program: type[BuildProgram]) -> None:
         self.build_programs.append((asset_cls, build_program))
         self.special_file_assets[asset_cls.source_extension] = asset_cls
         if asset_cls.artifact_extension:

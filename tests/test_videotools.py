@@ -4,16 +4,11 @@ from datetime import timedelta
 import pytest
 
 from lektor_ng.utils import locate_executable
-from lektor_ng.videotools import Dimensions
-from lektor_ng.videotools import get_ffmpeg_quality
-from lektor_ng.videotools import get_timecode
-
+from lektor_ng.videotools import Dimensions, get_ffmpeg_quality, get_timecode
 
 has_ffmpeg = locate_executable("ffmpeg")
 has_ffprobe = locate_executable("ffprobe")
-require_ffmpeg = pytest.mark.skipif(
-    not has_ffmpeg or not has_ffprobe, reason="requires ffmpeg and ffprobe in path"
-)
+require_ffmpeg = pytest.mark.skipif(not has_ffmpeg or not has_ffprobe, reason="requires ffmpeg and ffprobe in path")
 
 
 @pytest.mark.parametrize(
@@ -143,9 +138,7 @@ def test_metadata(pad):
 @require_ffmpeg
 def test_thumbnail_height(builder):
     builder.build_all()
-    with open(
-        os.path.join(builder.destination_path, "index.html"), encoding="utf-8"
-    ) as f:
+    with open(os.path.join(builder.destination_path, "index.html"), encoding="utf-8") as f:
         html = f.read()
 
     # The first thumbnail has the same dimensions as the source video,
@@ -156,6 +149,4 @@ def test_thumbnail_height(builder):
     assert '<img src="test@t00-00-00_160.jpg" width="160" height="90">' in html
 
     # There should also be a square thumbnail
-    assert (
-        '<img src="test@t00-00-02_160x160_crop.jpg" width="160" height="160">' in html
-    )
+    assert '<img src="test@t00-00-02_160x160_crop.jpg" width="160" height="160">' in html

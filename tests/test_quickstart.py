@@ -3,8 +3,7 @@ from typing import NamedTuple
 
 import pytest
 
-from lektor_ng.quickstart import get_default_author
-from lektor_ng.quickstart import get_default_author_email
+from lektor_ng.quickstart import get_default_author, get_default_author_email
 from lektor_ng.utils import locate_executable
 
 
@@ -31,9 +30,7 @@ def git_config_file(tmp_path, monkeypatch):
 @pytest.mark.skipif(os.name == "nt", reason="windows")
 def test_default_author_from_pwd(mocker):
     pw_gecos = "Lektor Tester,,555-1212,,"
-    mocker.patch(
-        "pwd.getpwuid", spec=True, return_value=struct_passwd(pw_gecos=pw_gecos)
-    )
+    mocker.patch("pwd.getpwuid", spec=True, return_value=struct_passwd(pw_gecos=pw_gecos))
     assert get_default_author() == "Lektor Tester"
 
 

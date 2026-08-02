@@ -3,8 +3,7 @@
 import os
 import shutil
 import sys
-from importlib.util import module_from_spec
-from importlib.util import spec_from_file_location
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -12,9 +11,10 @@ import pytest
 
 pytestmark = pytest.mark.skipif(True, reason="Web frontend not supported")
 
+
 @pytest.fixture(scope="session")
 def frontend_build_module(top_path):
-    return import_module_from_file("build_frontend", top_path / "support"/ "build_frontend.py")
+    return import_module_from_file("build_frontend", top_path / "support" / "build_frontend.py")
 
 
 @pytest.fixture
@@ -75,18 +75,14 @@ def test_clean_skipped_if_no_frontend(frontend_build_hook, compiled_output):
 
 
 @pytest.mark.usefixtures("frontend_src")
-def test_initialize_skips_build_if_output_exists(
-    frontend_build_hook, compiled_output, mocker
-):
+def test_initialize_skips_build_if_output_exists(frontend_build_hook, compiled_output, mocker):
     mocker.patch("shutil.which").return_value = None
     frontend_build_hook.initialize("standard", build_data={})
     assert compiled_output.exists()
 
 
 @pytest.mark.usefixtures("frontend_src")
-def test_initialize_aborts_if_no_npm(
-    frontend_build_hook, frontend_build_module, monkeypatch
-):
+def test_initialize_aborts_if_no_npm(frontend_build_hook, frontend_build_module, monkeypatch):
     monkeypatch.setitem(os.environ, "PATH", "")
     with pytest.raises(SystemExit) as exc_info:
         frontend_build_hook.initialize("standard", build_data={})

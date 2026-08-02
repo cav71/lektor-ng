@@ -15,10 +15,12 @@ import pytest
 from lektor_ng.cli import cli
 from lektor_ng.context import Context
 from lektor_ng.packages import add_package_to_project
-from lektor_ng.pluginsystem import _check_dist_name
-from lektor_ng.pluginsystem import get_plugin
-from lektor_ng.pluginsystem import Plugin
-from lektor_ng.pluginsystem import PluginController
+from lektor_ng.pluginsystem import (
+    Plugin,
+    PluginController,
+    _check_dist_name,
+    get_plugin,
+)
 
 
 class DummyPlugin(Plugin):
@@ -106,9 +108,7 @@ class DummyPluginFinder(metadata.DistributionFinder):
             return ModuleSpec(fullname, DummyPluginLoader())
         return None
 
-    def find_distributions(
-        self, context: metadata.DistributionFinder.Context | None = None
-    ):
+    def find_distributions(self, context: metadata.DistributionFinder.Context | None = None):
         return [self.distribution]
 
 
@@ -131,9 +131,7 @@ def dummy_plugin_distribution(save_sys_path):
 @pytest.fixture
 def dummy_plugin(env, dummy_plugin_distribution):
     """Instantiate and register a dummy plugin in env"""
-    env.plugin_controller.instanciate_plugin(
-        "dummy-plugin", DummyPlugin, dummy_plugin_distribution
-    )
+    env.plugin_controller.instanciate_plugin("dummy-plugin", DummyPlugin, dummy_plugin_distribution)
     return env.plugins["dummy-plugin"]
 
 
@@ -170,9 +168,7 @@ class TestPlugin:
     @pytest.fixture
     def scratch_plugin(self, scratch_env, dummy_plugin_distribution):
         """Instantiate and register a dummy plugin with scratch_env"""
-        scratch_env.plugin_controller.instanciate_plugin(
-            "dummy-plugin", DummyPlugin, dummy_plugin_distribution
-        )
+        scratch_env.plugin_controller.instanciate_plugin("dummy-plugin", DummyPlugin, dummy_plugin_distribution)
         return scratch_env.plugins["dummy-plugin"]
 
     def test_env(self, dummy_plugin, env):
@@ -212,7 +208,6 @@ class TestPlugin:
     @pytest.mark.requiresinternet
     @pytest.mark.slowtest
     @pytest.mark.usefixtures("save_sys_path")
-
     def test_path_installed_plugin_is_none(self, scratch_project):
         # XXX: this test is slow and fragile. (It won't run
         # without an internet connection.)
@@ -362,13 +357,9 @@ def test_cli_integration(project, cli_runner, monkeypatch):
     """Check that plugin hooks receive extra_flags from command line."""
     # chdir to tests/demo-project
     monkeypatch.chdir(project.tree)
-    result = cli_runner.invoke(
-        cli, ["clean", "--yes", "-f", "flag1", "--extra-flag", "flag2:value2"]
-    )
+    result = cli_runner.invoke(cli, ["clean", "--yes", "-f", "flag1", "--extra-flag", "flag2:value2"])
     print(result.output)
     assert result.exit_code == 0
-    assert {"before-prune", "after-prune", "setup-env"}.issubset(
-        call["event"] for call in DummyPlugin.calls
-    )
+    assert {"before-prune", "after-prune", "setup-env"}.issubset(call["event"] for call in DummyPlugin.calls)
     for call in DummyPlugin.calls:
         assert call["extra_flags"] == {"flag1": "flag1", "flag2": "value2"}

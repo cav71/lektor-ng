@@ -6,14 +6,12 @@ import shutil
 import sqlite3
 import stat
 import sys
-from collections import deque
-from collections import namedtuple
+from collections import deque, namedtuple
 from collections.abc import Sized
 from contextlib import contextmanager
 from dataclasses import dataclass
 from itertools import chain
-from typing import Any
-from typing import IO
+from typing import IO, Any
 
 import click
 
@@ -23,10 +21,12 @@ from lektor_ng.constants import PRIMARY_ALT
 from lektor_ng.context import Context
 from lektor_ng.reporter import reporter
 from lektor_ng.sourcesearch import find_files
-from lektor_ng.utils import create_temp
-from lektor_ng.utils import fs_enc
-from lektor_ng.utils import process_extra_flags
-from lektor_ng.utils import prune_file_and_folder
+from lektor_ng.utils import (
+    create_temp,
+    fs_enc,
+    process_extra_flags,
+    prune_file_and_folder,
+)
 
 
 def create_tables(con):
@@ -174,9 +174,7 @@ class BuildState:
                 filename = filename.lstrip(os.path.altsep)
         return filename.replace(os.path.sep, "/")
 
-    def new_artifact(
-        self, artifact_name, sources=None, source_obj=None, extra=None, config_hash=None
-    ):
+    def new_artifact(self, artifact_name, sources=None, source_obj=None, extra=None, config_hash=None):
         """Creates a new artifact and returns it."""
         dst_filename = self.get_destination_filename(artifact_name)
         key = self.artifact_name_from_destination_filename(dst_filename)
@@ -224,9 +222,7 @@ class BuildState:
                 vpath, alt = _unpack_virtual_source_path(path)
                 yield path, VirtualSourceInfo(vpath, alt, mtime, checksum)
             else:
-                file_info = FileInfo(
-                    self.env, path, mtime, size, checksum, bool(is_dir)
-                )
+                file_info = FileInfo(self.env, path, mtime, size, checksum, bool(is_dir))
                 filename = self.to_source_filename(file_info.filename)
                 found.add(filename)
                 yield filename, file_info
@@ -357,9 +353,7 @@ class BuildState:
 
             # If we do have an already existing artifact, we need to check if
             # any of the source files we depend on changed.
-            for _, info in self._iter_artifact_dependency_infos(
-                cur, artifact_name, sources
-            ):
+            for _, info in self._iter_artifact_dependency_infos(cur, artifact_name, sources):
                 # if we get a missing source info it means that we never
                 # saw this before.  This means we need to build it.
                 if info is None:
@@ -490,9 +484,7 @@ class FileInfo(_ArtifactSourceInfo):
     can be detected easily.
     """
 
-    def __init__(
-        self, env, filename, mtime=None, size=None, checksum=None, is_dir=None
-    ):
+    def __init__(self, env, filename, mtime=None, size=None, checksum=None, is_dir=None):
         self.env = env
         self.filename = filename
         if mtime is not None and size is not None and is_dir is not None:
@@ -559,11 +551,7 @@ class FileInfo(_ArtifactSourceInfo):
                     if isinstance(filename, str):
                         filename = filename.encode("utf-8")
                     h.update(filename)
-                    h.update(
-                        _describe_fs_path_for_checksum(
-                            os.path.join(self.filename, filename.decode("utf-8"))
-                        )
-                    )
+                    h.update(_describe_fs_path_for_checksum(os.path.join(self.filename, filename.decode("utf-8"))))
                     h.update(b"\x00")
             else:
                 with open(self.filename, "rb") as f:
@@ -647,10 +635,7 @@ class VirtualSourceInfo(_ArtifactSourceInfo):
             raise TypeError(f"'other' must be a VirtualSourceInfo, not {other!r}")
 
         if (self.path, self.alt) != (other.path, other.alt):
-            raise ValueError(
-                "trying to compare mismatched virtual paths: "
-                f"{self!r}.unchanged({other!r})"
-            )
+            raise ValueError(f"trying to compare mismatched virtual paths: {self!r}.unchanged({other!r})")
 
         return (self.mtime, self.checksum) == (other.mtime, other.checksum)
 
@@ -711,14 +696,10 @@ class Artifact:
         if not os.path.isfile(self.dst_filename):
             return False
 
-        return self.build_state.check_artifact_is_current(
-            self.artifact_name, self.sources, self.config_hash
-        )
+        return self.build_state.check_artifact_is_current(self.artifact_name, self.sources, self.config_hash)
 
     def get_dependency_infos(self):
-        return self.build_state.get_artifact_dependency_infos(
-            self.artifact_name, self.sources
-        )
+        return self.build_state.get_artifact_dependency_infos(self.artifact_name, self.sources)
 
     def ensure_dir(self):
         """Creates the directory if it does not exist yet."""
@@ -728,9 +709,7 @@ class Artifact:
         except OSError:
             pass
 
-    def open(
-        self, mode: str = "rb", encoding: str | None = None, ensure_dir: bool = True
-    ) -> IO[Any]:
+    def open(self, mode: str = "rb", encoding: str | None = None, ensure_dir: bool = True) -> IO[Any]:
         """Opens the artifact for reading or writing.  This is transaction
         safe by writing into a temporary file and by moving it over the
         actual source in commit.
@@ -759,23 +738,18 @@ class Artifact:
         if ensure_dir:
             self.ensure_dir()
         if copy:
-            with self.open("wb") as df:
-                with open(filename, "rb") as sf:
-                    shutil.copyfileobj(sf, df)
+            with self.open("wb") as df, open(filename, "rb") as sf:
+                shutil.copyfileobj(sf, df)
         else:
             self._new_artifact_file = filename
 
     def render_template_into(self, template_name, this, **extra):
         """Renders a template into the artifact."""
-        rv = self.build_state.env.render_template(
-            template_name, self.build_state.pad, this=this, **extra
-        )
+        rv = self.build_state.env.render_template(template_name, self.build_state.pad, this=this, **extra)
         with self.open("wb") as f:
             f.write(rv.encode("utf-8") + b"\n")
 
-    def _memorize_dependencies(
-        self, dependencies=None, virtual_dependencies=None, for_failure=False
-    ):
+    def _memorize_dependencies(self, dependencies=None, virtual_dependencies=None, for_failure=False):
         """This updates the dependencies recorded for the artifact based
         on the direct sources plus the provided dependencies.  This also
         stores the config hash.
@@ -785,9 +759,7 @@ class Artifact:
         """
 
         def operation(con):
-            primary_sources = {
-                self.build_state.to_source_filename(x) for x in self.sources
-            }
+            primary_sources = {self.build_state.to_source_filename(x) for x in self.sources}
 
             seen = set()
             rows = []
@@ -831,9 +803,7 @@ class Artifact:
 
             cur = con.cursor()
             if not for_failure:
-                cur.execute(
-                    "delete from artifacts where artifact = ?", [self.artifact_name]
-                )
+                cur.execute("delete from artifacts where artifact = ?", [self.artifact_name])
             if rows:
                 cur.executemany(
                     """
@@ -868,7 +838,7 @@ class Artifact:
             con = self.build_state.connect_to_database()
             try:
                 operation(con)
-            except:  # noqa
+            except:
                 con.rollback()
                 con.close()
                 raise
@@ -929,7 +899,7 @@ class Artifact:
         try:
             f(con)
             con.commit()
-        except:  # noqa
+        except:
             con.rollback()
             raise
         finally:
@@ -980,9 +950,7 @@ class Artifact:
                 con = None
 
             self.build_state.updated_artifacts.append(self)
-            self.build_state.builder.failure_controller.clear_failure(
-                self.artifact_name
-            )
+            self.build_state.builder.failure_controller.clear_failure(self.artifact_name)
         finally:
             if con is not None:
                 con.rollback()
@@ -1058,10 +1026,7 @@ class PathCache:
             if os.path.altsep:
                 filename = filename.lstrip(os.path.altsep)
         else:
-            raise ValueError(
-                f"The given value ({filename!r}) is not below the "
-                f"source folder ({self.env.root_path!r})"
-            )
+            raise ValueError(f"The given value ({filename!r}) is not below the source folder ({self.env.root_path!r})")
         rv = filename.replace(os.path.sep, "/")
         self.source_filename_cache[key] = rv
         return rv
@@ -1090,9 +1055,7 @@ class Builder:
     def __init__(self, pad, destination_path, buildstate_path=None, extra_flags=None):
         self.extra_flags = process_extra_flags(extra_flags)
         self.pad = pad
-        self.destination_path = os.path.abspath(
-            os.path.join(pad.db.env.root_path, destination_path)
-        )
+        self.destination_path = os.path.abspath(os.path.join(pad.db.env.root_path, destination_path))
         if buildstate_path:
             self.meta_path = buildstate_path
         else:
@@ -1167,9 +1130,7 @@ class Builder:
 
     def get_build_program(self, source, build_state):
         """Finds the right build function for the given source file."""
-        for cls, builder in chain(
-            reversed(self.env.build_programs), reversed(builtin_build_programs)
-        ):
+        for cls, builder in chain(reversed(self.env.build_programs), reversed(builtin_build_programs)):
             if isinstance(source, cls):
                 return builder(source, build_state)
         raise RuntimeError(f"I do not know how to build {source!r}")

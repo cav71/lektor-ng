@@ -4,10 +4,7 @@ import sys
 
 import click
 
-from lektor_ng.cli_utils import AliasedGroup
-from lektor_ng.cli_utils import extraflag
-from lektor_ng.cli_utils import pass_context
-
+from lektor_ng.cli_utils import AliasedGroup, extraflag, pass_context
 
 try:
     from IPython import embed
@@ -47,13 +44,10 @@ def shell_cmd(ctx, extra_flags):
     import code
 
     from lektor.builder import Builder
-    from lektor_ng.db import F
-    from lektor_ng.db import Tree
 
-    banner = (
-        f"Python {sys.version} on {sys.platform}\n"
-        f"Lektor Project: {ctx.get_env().root_path}"
-    )
+    from lektor_ng.db import F, Tree
+
+    banner = f"Python {sys.version} on {sys.platform}\nLektor Project: {ctx.get_env().root_path}"
     ns = {}
     startup = os.environ.get("PYTHONSTARTUP")
     if startup and os.path.isfile(startup):
@@ -66,9 +60,7 @@ def shell_cmd(ctx, extra_flags):
         pad=pad,
         tree=Tree(pad),
         config=ctx.get_env().load_config(),
-        make_builder=lambda: Builder(
-            ctx.get_env().new_pad(), ctx.get_default_output_path()
-        ),
+        make_builder=lambda: Builder(ctx.get_env().new_pad(), ctx.get_default_output_path()),
         F=F,
     )
     try:

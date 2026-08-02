@@ -11,7 +11,6 @@ from lektor_ng.environment import Environment
 from lektor_ng.project import Project
 from lektor_ng.reporter import Reporter
 
-
 sep = os.path.sep
 
 
@@ -122,9 +121,7 @@ def test_theme_asset_loading(theme_pad, asset_name, found_in):
     Loading should take in account the order of the themes
     """
     path_list = theme_pad.get_asset(asset_name).source_filename.split(sep)
-    path_list_from_url = theme_pad.resolve_url_path(asset_name).source_filename.split(
-        sep
-    )
+    path_list_from_url = theme_pad.resolve_url_path(asset_name).source_filename.split(sep)
 
     assert path_list == path_list_from_url
 

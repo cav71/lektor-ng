@@ -2,9 +2,7 @@ import re
 
 import pytest
 
-from lektor_ng.datamodel import ChildConfig
-from lektor_ng.datamodel import DataModel
-from lektor_ng.datamodel import PaginationConfig
+from lektor_ng.datamodel import ChildConfig, DataModel, PaginationConfig
 from lektor_ng.reporter import BufferReporter
 
 

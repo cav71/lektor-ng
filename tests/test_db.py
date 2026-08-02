@@ -6,12 +6,7 @@ from datetime import date
 import pytest
 
 from lektor_ng.context import Context
-from lektor_ng.db import Database
-from lektor_ng.db import F
-from lektor_ng.db import get_alts
-from lektor_ng.db import Image
-from lektor_ng.db import Query
-from lektor_ng.db import Video
+from lektor_ng.db import Database, F, Image, Query, Video, get_alts
 from lektor_ng.filecontents import FileContents
 from lektor_ng.metaformat import serialize
 
@@ -125,11 +120,7 @@ def test_basic_alts(pad):
 def test_basic_query_syntax(pad):
     projects = pad.get("/projects")
 
-    encumbered = (
-        projects.children.filter((F._slug == "master") | (F._slug == "slave"))
-        .order_by("_slug")
-        .all()
-    )
+    encumbered = projects.children.filter((F._slug == "master") | (F._slug == "slave")).order_by("_slug").all()
 
     assert len(encumbered) == 2
     assert [x["name"] for x in encumbered] == ["Master", "Slave"]
@@ -268,9 +259,7 @@ def test_root_pagination(scratch_project, scratch_env):
 
     for name in "a", "b", "c":
         os.mkdir(os.path.join(base, "content", name))
-        with open(
-            os.path.join(base, "content", name, "contents.lr"), "w", encoding="utf-8"
-        ) as f:
+        with open(os.path.join(base, "content", name, "contents.lr"), "w", encoding="utf-8") as f:
             f.write(f"_model: page\n---\ntitle: Page {name}\n---\nbody: Hello World!\n")
 
     scratch_pad = Database(scratch_env).new_pad()
@@ -335,16 +324,9 @@ def test_hidden_flag(pad):
 def test_default_order_by(scratch_project, scratch_env):
     tree = scratch_project.tree
     with open(os.path.join(tree, "models", "mymodel.ini"), "w", encoding="utf-8") as f:
-        f.write(
-            "[children]\n"
-            "order_by = title\n"
-            "[attachments]\n"
-            "order_by = attachment_filename\n"
-        )
+        f.write("[children]\norder_by = title\n[attachments]\norder_by = attachment_filename\n")
     os.mkdir(os.path.join(tree, "content", "myobj"))
-    with open(
-        os.path.join(tree, "content", "myobj", "contents.lr"), "w", encoding="utf-8"
-    ) as f:
+    with open(os.path.join(tree, "content", "myobj", "contents.lr"), "w", encoding="utf-8") as f:
         f.write("_model: mymodel\n---\ntitle: My Test Object\n")
 
     pad = Database(scratch_env).new_pad()

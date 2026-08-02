@@ -4,9 +4,7 @@ from contextlib import contextmanager
 
 import click
 from click import style
-from werkzeug.local import LocalProxy
-from werkzeug.local import LocalStack
-
+from werkzeug.local import LocalProxy, LocalStack
 
 _reporter_stack = LocalStack()
 _build_buffer_stack = LocalStack()
@@ -306,9 +304,7 @@ class CliReporter(Reporter):
         if not self.show_build_info:
             return
         self._write_line(style(f"  Tree: {self.env.root_path}", fg="cyan"))
-        self._write_line(
-            style(f"  Output path: {self.builder.destination_path}", fg="cyan")
-        )
+        self._write_line(style(f"  Output path: {self.builder.destination_path}", fg="cyan"))
 
     def finish_build(self, activity, start_time):
         self._write_line(
@@ -335,15 +331,11 @@ class CliReporter(Reporter):
 
     def report_build_all_failure(self, failures):
         pluralize = "failure" if failures == 1 else "failures"
-        self._write_line(
-            click.style(f"Error: Build failed with {failures} {pluralize}.", fg="red")
-        )
+        self._write_line(click.style(f"Error: Build failed with {failures} {pluralize}.", fg="red"))
 
     def report_failure(self, artifact, exc_info):
         sign = click.style("E", fg="red")
-        err = " ".join(
-            "".join(traceback.format_exception_only(*exc_info[:2])).splitlines()
-        ).strip()
+        err = " ".join("".join(traceback.format_exception_only(*exc_info[:2])).splitlines()).strip()
         self._write_line(f"{sign} {artifact.artifact_name} ({err})")
 
         if not self.show_tracebacks:

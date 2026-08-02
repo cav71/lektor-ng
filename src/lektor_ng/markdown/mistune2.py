@@ -2,17 +2,17 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from importlib import import_module
-from typing import ClassVar
-from typing import TypedDict
+from typing import ClassVar, TypedDict
 
 import mistune.util
 
-from lektor_ng.markdown.controller import MarkdownController
-from lektor_ng.markdown.controller import RendererHelper
-from lektor_ng.markdown.controller import UnknownPluginError
+from lektor_ng.markdown.controller import (
+    MarkdownController,
+    RendererHelper,
+    UnknownPluginError,
+)
 from lektor_ng.utils import unique_everseen
 
 
@@ -79,16 +79,12 @@ class MarkdownController2(MarkdownController):
         # FIXME: call different hooks here for mistune 2?
         env.plugin_controller.emit("markdown-config", config=cfg)
         renderer = cfg.make_renderer()
-        env.plugin_controller.emit(
-            "markdown-lexer-config", config=cfg, renderer=renderer
-        )
+        env.plugin_controller.emit("markdown-lexer-config", config=cfg, renderer=renderer)
         parser_options = cfg.parser_options
         plugins = parser_options.get("plugins")
         if plugins:
             # Resolve and filter out duplicates
-            parser_options["plugins"] = tuple(
-                unique_everseen(map(self.resolve_plugin, plugins))
-            )
+            parser_options["plugins"] = tuple(unique_everseen(map(self.resolve_plugin, plugins)))
         return mistune.Markdown(renderer, **cfg.parser_options)
 
     PLUGINS = {**mistune.PLUGINS}
@@ -97,9 +93,7 @@ class MarkdownController2(MarkdownController):
         if callable(plugin):
             return plugin
         if not isinstance(plugin, str):
-            raise TypeError(
-                f"Plugins should be specified as strings or callables, not {plugin!r}"
-            )
+            raise TypeError(f"Plugins should be specified as strings or callables, not {plugin!r}")
 
         module_name, sep, attr = plugin.partition(":")
         if sep:

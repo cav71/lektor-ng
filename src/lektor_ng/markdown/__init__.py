@@ -2,21 +2,20 @@ import sys
 import warnings
 from collections.abc import Hashable
 from importlib import metadata
-from typing import Any
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 from weakref import ref as weakref
 
 from markupsafe import Markup
 
-from lektor_ng.markdown.controller import ControllerCache
-from lektor_ng.markdown.controller import FieldOptions
-from lektor_ng.markdown.controller import MarkdownController
-from lektor_ng.markdown.controller import Meta
-from lektor_ng.markdown.controller import RenderResult
+from lektor_ng.markdown.controller import (
+    ControllerCache,
+    FieldOptions,
+    MarkdownController,
+    Meta,
+    RenderResult,
+)
 from lektor_ng.sourceobj import SourceObject
-from lektor_ng.utils import deprecated
-from lektor_ng.utils import DeprecatedWarning
-
+from lektor_ng.utils import DeprecatedWarning, deprecated
 
 if TYPE_CHECKING:  # pragma: no cover
     from lektor.environment import Environment
@@ -37,9 +36,7 @@ get_controller = ControllerCache(controller_class)
 
 
 class Markdown:
-    def __init__(
-        self, source: str, record: SourceObject | None, field_options: FieldOptions
-    ) -> None:
+    def __init__(self, source: str, record: SourceObject | None, field_options: FieldOptions) -> None:
         self.source = source
         self.__record = weakref(record) if record is not None else None
         self.__field_options = field_options
@@ -126,7 +123,5 @@ def make_markdown(env: "Environment") -> Any:  # (Environment) -> mistune.Markdo
 
 
 @deprecated(version="3.4.0")
-def markdown_to_html(
-    text: str, record: SourceObject, field_options: FieldOptions
-) -> RenderResult:
+def markdown_to_html(text: str, record: SourceObject, field_options: FieldOptions) -> RenderResult:
     return get_controller().render(text, record, field_options)

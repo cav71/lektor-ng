@@ -2,18 +2,19 @@
 import os
 import sys
 import warnings
-from importlib import metadata
 from itertools import chain
 
 import click
 
-from lektor_ng.cli_utils import AliasedGroup
-from lektor_ng.cli_utils import echo_json
-from lektor_ng.cli_utils import extraflag
-from lektor_ng.cli_utils import pass_context
-from lektor_ng.cli_utils import pruneflag
-from lektor_ng.cli_utils import ResolvedPath
-from lektor_ng.cli_utils import validate_language
+from lektor_ng.cli_utils import (
+    AliasedGroup,
+    ResolvedPath,
+    echo_json,
+    extraflag,
+    pass_context,
+    pruneflag,
+    validate_language,
+)
 from lektor_ng.devcli import cli as devcli
 from lektor_ng.project import Project
 from lektor_ng.utils import secure_url
@@ -133,9 +134,7 @@ def build_cmd(
             from lektor_ng.watcher import watch_project
 
             click.secho("Watching for file system changes", fg="cyan")
-            builds = chain(
-                builds, watch_project(env, output_path, raise_interrupt=False)
-            )
+            builds = chain(builds, watch_project(env, output_path, raise_interrupt=False))
 
         success = False
         for _ in builds:
@@ -218,14 +217,12 @@ def clean_cmd(ctx, *, output_path, verbosity, extra_flags):
 @click.option(
     "--key-file",
     envvar="LEKTOR_DEPLOY_KEY_FILE",
-    help="The path to a key file that should be used for the "
-    "authentication of the deployment.",
+    help="The path to a key file that should be used for the authentication of the deployment.",
 )
 @click.option(
     "--key",
     envvar="LEKTOR_DEPLOY_KEY",
-    help="The contents of a key file directly a string that should "
-    "be used for authentication of the deployment.",
+    help="The contents of a key file directly a string that should be used for authentication of the deployment.",
 )
 @extraflag
 @pass_context
@@ -244,8 +241,7 @@ def deploy_cmd(ctx, *, server, output_path, extra_flags, **credentials):
 
     For more information see the deployment chapter in the documentation.
     """
-    from lektor_ng.publisher import publish
-    from lektor_ng.publisher import PublishError
+    from lektor_ng.publisher import PublishError, publish
 
     if output_path is None:
         output_path = ctx.get_default_output_path()
@@ -257,15 +253,11 @@ def deploy_cmd(ctx, *, server, output_path, extra_flags, **credentials):
     if server is None:
         server_info = config.get_default_server()
         if server_info is None:
-            raise click.BadParameter(
-                "No default server configured.", param_hint="server"
-            )
+            raise click.BadParameter("No default server configured.", param_hint="server")
     else:
         server_info = config.get_server(server)
         if server_info is None:
-            raise click.BadParameter(
-                f"Server {server!r} does not exist.", param_hint="server"
-            )
+            raise click.BadParameter(f"Server {server!r} does not exist.", param_hint="server")
 
     try:
         event_iter = publish(
@@ -302,16 +294,13 @@ def deploy_cmd(ctx, *, server, output_path, extra_flags, **credentials):
     "loopback device, but by setting it to 0.0.0.0 it becomes "
     "available on all network interfaces.",
 )
-@click.option(
-    "-p", "--port", default=5000, help="The port to bind to.", show_default=True
-)
+@click.option("-p", "--port", default=5000, help="The port to bind to.", show_default=True)
 @click.option(
     "-O",
     "--output-path",
     type=ResolvedPath(writable=True, file_okay=False),
     default=None,
-    help="The dev server will build into the same folder as "
-    "the build command by default.",
+    help="The dev server will build into the same folder as the build command by default.",
 )
 @pruneflag
 @click.option(
@@ -406,9 +395,7 @@ def project_info_cmd(ctx, *, as_json, **opts):
         click.echo(f"Package Cache: {json_data['package_cache_path']}")
 
 
-@cli.command(
-    "content-file-info", short_help="Provides information for a set of lektor files."
-)
+@cli.command("content-file-info", short_help="Provides information for a set of lektor files.")
 @click.option("as_json", "--json", is_flag=True, help="Prints out the data as json.")
 @click.argument("files", nargs=-1, type=click.Path(dir_okay=False))
 @pass_context
@@ -491,9 +478,7 @@ def plugins_add_cmd(ctx, name):
     except RuntimeError as e:
         click.echo(f"Error: {e}", err=True)
     else:
-        click.echo(
-            f"Package {info['name']} ({info['version']}) was added to the project"
-        )
+        click.echo(f"Package {info['name']} ({info['version']}) was added to the project")
 
 
 @plugins_cmd.command("remove", short_help="Removes a plugin from the project.")
@@ -512,9 +497,7 @@ def plugins_remove_cmd(ctx, name):
         click.echo(f"Error: {e}", err=True)
     else:
         if old_info is None:
-            click.echo(
-                "Package was not registered with the project. Nothing was removed."
-            )
+            click.echo("Package was not registered with the project. Nothing was removed.")
         else:
             click.echo(f"Removed package {old_info['name']} ({old_info['version']})")
 

@@ -17,7 +17,7 @@ def get_undefined_info(undefined):
 
 
 class RawValue:
-    __slots__ = ("name", "value", "field", "pad")
+    __slots__ = ("field", "name", "pad", "value")
 
     def __init__(self, name, value=None, field=None, pad=None):
         self.name = name
@@ -78,14 +78,8 @@ class Type:
 
     def value_from_raw_with_default(self, raw):
         value = self.value_from_raw(raw)
-        if (
-            isinstance(value, Undefined)
-            and raw.field is not None
-            and raw.field.default is not None
-        ):
-            return self.value_from_raw(
-                RawValue(raw.name, raw.field.default, field=raw.field, pad=raw.pad)
-            )
+        if isinstance(value, Undefined) and raw.field is not None and raw.field.default is not None:
+            return self.value_from_raw(RawValue(raw.name, raw.field.default, field=raw.field, pad=raw.pad))
         return value
 
     def __repr__(self):

@@ -1,8 +1,6 @@
 import sys
 from contextlib import suppress
-from importlib import import_module
-from importlib import metadata
-
+from importlib import import_module, metadata
 
 # pylint: disable-next=wrong-import-order
 from conftest import restore_import_state  # isort: skip

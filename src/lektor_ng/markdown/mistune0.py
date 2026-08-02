@@ -5,9 +5,11 @@ from typing import ClassVar
 
 import mistune  # type: ignore[import]
 
-from lektor_ng.markdown.controller import MarkdownController
-from lektor_ng.markdown.controller import Meta  # FIXME: move this?
-from lektor_ng.markdown.controller import RendererHelper
+from lektor_ng.markdown.controller import (
+    MarkdownController,
+    Meta,  # FIXME: move this?
+    RendererHelper,
+)
 from lektor_ng.sourceobj import SourceObject
 from lektor_ng.utils import deprecated
 
@@ -71,8 +73,6 @@ class MarkdownController0(MarkdownController, threading.local):
         cfg = MarkdownConfig()
         env.plugin_controller.emit("markdown-config", config=cfg)
         renderer = cfg.make_renderer()
-        env.plugin_controller.emit(
-            "markdown-lexer-config", config=cfg, renderer=renderer
-        )
+        env.plugin_controller.emit("markdown-lexer-config", config=cfg, renderer=renderer)
         # pylint: disable=unexpected-keyword-arg
         return mistune.Markdown(renderer, **cfg.options)

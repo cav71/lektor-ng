@@ -1,23 +1,14 @@
 import threading
-from abc import ABC
-from abc import abstractmethod
-from collections.abc import Callable
-from collections.abc import Hashable
-from collections.abc import Mapping
-from collections.abc import MutableMapping
+from abc import ABC, abstractmethod
+from collections.abc import Callable, Hashable, Mapping, MutableMapping
 from dataclasses import dataclass
-from typing import Any
-from typing import NamedTuple
-from typing import Optional
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, NamedTuple, Optional
 from weakref import WeakKeyDictionary
 
 from werkzeug.utils import cached_property
 
-from lektor_ng.context import Context
-from lektor_ng.context import get_ctx
+from lektor_ng.context import Context, get_ctx
 from lektor_ng.sourceobj import SourceObject
-
 
 if TYPE_CHECKING:  # pragma: no cover
     from lektor_ng.environment import Environment
@@ -54,7 +45,7 @@ class RendererContext(NamedTuple):
         _threadlocal.renderer_context = self
         return self
 
-    def __exit__(self, *__: Any) -> None:
+    def __exit__(self, *__: object) -> None:
         _threadlocal.renderer_context = None
 
 
@@ -128,9 +119,7 @@ class RendererHelper:
         elif resolve_links == "never":
             # This is the old behavior, equivalent to '!' prefix
             resolve = False
-        return self.record.url_to(
-            url, base_url=self.base_url, resolve=resolve, strict_resolve=strict_resolve
-        )
+        return self.record.url_to(url, base_url=self.base_url, resolve=resolve, strict_resolve=strict_resolve)
 
 
 class UnknownPluginError(LookupError):
@@ -168,17 +157,13 @@ class MarkdownController(ABC):
             return None
         return ctx.base_url
 
-    def render(
-        self, source: str, record: SourceObject | None, field_options: FieldOptions
-    ) -> RenderResult:
+    def render(self, source: str, record: SourceObject | None, field_options: FieldOptions) -> RenderResult:
         """Render markdown string"""
         meta: Meta = {}
         self.env.plugin_controller.emit("markdown-meta-init", meta=meta, record=record)
         with RendererContext(record, meta, field_options):
             html = self.parser(source)
-        self.env.plugin_controller.emit(
-            "markdown-meta-postprocess", meta=meta, record=record
-        )
+        self.env.plugin_controller.emit("markdown-meta-postprocess", meta=meta, record=record)
         return RenderResult(html, meta)
 
 

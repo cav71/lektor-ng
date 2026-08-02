@@ -2,11 +2,9 @@ import os
 import shutil
 from itertools import chain
 
-from lektor_ng.assets import Directory
-from lektor_ng.assets import File
+from lektor_ng.assets import Directory, File
 from lektor_ng.constants import PRIMARY_ALT
-from lektor_ng.db import Attachment
-from lektor_ng.db import Page
+from lektor_ng.db import Attachment, Page
 from lektor_ng.exception import LektorException
 
 
@@ -30,9 +28,7 @@ class SourceInfo:
     build state.
     """
 
-    def __init__(
-        self, path, filename, alt=PRIMARY_ALT, type="unknown", title_i18n=None
-    ):
+    def __init__(self, path, filename, alt=PRIMARY_ALT, type="unknown", title_i18n=None):
         self.path = path
         self.alt = alt
         self.filename = filename
@@ -164,16 +160,12 @@ class PageBuildProgram(BuildProgram):
     def produce_artifacts(self):
         pagination_enabled = self.source.datamodel.pagination_config.enabled
 
-        if self.source.is_visible and (
-            self.source.page_num is not None or not pagination_enabled
-        ):
+        if self.source.is_visible and (self.source.page_num is not None or not pagination_enabled):
             artifact_name = self.source.url_path
             if artifact_name.endswith("/"):
                 artifact_name += "index.html"
 
-            self.declare_artifact(
-                artifact_name, sources=list(self.source.iter_source_filenames())
-            )
+            self.declare_artifact(artifact_name, sources=list(self.source.iter_source_filenames()))
 
     def build_artifact(self, artifact):
         # Record dependecies on all our sources and datamodel
@@ -247,9 +239,7 @@ class AttachmentBuildProgram(BuildProgram):
     def produce_artifacts(self):
         primary_alt = self.build_state.config.primary_alternative or PRIMARY_ALT
         if self.source.is_visible and self.source.alt == primary_alt:
-            self.declare_artifact(
-                self.source.url_path, sources=list(self.source.iter_source_filenames())
-            )
+            self.declare_artifact(self.source.url_path, sources=list(self.source.iter_source_filenames()))
 
     def build_artifact(self, artifact):
         with artifact.open("wb") as df:
@@ -260,9 +250,7 @@ class AttachmentBuildProgram(BuildProgram):
 @buildprogram(File)
 class FileAssetBuildProgram(BuildProgram):
     def produce_artifacts(self):
-        self.declare_artifact(
-            self.source.artifact_name, sources=[self.source.source_filename]
-        )
+        self.declare_artifact(self.source.artifact_name, sources=[self.source.source_filename])
 
     def build_artifact(self, artifact):
         with artifact.open("wb") as df:

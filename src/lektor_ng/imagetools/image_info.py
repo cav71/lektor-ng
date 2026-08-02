@@ -5,28 +5,20 @@ from __future__ import annotations
 import enum
 import re
 import warnings
-from collections.abc import Generator
-from collections.abc import Mapping
-from contextlib import contextmanager
-from contextlib import ExitStack
-from contextlib import suppress
+from collections.abc import Generator, Mapping
+from contextlib import ExitStack, contextmanager, suppress
 from pathlib import Path
-from typing import BinaryIO
-from typing import Final
-from typing import NamedTuple
-from typing import TYPE_CHECKING
-from typing import TypeAlias
+from typing import TYPE_CHECKING, BinaryIO, Final, NamedTuple, TypeAlias
 from xml.etree import ElementTree as etree
 
 import PIL.Image
 
-from ._compat import ExifTags
-from ._compat import UnidentifiedImageError
-
+from ._compat import ExifTags, UnidentifiedImageError
 
 if TYPE_CHECKING:
-    from _typeshed import SupportsRead
     from typing import Literal
+
+    from _typeshed import SupportsRead
 
 
 class SvgImageInfo(NamedTuple):
@@ -100,7 +92,7 @@ def get_image_orientation(image: PIL.Image.Image) -> TiffOrientation:
 
     For all of these reasons, we only check the Exif Orientation tag for JPEGs.
 
-    """  # pylint: disable=line-too-long # noqa: E501
+    """  # pylint: disable=line-too-long
     if image.format != "JPEG":
         return TiffOrientation.TOPLEFT
     exif = image.getexif()
@@ -112,9 +104,7 @@ def get_image_orientation(image: PIL.Image.Image) -> TiffOrientation:
 
 
 def _parse_svg_units_px(length: str) -> float | None:
-    match = re.match(
-        r"\d+(?: \.\d* )? (?= (?: \s*px )? \Z)", length.strip(), re.VERBOSE
-    )
+    match = re.match(r"\d+(?: \.\d* )? (?= (?: \s*px )? \Z)", length.strip(), re.VERBOSE)
     if match:
         return float(match.group())
     return None

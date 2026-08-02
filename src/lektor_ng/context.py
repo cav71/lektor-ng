@@ -1,11 +1,9 @@
 from contextlib import contextmanager
 
 from jinja2 import Undefined
-from werkzeug.local import LocalProxy
-from werkzeug.local import LocalStack
+from werkzeug.local import LocalProxy, LocalStack
 
 from lektor_ng.reporter import reporter
-
 
 _ctx_stack = LocalStack()
 
@@ -73,9 +71,7 @@ class Context:
     def __init__(self, artifact=None, pad=None):
         if pad is None:
             if artifact is None:
-                raise TypeError(
-                    "Either artifact or pad is needed to construct a context."
-                )
+                raise TypeError("Either artifact or pad is needed to construct a context.")
             pad = artifact.build_state.pad
 
         if artifact is not None:
@@ -166,10 +162,7 @@ class Context:
     ):
         """Returns a URL to another path."""
         if self.source is None:
-            raise RuntimeError(
-                "Can only generate paths to other pages if "
-                "the context has a source document set."
-            )
+            raise RuntimeError("Can only generate paths to other pages if the context has a source document set.")
         return self.source.url_to(
             path,
             alt=alt,
@@ -183,10 +176,7 @@ class Context:
     def get_asset_url(self, asset):
         """Calculates the asset URL relative to the current record."""
         if self.source is None:
-            raise RuntimeError(
-                "Can only generate paths to assets if "
-                "the context has a source document set."
-            )
+            raise RuntimeError("Can only generate paths to assets if the context has a source document set.")
         asset_url = self.source.url_to("!" + asset.url_path)
         info = self.build_state.get_file_info(asset.source_filename)
         self.record_dependency(asset.source_filename)
@@ -215,8 +205,7 @@ class Context:
         """
         if self.build_state is None:
             raise TypeError(
-                "The context does not have a build state which "
-                "means that artifact declaration is not possible."
+                "The context does not have a build state which means that artifact declaration is not possible."
             )
         aft = self.build_state.new_artifact(
             artifact_name=artifact_name,

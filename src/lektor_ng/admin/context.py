@@ -1,23 +1,16 @@
 from __future__ import annotations
 
-from typing import Any
-from typing import NamedTuple
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, NamedTuple
 
-from flask import current_app
-from flask import Flask
-from flask import g
+from flask import Flask, current_app, g
 from werkzeug.utils import cached_property
 
 from lektor_ng.builder import Builder
 from lektor_ng.buildfailures import FailureController
-from lektor_ng.db import Database
-from lektor_ng.db import Pad
-from lektor_ng.db import Tree
+from lektor_ng.db import Database, Pad, Tree
 from lektor_ng.environment import Environment
 from lektor_ng.environment.config import Config
 from lektor_ng.reporter import CliReporter
-
 
 if TYPE_CHECKING:
     from _typeshed import StrPath

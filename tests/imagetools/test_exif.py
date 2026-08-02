@@ -8,16 +8,17 @@ from pathlib import Path
 import pytest
 from pytest import approx
 
-from lektor_ng.imagetools.exif import _combine_make
-from lektor_ng.imagetools.exif import _to_altitude
-from lektor_ng.imagetools.exif import _to_degrees
-from lektor_ng.imagetools.exif import _to_flash_description
-from lektor_ng.imagetools.exif import _to_float
-from lektor_ng.imagetools.exif import _to_focal_length
-from lektor_ng.imagetools.exif import _to_rational
-from lektor_ng.imagetools.exif import _to_string
-from lektor_ng.imagetools.exif import read_exif
-
+from lektor_ng.imagetools.exif import (
+    _combine_make,
+    _to_altitude,
+    _to_degrees,
+    _to_flash_description,
+    _to_float,
+    _to_focal_length,
+    _to_rational,
+    _to_string,
+    read_exif,
+)
 
 HERE = Path(__file__).parent
 DEMO_PROJECT = HERE / "../demo-project/content"
@@ -43,21 +44,17 @@ def test_combine_make(make, model, expected):
         (_to_string, "a b", "a b"),
         (_to_string, "a\xc2\xa0b", "a\xa0b"),
         (_to_string, "a\xa0b", "a\xa0b"),
-        #
         (_to_rational, 42, 42),
         (_to_rational, Fraction("22/7"), Fraction("22/7")),
         (_to_rational, (3, 2), Fraction("3/2")),
-        #
         (_to_float, 42, 42),
         (_to_float, 1.5, 1.5),
         (_to_float, Fraction("22/7"), approx(3.142857)),
         (_to_float, (7, 4), 1.75),
-        #
         (_to_flash_description, 0x41, "Flash fired, red-eye reduction mode"),
         (_to_flash_description, 0x100, "Flash did not fire (256)"),
         (_to_flash_description, 0x101, "Flash fired (257)"),
         (_to_flash_description, -1, "Flash fired (-1)"),
-        #
         (_to_focal_length, Fraction("45/2"), "22.5mm"),
         (_to_focal_length, (521, 10), "52.1mm"),
     ],
@@ -189,11 +186,7 @@ TEST_IMAGE_EXIF_INFO = {
 
 @pytest.mark.parametrize(
     "path, attr, expected",
-    [
-        (path, attr, expected)
-        for path, tags in TEST_IMAGE_EXIF_INFO.items()
-        for attr, expected in tags.items()
-    ],
+    [(path, attr, expected) for path, tags in TEST_IMAGE_EXIF_INFO.items() for attr, expected in tags.items()],
 )
 def test_read_exif_attr(path, attr, expected):
     with path.open("rb") as fp:

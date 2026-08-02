@@ -5,19 +5,15 @@ import os
 import shutil
 import sys
 from pathlib import Path
-from urllib.parse import parse_qsl
-from urllib.parse import urljoin
-from urllib.parse import urlparse
+from urllib.parse import parse_qsl, urljoin, urlparse
 
 import flask
 import pytest
 from werkzeug.exceptions import NotFound
 
 from lektor_ng.admin.context import LektorContext
-from lektor_ng.admin.modules import livereload
-from lektor_ng.admin.modules import serve
-from lektor_ng.admin.webui import LektorApp
-from lektor_ng.admin.webui import LektorInfo
+from lektor_ng.admin.modules import livereload, serve
+from lektor_ng.admin.webui import LektorApp, LektorInfo
 from lektor_ng.assets import Asset
 from lektor_ng.builder import Artifact
 from lektor_ng.buildfailures import FailureController
@@ -39,9 +35,7 @@ def dummy_app_context(dummy_app):
         yield
 
 
-def make_tooldrawer_config(
-    edit_url: str | None = None, artifact: Artifact | None = None
-) -> serve.TooldrawerConfig:
+def make_tooldrawer_config(edit_url: str | None = None, artifact: Artifact | None = None) -> serve.TooldrawerConfig:
     return serve.TooldrawerConfig(
         editUrl=edit_url,
         livereloadConfig=serve.LivereloadConfig.from_artifact(artifact),
@@ -82,9 +76,7 @@ def test_inject_tooldrawer_adds_livereload(dummy_app, make_dummy_artifact):
     dummy_app.register_blueprint(livereload.bp)
     artifact = make_dummy_artifact(artifact_name="ARTIFACT_NAME")
     config = make_tooldrawer_config("EDIT_URL", artifact)
-    assert b"ARTIFACT_NAME" in serve._inject_tooldrawer(
-        html=b"", tooldrawer_config=config
-    )
+    assert b"ARTIFACT_NAME" in serve._inject_tooldrawer(html=b"", tooldrawer_config=config)
 
 
 @pytest.mark.usefixtures("dummy_app_context")
@@ -133,21 +125,13 @@ def test_send_html_for_editing_etag_depends_on_edit_url(tmp_path, make_dummy_art
 
 
 @pytest.mark.usefixtures("dummy_app_context")
-def test_send_html_for_editing_etag_depends_on_artifact_name(
-    tmp_path, make_dummy_artifact
-):
+def test_send_html_for_editing_etag_depends_on_artifact_name(tmp_path, make_dummy_artifact):
     artifact1 = make_dummy_artifact("test1")
     artifact2 = make_dummy_artifact("test2")
-    resp1 = serve._send_html_for_editing(
-        artifact1, make_tooldrawer_config("EDIT_URL", artifact1)
-    )
-    resp2 = serve._send_html_for_editing(
-        artifact1, make_tooldrawer_config("EDIT_URL", artifact2)
-    )
+    resp1 = serve._send_html_for_editing(artifact1, make_tooldrawer_config("EDIT_URL", artifact1))
+    resp2 = serve._send_html_for_editing(artifact1, make_tooldrawer_config("EDIT_URL", artifact2))
     assert resp2.headers["ETag"] != resp1.headers["ETag"]
-    resp3 = serve._send_html_for_editing(
-        artifact1, make_tooldrawer_config("EDIT_URL", artifact1)
-    )
+    resp3 = serve._send_html_for_editing(artifact1, make_tooldrawer_config("EDIT_URL", artifact1))
     assert resp3.headers["ETag"] == resp1.headers["ETag"]
 
 
@@ -180,9 +164,8 @@ def test_checked_send_file(tmp_path, dummy_app):
 
 
 def test_checked_send_file_raises_404(tmp_path, dummy_app):
-    with dummy_app.test_request_context():
-        with pytest.raises(NotFound):
-            serve._checked_send_file(tmp_path / "missing.txt", "text/plain")
+    with dummy_app.test_request_context(), pytest.raises(NotFound):
+        serve._checked_send_file(tmp_path / "missing.txt", "text/plain")
 
 
 ################################################################
@@ -442,9 +425,7 @@ class TestArtifactServer:
             ("dir_with_index_htm/index.htm", "text/html", False),
         ],
     )
-    def test_serve_artifact_serves_artifact(
-        self, a_s, app, url_path, mimetype, is_editable
-    ):
+    def test_serve_artifact_serves_artifact(self, a_s, app, url_path, mimetype, is_editable):
         with app.test_request_context(f"/{url_path}"):
             resp = a_s.serve_artifact(url_path)
             assert resp.status_code == 200
@@ -463,9 +444,8 @@ class TestArtifactServer:
         ],
     )
     def test_serve_artifact_raises_404(self, a_s, app, url_path):
-        with app.test_request_context(f"/{url_path}"):
-            with pytest.raises(NotFound):
-                a_s.serve_artifact(url_path)
+        with app.test_request_context(f"/{url_path}"), pytest.raises(NotFound):
+            a_s.serve_artifact(url_path)
 
 
 ################################################################
@@ -541,9 +521,8 @@ def test_serve_file_raises_404(output_path, app, path):
     not_an_index.write_text("non-index")
     output_path.joinpath("top.txt").write_text("top")
 
-    with app.test_request_context(path):
-        with pytest.raises(NotFound):
-            serve.serve_file(path)
+    with app.test_request_context(path), pytest.raises(NotFound):
+        serve.serve_file(path)
 
 
 ################################################################
@@ -592,9 +571,7 @@ def test_serve_from_file(app, output_path):
         ("/adir/bdir", "http://localhost/", "http://localhost/adir/bdir/"),
     ],
 )
-def test_serve_add_slash_redirect_integration(
-    app, output_path, path_info, base_url, location
-):
+def test_serve_add_slash_redirect_integration(app, output_path, path_info, base_url, location):
     output_path.joinpath("adir/bdir").mkdir(parents=True)
     with app.test_client() as c:
         resp = c.get(path_info, base_url=base_url)

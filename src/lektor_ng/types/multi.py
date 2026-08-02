@@ -1,8 +1,7 @@
 import traceback
 
 from lektor_ng.constants import PRIMARY_ALT
-from lektor_ng.environment.expressions import Expression
-from lektor_ng.environment.expressions import FormatExpression
+from lektor_ng.environment.expressions import Expression, FormatExpression
 from lektor_ng.i18n import get_i18n_block
 from lektor_ng.types.base import Type
 
@@ -45,10 +44,7 @@ def _parse_choices(options):
     if user_labels:
         rv = list(zip(choices, _reflow_and_split_labels(user_labels), strict=False))
     else:
-        rv = [
-            (key, {"en": label})
-            for key, label in zip(choices, implied_labels, strict=False)
-        ]
+        rv = [(key, {"en": label}) for key, label in zip(choices, implied_labels, strict=False)]
 
     return rv
 
@@ -95,11 +91,7 @@ class ChoiceSource:
             # we only have one language to fill in, we fill it in for the
             # default language
             if self.item_label is not None:
-                label = {
-                    "en": self.item_label.evaluate(
-                        pad, this=item, alt=alt, values=values
-                    )
-                }
+                label = {"en": self.item_label.evaluate(pad, this=item, alt=alt, values=values)}
 
             # Otherwise we create a proper internationalized key out of
             # our target label

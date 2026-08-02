@@ -36,12 +36,7 @@ class FailureController:
         )
 
     def get_filename(self, artifact_name):
-        return (
-            os.path.join(
-                self.path, hashlib.md5(artifact_name.encode("utf-8")).hexdigest()
-            )
-            + ".json"
-        )
+        return os.path.join(self.path, hashlib.md5(artifact_name.encode("utf-8")).hexdigest()) + ".json"
 
     def lookup_failure(self, artifact_name):
         """Looks up a failure for the given artifact name."""

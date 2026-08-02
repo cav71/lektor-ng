@@ -5,8 +5,7 @@ import pytest
 
 from lektor_ng.builder import Builder
 from lektor_ng.context import Context
-from lektor_ng.db import Database
-from lektor_ng.db import Siblings
+from lektor_ng.db import Database, Siblings
 from lektor_ng.environment import Environment
 from lektor_ng.project import Project
 from lektor_ng.reporter import Reporter

@@ -1,8 +1,8 @@
 import pytest
+
 pytestmark = pytest.mark.skipif(True, reason="Web frontend not supported")
 
 import flask
-import lektor_ng.admin.webui
 
 
 @pytest.fixture
@@ -21,9 +21,7 @@ def static_folder(tmp_path) -> str:
 
 @pytest.fixture
 def test_client(env, static_folder, output_path):
-    app = lektor.admin.webui.make_app(
-        env, output_path=output_path, static_folder=static_folder
-    )
+    app = lektor.admin.webui.make_app(env, output_path=output_path, static_folder=static_folder)
     with app.test_client() as client:
         yield client
 

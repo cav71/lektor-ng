@@ -191,10 +191,7 @@ def test_pagination_items_filter(pad):
     # This tests that items are excluded from the pagination based on a
     # query if needed.
     blog = pad.get("/blog", page_num=1)
-    assert (
-        blog.datamodel.pagination_config.items
-        == "this.children.filter(F._model == 'blog-post')"
-    )
+    assert blog.datamodel.pagination_config.items == "this.children.filter(F._model == 'blog-post')"
 
     assert blog.children.count() == 3
     assert sorted(x["_id"] for x in blog.children) == ["dummy.xml", "post1", "post2"]
@@ -302,7 +299,4 @@ def test_iter_pages(
     right_edge,
     expected,
 ):
-    assert (
-        list(pagination.iter_pages(left_edge, left_current, right_current, right_edge))
-        == expected
-    )
+    assert list(pagination.iter_pages(left_edge, left_current, right_current, right_edge)) == expected

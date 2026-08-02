@@ -3,9 +3,7 @@ from pathlib import Path
 import pytest
 
 import lektor_ng
-from lektor_ng.imagetools import compute_dimensions
-from lektor_ng.imagetools import get_quality
-
+from lektor_ng.imagetools import compute_dimensions, get_quality
 
 HERE = Path(__file__).parent
 EXAMPLE = Path(lektor_ng.__file__).parent / "example"
@@ -13,7 +11,7 @@ EXAMPLE = Path(lektor_ng.__file__).parent / "example"
 
 def test_compute_dimensions():
     assert compute_dimensions(10, 10, 200, 100) == (10, 5)
- 
+
 
 @pytest.mark.parametrize(
     "image, expected",

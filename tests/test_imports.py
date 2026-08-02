@@ -14,7 +14,6 @@ import pytest
 import lektor_ng
 from lektor_ng.markdown import MISTUNE_VERSION
 
-
 ignored = set()
 
 # Do not check importability of module for the non-installed version of mistune

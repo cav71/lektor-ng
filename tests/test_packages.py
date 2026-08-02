@@ -4,17 +4,13 @@ import re
 import sys
 import sysconfig
 from pathlib import Path
-from subprocess import PIPE
-from subprocess import run
+from subprocess import PIPE, run
 
 import pytest
 from pytest_mock import MockerFixture
 
 from lektor_ng.environment import Environment
-from lektor_ng.packages import load_packages
-from lektor_ng.packages import Requirements
-from lektor_ng.packages import update_cache
-from lektor_ng.packages import VirtualEnv
+from lektor_ng.packages import Requirements, VirtualEnv, load_packages, update_cache
 from lektor_ng.project import Project
 
 
@@ -150,9 +146,7 @@ def test_Requirements_hash() -> None:
     assert requirements.hash() == "a44f078eab8bc1aa1ddfd111d63e24ff65131b4b"
 
 
-def test_update_cache_installs_requirements(
-    tmp_path: Path, mocker: MockerFixture
-) -> None:
+def test_update_cache_installs_requirements(tmp_path: Path, mocker: MockerFixture) -> None:
     venv_path = tmp_path / "cache"
     venv_path.mkdir()
     VirtualEnv = mocker.patch("lektor_ng.packages.VirtualEnv")
@@ -162,14 +156,10 @@ def test_update_cache_installs_requirements(
     assert hash_file.read_text().strip() == "a44f078eab8bc1aa1ddfd111d63e24ff65131b4b"
 
 
-def test_update_cache_skips_install_if_up_to_date(
-    tmp_path: Path, mocker: MockerFixture
-) -> None:
+def test_update_cache_skips_install_if_up_to_date(tmp_path: Path, mocker: MockerFixture) -> None:
     venv_path = tmp_path / "cache"
     venv_path.mkdir()
-    venv_path.joinpath("lektor-requirements-hash.txt").write_text(
-        "a44f078eab8bc1aa1ddfd111d63e24ff65131b4b\n"
-    )
+    venv_path.joinpath("lektor-requirements-hash.txt").write_text("a44f078eab8bc1aa1ddfd111d63e24ff65131b4b\n")
     VirtualEnv = mocker.patch("lektor_ng.packages.VirtualEnv")
     update_cache(venv_path, {"foo": "42"}, tmp_path / "packages")
     assert VirtualEnv.mock_calls == []
@@ -194,9 +184,7 @@ PackageCacheType = Project.PackageCacheType
 
 
 @pytest.mark.parametrize("cache_type", PackageCacheType)
-def test_load_packages_reinstall_wipes_cache(
-    env: Environment, cache_type: PackageCacheType
-) -> None:
+def test_load_packages_reinstall_wipes_cache(env: Environment, cache_type: PackageCacheType) -> None:
     project = env.project
     cache_path = project.get_package_cache_path(cache_type)
     cache_path.mkdir(parents=True, exist_ok=False)

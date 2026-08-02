@@ -44,9 +44,7 @@ def test_dev_cmd_alias(isolated_cli_runner):
 
 
 def test_alias_multiple_matches(project_cli_runner):
-    result = project_cli_runner.invoke(
-        cli, ["p"]
-    )  # short for 'project-info' & 'plugins'
+    result = project_cli_runner.invoke(cli, ["p"])  # short for 'project-info' & 'plugins'
     assert result.exit_code == 2
     assert "Error: Too many matches" in result.output
 
@@ -65,9 +63,7 @@ def test_build_no_project(isolated_cli_runner):
 
 def test_build(project_cli_runner):
     result = project_cli_runner.invoke(cli, ["build"])
-    assert (
-        "files or folders already exist" not in result.output
-    )  # No warning on fresh build
+    assert "files or folders already exist" not in result.output  # No warning on fresh build
     assert result.exit_code == 0
     start_matches = re.findall(r"Started build", result.output)
     assert len(start_matches) == 1
@@ -76,9 +72,7 @@ def test_build(project_cli_runner):
 
     # rebuild
     result = project_cli_runner.invoke(cli, ["build"])
-    assert (
-        "files or folders already exist" not in result.output
-    )  # No warning on repeat build
+    assert "files or folders already exist" not in result.output  # No warning on repeat build
     assert result.exit_code == 0
 
 

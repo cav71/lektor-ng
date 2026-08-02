@@ -6,35 +6,30 @@ import dataclasses
 import io
 import math
 import posixpath
-from collections.abc import Iterable
-from collections.abc import Iterator
-from collections.abc import Mapping
-from collections.abc import Sequence
+from collections.abc import Iterable, Iterator, Mapping, Sequence
 from enum import Enum
 from functools import partial
 from pathlib import Path
-from typing import Any
-from typing import ClassVar
-from typing import Final
-from typing import NamedTuple
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, ClassVar, Final, NamedTuple
 
 import PIL.Image
 import PIL.ImageCms
 
 from ..utils import get_dependent_url
-from ._compat import PILLOW_VERSION_INFO
-from ._compat import Transpose  # PIL.Image.Transpose
-from .image_info import get_image_info
-from .image_info import get_image_orientation
-from .image_info import SvgImageInfo
-from .image_info import TiffOrientation
-from .image_info import UnknownImageInfo
-
+from ._compat import (
+    PILLOW_VERSION_INFO,
+    Transpose,  # PIL.Image.Transpose
+)
+from .image_info import (
+    SvgImageInfo,
+    TiffOrientation,
+    UnknownImageInfo,
+    get_image_info,
+    get_image_orientation,
+)
 
 if TYPE_CHECKING:
     from _typeshed import SupportsRead
-
     from lektor.builder import Artifact
     from lektor.context import Context
 
@@ -202,9 +197,7 @@ def _scale(x: int, num: float, denom: float) -> int:
     return math.trunc((x * num + denom / 2) // denom)
 
 
-def compute_dimensions(
-    width: int | None, height: int | None, source_width: float, source_height: float
-) -> ImageSize:
+def compute_dimensions(width: int | None, height: int | None, source_width: float, source_height: float) -> ImageSize:
     """Compute "fit"-mode dimensions of thumbnail.
 
     Returns the maximum size of a thumbnail with that has (nearly) the same aspect ratio
@@ -246,9 +239,7 @@ SRGB_PROFILE: Final = PIL.ImageCms.createProfile("sRGB")
 SRGB_PROFILE_BYTES: Final = PIL.ImageCms.ImageCmsProfile(SRGB_PROFILE).tobytes()
 
 
-def _get_icc_transform(
-    icc_profile: bytes, inMode: str, outMode: str
-) -> PIL.ImageCms.ImageCmsTransform:
+def _get_icc_transform(icc_profile: bytes, inMode: str, outMode: str) -> PIL.ImageCms.ImageCmsTransform:
     """Construct ICC transform mapping icc_profile to sRGB."""
     profile = PIL.ImageCms.getOpenProfile(io.BytesIO(icc_profile))
     transform = PIL.ImageCms.buildTransform(profile, SRGB_PROFILE, inMode, outMode)
@@ -328,9 +319,7 @@ def _auto_orient_image(image: PIL.Image.Image) -> PIL.Image.Image:
     return image
 
 
-def _create_thumbnail(
-    image: PIL.Image.Image, params: ThumbnailParams
-) -> PIL.Image.Image:
+def _create_thumbnail(image: PIL.Image.Image, params: ThumbnailParams) -> PIL.Image.Image:
     # XXX: There is an Image.thumbnail() method that can be significantly faster at
     # down-scaling than Image.resize() in some particular cases. Perhaps we want to use
     # that. (Image.thumbnail() never upscales, so we can only use it when down-scaling.)
@@ -397,9 +386,7 @@ def _create_artifact(
         thumbnail.save(fp, **save_params)
 
 
-def _get_thumbnail_url_path(
-    source_url_path: str, thumbnail_params: ThumbnailParams
-) -> str:
+def _get_thumbnail_url_path(source_url_path: str, thumbnail_params: ThumbnailParams) -> str:
     source_ext = posixpath.splitext(source_url_path)[1]
     # leave ext unchanged from source if valid for the thumbnail format
     ext = thumbnail_params.get_ext(source_ext)
@@ -438,10 +425,7 @@ def make_image_thumbnail(
         size = compute_dimensions(width, height, image_info.width, image_info.height)
     else:
         if width is None or height is None:
-            raise ValueError(
-                f'"{mode.value}" mode requires both `width` and `height` '
-                "to be specified."
-            )
+            raise ValueError(f'"{mode.value}" mode requires both `width` and `height` to be specified.')
         if upscale is None:
             upscale = True
         size = ImageSize(width, height)

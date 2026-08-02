@@ -114,9 +114,7 @@ class Pagination:
             # pylint: disable=chained-comparison
             if (
                 num <= left_edge
-                or (
-                    num >= self.page - left_current and num <= self.page + right_current
-                )
+                or (num >= self.page - left_current and num <= self.page + right_current)
                 or num > self.pages - right_edge
             ):
                 if last + 1 != num:

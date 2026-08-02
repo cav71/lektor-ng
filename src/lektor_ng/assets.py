@@ -3,9 +3,7 @@ from __future__ import annotations
 import posixpath
 import warnings
 from collections import defaultdict
-from collections.abc import Generator
-from collections.abc import Iterable
-from collections.abc import Sequence
+from collections.abc import Generator, Iterable, Sequence
 from contextlib import suppress
 from itertools import takewhile
 from operator import methodcaller
@@ -15,9 +13,7 @@ from typing import TYPE_CHECKING
 from werkzeug.utils import cached_property
 
 from lektor_ng.sourceobj import SourceObject
-from lektor_ng.utils import deprecated
-from lektor_ng.utils import DeprecatedWarning
-
+from lektor_ng.utils import DeprecatedWarning, deprecated
 
 if TYPE_CHECKING:
     from _typeshed import StrPath
@@ -34,9 +30,7 @@ def get_asset_root(pad: Pad, asset_roots: Iterable[StrPath]) -> Directory:
     Any paths listed in ``asset_roots`` that do not refer to a directory
     are silently ignored.
     """
-    root_paths = tuple(
-        Path(root).absolute() for root in asset_roots if Path(root).is_dir()
-    )
+    root_paths = tuple(Path(root).absolute() for root in asset_roots if Path(root).is_dir())
     return Directory(pad, parent=None, name="", paths=root_paths)
 
 
@@ -60,9 +54,7 @@ class Asset(SourceObject):
     source_classification = "asset"
     artifact_extension = ""
 
-    def __init__(
-        self, pad: Pad, name: str, parent: Asset | None, paths: tuple[Path, ...]
-    ):
+    def __init__(self, pad: Pad, name: str, parent: Asset | None, paths: tuple[Path, ...]):
         super().__init__(pad)
         self.name = name
         self.parent = parent

@@ -1,14 +1,12 @@
 import re
 
-from jinja2 import is_undefined
-from jinja2 import TemplateNotFound
+from jinja2 import TemplateNotFound, is_undefined
 from markupsafe import Markup
 
 from lektor_ng.constants import PRIMARY_ALT
 from lektor_ng.context import get_ctx
 from lektor_ng.metaformat import tokenize
 from lektor_ng.types.base import Type
-
 
 _block_re = re.compile(r"^####\s*([^#]*?)\s*####\s*$")
 _line_unescape_re = re.compile(r"^#####(.*?)#####(\s*)$")
@@ -38,9 +36,7 @@ def discover_relevant_flowblock_models(flow, pad, record, alt):
         for field in flowblock.fields:
             if isinstance(field.type, FlowType):
                 if field.type.flow_blocks is None:
-                    raise RuntimeError(
-                        "Nested flow-blocks require explicit list of involved blocks."
-                    )
+                    raise RuntimeError("Nested flow-blocks require explicit list of involved blocks.")
                 to_process.extend(field.type.flow_blocks)
 
     rv = {}
@@ -180,19 +176,13 @@ class FlowType(Type):
 
     def __init__(self, env, options):
         Type.__init__(self, env, options)
-        self.flow_blocks = [
-            x.strip() for x in options.get("flow_blocks", "").split(",") if x.strip()
-        ] or None
+        self.flow_blocks = [x.strip() for x in options.get("flow_blocks", "").split(",") if x.strip()] or None
 
     def value_from_raw(self, raw):
         if raw.value is None:
             return raw.missing_value("Missing flow")
         if raw.pad is None:
-            return raw.missing_value(
-                "Flow value was technically present "
-                "but used in a place where it cannot "
-                "be used."
-            )
+            return raw.missing_value("Flow value was technically present but used in a place where it cannot be used.")
 
         db = raw.pad.db
         rv = []
@@ -222,10 +212,7 @@ class FlowType(Type):
 
         block_order = self.flow_blocks
         if block_order is None:
-            block_order = [
-                k
-                for k, v in sorted(pad.db.flowblocks.items(), key=lambda x: x[1].order)
-            ]
+            block_order = [k for k, v in sorted(pad.db.flowblocks.items(), key=lambda x: x[1].order)]
         rv["flowblock_order"] = block_order
 
         return rv

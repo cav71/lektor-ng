@@ -3,13 +3,11 @@ import re
 import warnings
 
 import pytest
-from markupsafe import escape
-from markupsafe import Markup
+from markupsafe import Markup, escape
 
 from lektor_ng.context import Context
 from lektor_ng.datamodel import Field
-from lektor_ng.types.base import BadValue
-from lektor_ng.types.base import Undefined
+from lektor_ng.types.base import BadValue, Undefined
 from lektor_ng.types.formats import MarkdownDescriptor
 
 
@@ -59,12 +57,8 @@ def test_markdown_links(env, pad):
         return str(rv.__get__(source)).strip()
 
     with Context(pad=pad):
-        assert md("[foo](http://example.com/)") == (
-            '<p><a href="http://example.com/">foo</a></p>'
-        )
-        assert md("[foo](javascript:foo)") == (
-            '<p><a href="javascript:foo">foo</a></p>'
-        )
+        assert md("[foo](http://example.com/)") == ('<p><a href="http://example.com/">foo</a></p>')
+        assert md("[foo](javascript:foo)") == ('<p><a href="javascript:foo">foo</a></p>')
 
         img = (
             "iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAHElEQVQI12P4"
@@ -81,9 +75,7 @@ def test_markdown_linking(pad, builder):
 
     prog, _ = builder.build(blog_index)
     with prog.artifacts[0].open("rb") as f:
-        assert (
-            b'Look at my <a href="2015/12/post1/hello.txt">attachment</a>'
-        ) in f.read()
+        assert (b'Look at my <a href="2015/12/post1/hello.txt">attachment</a>') in f.read()
 
     blog_post = pad.get("/blog/post1")
 
@@ -238,7 +230,7 @@ def test_datetime_no_timezone(env, pad, value, expected):
 
 
 def utc(*args):
-    return datetime.datetime(*args, tzinfo=datetime.timezone.utc)
+    return datetime.datetime(*args, tzinfo=datetime.UTC)
 
 
 @pytest.mark.parametrize(

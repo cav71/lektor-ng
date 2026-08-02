@@ -3,28 +3,23 @@
 from __future__ import annotations
 
 import numbers
-from collections.abc import Callable
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from contextlib import suppress
 from datetime import datetime
 from fractions import Fraction
 from functools import wraps
 from pathlib import Path
-from typing import Any
-from typing import TYPE_CHECKING
-from typing import TypeAlias
-from typing import TypeVar
+from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar
 
 import PIL.Image
 
-from ._compat import ExifTags
-from ._compat import UnidentifiedImageError
+from ._compat import ExifTags, UnidentifiedImageError
 from .image_info import TiffOrientation
 
-
 if TYPE_CHECKING:
-    from _typeshed import SupportsRead
     from typing import Literal
+
+    from _typeshed import SupportsRead
 
 
 def _combine_make(make: str | None, model: str | None) -> str:
@@ -60,14 +55,8 @@ _EXIF_FLASH_VALUES = {
     69: "Flash fired, red-eye reduction mode, return light not detected",
     71: "Flash fired, red-eye reduction mode, return light detected",
     73: "Flash fired, compulsory flash mode, red-eye reduction mode",
-    77: (
-        "Flash fired, compulsory flash mode, red-eye reduction mode, "
-        "return light not detected"
-    ),
-    79: (
-        "Flash fired, compulsory flash mode, red-eye reduction mode, "
-        "return light detected"
-    ),
+    77: ("Flash fired, compulsory flash mode, red-eye reduction mode, return light not detected"),
+    79: ("Flash fired, compulsory flash mode, red-eye reduction mode, return light detected"),
     89: "Flash fired, auto mode, red-eye reduction mode",
     93: "Flash fired, auto mode, return light not detected, red-eye reduction mode",
     95: "Flash fired, auto mode, return light detected, red-eye reduction mode",
@@ -120,9 +109,7 @@ def _to_focal_length(value: ExifReal) -> str:
     return f"{_to_float(value):g}mm"
 
 
-def _to_degrees(
-    coords: tuple[ExifReal, ExifReal, ExifReal], hemisphere: Literal["E", "W", "N", "S"]
-) -> float:
+def _to_degrees(coords: tuple[ExifReal, ExifReal, ExifReal], hemisphere: Literal["E", "W", "N", "S"]) -> float:
     degrees, minutes, seconds = map(_to_float, coords)
     degrees = degrees + minutes / 60 + seconds / 3600
     if hemisphere in {"S", "W"}:

@@ -1,11 +1,10 @@
-from configparser import RawConfigParser, ConfigParser, MissingSectionHeaderError
 import dataclasses as dc
 import io
-from pathlib import Path
-from typing import Any, Generator, Iterator
-import pickle
 import os
-
+from collections.abc import Generator, Iterator
+from configparser import ConfigParser, MissingSectionHeaderError
+from pathlib import Path
+from typing import Any
 
 GLOBAL_NAME = "xyz"
 
@@ -47,11 +46,7 @@ class IniFile:
         while section.endswith("."):
             section, option = section[:-1], f".{option}"
         if not section:
-            return (
-                self.config[GLOBAL_NAME][option]
-                if option in self.config[GLOBAL_NAME]
-                else default
-            )
+            return self.config[GLOBAL_NAME][option] if option in self.config[GLOBAL_NAME] else default
         if section not in self.sections():
             return default
         return self.config[section].get(option, default)

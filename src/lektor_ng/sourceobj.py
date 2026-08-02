@@ -2,16 +2,13 @@ from __future__ import annotations
 
 import posixpath
 from typing import TYPE_CHECKING
-from urllib.parse import parse_qsl
-from urllib.parse import urlsplit
+from urllib.parse import parse_qsl, urlsplit
 from weakref import ref as weakref
 
 from lektor_ng.constants import PRIMARY_ALT
 from lektor_ng.context import ignore_url_unaffecting_dependencies
 from lektor_ng.reporter import reporter
-from lektor_ng.utils import is_path_child_of
-from lektor_ng.utils import join_path
-
+from lektor_ng.utils import is_path_child_of, join_path
 
 if TYPE_CHECKING:
     from lektor_ng.db import Pad
@@ -211,9 +208,7 @@ class SourceObject:
                 url_path = _join_url_path(self, url.path)
                 query = url.query
 
-            result = self.pad.make_url(
-                url_path, absolute=absolute, external=external, base_url=base_url
-            )
+            result = self.pad.make_url(url_path, absolute=absolute, external=external, base_url=base_url)
             resolved = urlsplit(result)._replace(query=query, fragment=url.fragment)
         return resolved.geturl()
 
@@ -241,10 +236,7 @@ def _join_url_path(source, path):
         # Source is not a container type (e.g. it is an attachment).
         # Punt and treat path as relative to the source's containing directory.
         content_path = posixpath.dirname(source.url_path) or "/"
-        reporter.report_generic(
-            f"Suspicious use of relative URL {path!r} "
-            f"from non-container source {source!r}"
-        )
+        reporter.report_generic(f"Suspicious use of relative URL {path!r} from non-container source {source!r}")
     return posixpath.join(content_path, path)
 
 
@@ -270,9 +262,7 @@ class DBSourceObject(SourceObject):
             return True  # optimization
         if other.__class__ is not self.__class__:
             return False  # optimization
-        return (
-            other.alt == self.alt and other.path == self.path and other.pad == self.pad
-        )
+        return other.alt == self.alt and other.path == self.path and other.pad == self.pad
 
     def __hash__(self):
         return hash((self.path, self.alt))

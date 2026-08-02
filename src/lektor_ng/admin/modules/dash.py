@@ -1,10 +1,6 @@
 from typing import Any
 
-from flask import Blueprint
-from flask import current_app
-from flask import render_template
-from flask import request
-
+from flask import Blueprint, current_app, render_template, request
 
 bp = Blueprint("dash", __name__, url_prefix="/admin")
 

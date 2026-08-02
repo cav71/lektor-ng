@@ -4,10 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from lektor_ng.assets import Directory
-from lektor_ng.assets import File
-from lektor_ng.assets import get_asset
-from lektor_ng.assets import get_asset_root
+from lektor_ng.assets import Directory, File, get_asset, get_asset_root
 from lektor_ng.project import Project
 
 
@@ -115,9 +112,7 @@ def test_asset_children(asset, child_names):
 
 @pytest.mark.parametrize("asset_path", ["/static"])
 def test_asset_children_no_children_if_dir_unreadable(asset):
-    asset._paths = tuple(
-        path.with_name(path.name + "-missing") for path in asset._paths
-    )
+    asset._paths = tuple(path.with_name(path.name + "-missing") for path in asset._paths)
     assert len(set(asset.children)) == 0
 
 

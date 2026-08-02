@@ -30,9 +30,7 @@ def scratch_project_data(scratch_project_data):
 @pytest.fixture
 def compile_template(scratch_env):
     def compile_template(source, name="tmpl.html"):
-        Path(scratch_env.root_path, "templates", name).write_text(
-            source, encoding="utf-8"
-        )
+        Path(scratch_env.root_path, "templates", name).write_text(source, encoding="utf-8")
         return scratch_env.jinja_env.get_template(name)
 
     return compile_template
@@ -66,9 +64,7 @@ def test_jinja2_feature_with(compile_template):
 
 
 def test_jinja2_feature_do(compile_template):
-    tmpl = compile_template(
-        "{% set x = ['a'] %}{% do x.append('b') %}{{ x|join('-') }}"
-    )
+    tmpl = compile_template("{% set x = ['a'] %}{% do x.append('b') %}{{ x|join('-') }}")
     assert tmpl.render() == "a-b"
 
 
@@ -81,9 +77,7 @@ def test_jinja2_markdown_filter(compile_template):
 
 @pytest.mark.usefixtures("bogus_context")
 def test_jinja2_markdown_filter_resolve_links(compile_template):
-    tmpl = compile_template(
-        "{{ '[subpage](sub-page)' | markdown(resolve_links='always') }}"
-    )
+    tmpl = compile_template("{{ '[subpage](sub-page)' | markdown(resolve_links='always') }}")
     assert re.search(r"<a.*\bhref=(['\"])sub-page/\1.*>subpage</a>", tmpl.render())
 
 
@@ -97,26 +91,20 @@ def test_jinja2_markdown_filter_resolve_links(compile_template):
 )
 @pytest.mark.usefixtures("bogus_context")
 def test_jinja2_markdown_filter_noresolve_links(compile_template, resolve_links):
-    tmpl = compile_template(
-        f"{{{{ '[subpage](sub-page)' | markdown(resolve_links={resolve_links!r}) }}}}"
-    )
+    tmpl = compile_template(f"{{{{ '[subpage](sub-page)' | markdown(resolve_links={resolve_links!r}) }}}}")
     assert re.search(r"<a.*\bhref=(['\"])sub-page\1.*>subpage</a>", tmpl.render())
 
 
 @pytest.mark.parametrize("source_path", [None])
 @pytest.mark.usefixtures("bogus_context")
 def test_jinja2_markdown_filter_resolve_raises_if_no_source_obj(compile_template):
-    tmpl = compile_template(
-        "{{ '[subpage](sub-page)' | markdown(resolve_links='always') }}"
-    )
+    tmpl = compile_template("{{ '[subpage](sub-page)' | markdown(resolve_links='always') }}")
     with pytest.raises(RuntimeError) as exc_info:
         tmpl.render()
     assert re.search(r"\bsource object\b.*\brequired\b", str(exc_info.value))
 
 
-@pytest.mark.skipif(
-    not hasattr(sys, "getrefcount"), reason="interpreter does not support ref counting"
-)
+@pytest.mark.skipif(not hasattr(sys, "getrefcount"), reason="interpreter does not support ref counting")
 def test_no_reference_cycle_in_environment(project):
     ref = weakref.ref(project.make_env(load_plugins=False))
     # With ref counts (and no ref cycle), the environment should be immediately
@@ -165,48 +153,36 @@ def dates_filter(request: pytest.FixtureRequest) -> str:
     return request.param
 
 
-def test_dates_format_filter_handles_undefined(
-    env: Environment, dates_filter: str
-) -> None:
+def test_dates_format_filter_handles_undefined(env: Environment, dates_filter: str) -> None:
     template = env.jinja_env.from_string(f"{{{{ undefined | {dates_filter} }}}}")
     assert template.render() == ""
 
 
-def test_dates_format_filter_raises_type_error_on_bad_arg(
-    env: Environment, dates_filter: str
-) -> None:
+def test_dates_format_filter_raises_type_error_on_bad_arg(env: Environment, dates_filter: str) -> None:
     template = env.jinja_env.from_string(f"{{{{ obj | {dates_filter} }}}}")
     with pytest.raises(TypeError, match="unexpected exception"):
         template.render(obj=object())
 
 
-def test_dates_format_filter_raises_type_error_on_bad_format(
-    env: Environment, dates_filter: str
-) -> None:
+def test_dates_format_filter_raises_type_error_on_bad_format(env: Environment, dates_filter: str) -> None:
     template = env.jinja_env.from_string(f"{{{{ now | {dates_filter}(42) }}}}")
     with pytest.raises(TypeError, match="should be a str"):
         template.render(now=datetime.datetime.now())
 
 
 @pytest.mark.parametrize("arg", ["locale", "tzinfo"])
-def test_dates_format_filter_raises_type_error_on_bad_kwarg(
-    env: Environment, dates_filter: str, arg: str
-) -> None:
+def test_dates_format_filter_raises_type_error_on_bad_kwarg(env: Environment, dates_filter: str, arg: str) -> None:
     template = env.jinja_env.from_string(f"{{{{ now | {dates_filter}({arg}=42) }}}}")
     with pytest.raises(TypeError):
         template.render(now=datetime.datetime.now())
 
 
-def test_bag_gets_site_from_jinja_context(
-    scratch_env: Environment, scratch_pad: Pad
-) -> None:
+def test_bag_gets_site_from_jinja_context(scratch_env: Environment, scratch_pad: Pad) -> None:
     template = scratch_env.jinja_env.from_string("{{ bag('testbag.foo') }}")
     assert template.render(site=scratch_pad) == "bar"
 
 
-def test_bag_gets_site_from_lektor_context(
-    scratch_env: Environment, scratch_pad: Pad
-) -> None:
+def test_bag_gets_site_from_lektor_context(scratch_env: Environment, scratch_pad: Pad) -> None:
     template = scratch_env.jinja_env.from_string("{{ bag('testbag.foo') }}")
     with lektor_ng.context.Context(pad=scratch_pad):
         assert template.render() == "bar"

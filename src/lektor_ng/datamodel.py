@@ -1,19 +1,15 @@
 import errno
 import os
 
-
 from lektor_ng.constants import PRIMARY_ALT
-from lektor_ng.environment.expressions import Expression
-from lektor_ng.environment.expressions import FormatExpression
-from lektor_ng.i18n import generate_i18n_kvs
-from lektor_ng.i18n import get_i18n_block
+from lektor_ng.environment.expressions import Expression, FormatExpression
+from lektor_ng.i18n import generate_i18n_kvs, get_i18n_block
+from lektor_ng.inifile import IniFile
 from lektor_ng.pagination import Pagination
 from lektor_ng.reporter import reporter
 from lektor_ng.types import builtin_types
 from lektor_ng.types.base import RawValue
-from lektor_ng.utils import bool_from_string
-from lektor_ng.utils import slugify
-from lektor_ng.inifile import IniFile
+from lektor_ng.utils import bool_from_string, slugify
 
 
 class ChildConfig:
@@ -48,9 +44,7 @@ class ChildConfig:
 
 
 class PaginationConfig:
-    def __init__(
-        self, env, *, enabled=None, per_page=None, url_suffix=None, items=None
-    ):
+    def __init__(self, env, *, enabled=None, per_page=None, url_suffix=None, items=None):
         self.env = env
         if enabled is None:
             enabled = False
@@ -200,15 +194,11 @@ class Field:
             "name": self.name,
             "label": self.label,
             "label_i18n": self.label_i18n,
-            "hide_label": bool_from_string(
-                self.options.get("hide_label"), default=False
-            ),
+            "hide_label": bool_from_string(self.options.get("hide_label"), default=False),
             "description_i18n": self.description_i18n,
             "type": self.type.to_json(pad, record, alt),
             "default": self.default,
-            "alts_enabled": bool_from_string(
-                self.options.get("alts_enabled"), default=None
-            ),
+            "alts_enabled": bool_from_string(self.options.get("alts_enabled"), default=None),
         }
 
     def deserialize_value(self, value, pad=None):
@@ -343,9 +333,7 @@ class DataModel:
             )
 
         try:
-            return "_".join(
-                self._child_slug_tmpl[1].evaluate(pad, this=data).strip().split()
-            ).strip("/")
+            return "_".join(self._child_slug_tmpl[1].evaluate(pad, this=data).strip().split()).strip("/")
         except Exception as exc:
             reporter.report_generic(f"Failed to expand child slug_format: {exc}")
             return "temp-" + slugify(data["_id"])
@@ -369,10 +357,7 @@ class DataModel:
         if replaced_with is None:
             return None
 
-        if (
-            self._child_replacements is None
-            or self._child_replacements[0] != replaced_with
-        ):
+        if self._child_replacements is None or self._child_replacements[0] != replaced_with:
             self._child_replacements = (
                 replaced_with,
                 Expression(self.env, replaced_with),
@@ -417,9 +402,7 @@ class FlowBlockModel:
         self.button_label = button_label
 
         self.field_map = {x.name: x for x in fields}
-        self.field_map["_flowblock"] = Field(
-            env, name="_flowblock", type=env.types["string"]
-        )
+        self.field_map["_flowblock"] = Field(env, name="_flowblock", type=env.types["string"])
 
     @property
     def name(self):
@@ -431,11 +414,7 @@ class FlowBlockModel:
             "name": self.name,
             "name_i18n": self.name_i18n,
             "filename": self.filename,
-            "fields": [
-                x.to_json(pad, record, alt)
-                for x in _iter_all_fields(self)
-                if x.name != "_flowblock"
-            ],
+            "fields": [x.to_json(pad, record, alt) for x in _iter_all_fields(self) if x.name != "_flowblock"],
             "order": self.order,
             "button_label": self.button_label,
         }
@@ -524,9 +503,7 @@ def fields_from_data(env, data, parent_fields=None):
         known_fields.add(name)
 
     if parent_fields is not None:
-        prepended_fields = [
-            field for field in parent_fields if field.name not in known_fields
-        ]
+        prepended_fields = [field for field in parent_fields if field.name not in known_fields]
         fields = prepended_fields + fields
 
     return fields
@@ -547,9 +524,7 @@ def datamodel_from_data(env, model_data, parent=None):
             return node
         return None
 
-    fields = fields_from_data(
-        env, model_data["fields"], parent and parent.fields or None
-    )
+    fields = fields_from_data(env, model_data["fields"], parent and parent.fields or None)
 
     return DataModel(
         env,
@@ -669,9 +644,7 @@ def load_flowblocks(env):
 
     for path in paths:
         for flowblock_id, inifile in iter_inis(path):
-            rv[flowblock_id] = flowblock_from_data(
-                env, flowblock_data_from_ini(flowblock_id, inifile)
-            )
+            rv[flowblock_id] = flowblock_from_data(env, flowblock_data_from_ini(flowblock_id, inifile))
 
     return rv
 

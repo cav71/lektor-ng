@@ -9,22 +9,21 @@ from contextlib import ExitStack
 from itertools import chain
 from pathlib import Path
 from shutil import which
-from subprocess import CalledProcessError
-from subprocess import DEVNULL
-from subprocess import PIPE
-from subprocess import run
+from subprocess import DEVNULL, PIPE, CalledProcessError, run
 
 import pytest
 
-from lektor_ng.publisher import _CompatURLStr
-from lektor_ng.publisher import _ssh_command
-from lektor_ng.publisher import _ssh_key_file
-from lektor_ng.publisher import Command
-from lektor_ng.publisher import GithubPagesPublisher
-from lektor_ng.publisher import GitRepo
-from lektor_ng.publisher import publish
-from lektor_ng.publisher import Publisher
-from lektor_ng.publisher import PublishError
+from lektor_ng.publisher import (
+    Command,
+    GithubPagesPublisher,
+    GitRepo,
+    Publisher,
+    PublishError,
+    _CompatURLStr,
+    _ssh_command,
+    _ssh_key_file,
+    publish,
+)
 from lektor_ng.utils import locate_executable
 
 
@@ -194,15 +193,13 @@ def test_Command_triggers_no_warnings():
             gc.collect()
 
     if client_is_alive():
-        warnings.warn(  # noqa: B028
+        warnings.warn(
             "Unable to trigger garbage collection of Command instance, "
             "so unable to check for warnings issued during finalization."
         )
 
 
-@pytest.mark.skipif(
-    which("rsync") is None, reason="rsync is not available on this system"
-)
+@pytest.mark.skipif(which("rsync") is None, reason="rsync is not available on this system")
 @pytest.mark.parametrize("delete", ["yes", "no"])
 def test_RsyncPublisher_integration(env, tmp_path, delete):
     # Integration test of local rsync deployment
@@ -221,10 +218,7 @@ def test_RsyncPublisher_integration(env, tmp_path, delete):
     for line in event_iter:
         print(line)
 
-    target_files = {
-        os.fspath(_.relative_to(target_path)): _.read_text()
-        for _ in target_path.iterdir()
-    }
+    target_files = {os.fspath(_.relative_to(target_path)): _.read_text() for _ in target_path.iterdir()}
     assert target_files == files
 
 
@@ -292,10 +286,7 @@ def test_GitRepo_set_https_credentials(gitrepo):
 
 def test_GitRepo_set_https_credentials_no_cred(gitrepo):
     gitrepo.set_https_credentials({})
-    assert not any(
-        line.startswith("credential.helper")
-        for line in gitrepo.popen("config", "--local", "--list")
-    )
+    assert not any(line.startswith("credential.helper") for line in gitrepo.popen("config", "--local", "--list"))
 
 
 def test_GitRepo_add_to_index(gitrepo):
@@ -350,9 +341,7 @@ def no_scary_output(capsys):
 
     yield
     captured = capsys.readouterr()
-    scary_output = list(
-        filter(is_scary, chain(captured.out.splitlines(), captured.err.splitlines()))
-    )
+    scary_output = list(filter(is_scary, chain(captured.out.splitlines(), captured.err.splitlines())))
     assert len(scary_output) == 0
 
 
@@ -397,9 +386,7 @@ def test_GitRepo_publish_ghpages_cname(publish_ghpages, upstream_repo, work_tree
     assert upstream_repo.ls_files("gh-pages") == set()
 
 
-def test_GitRepo_publish_ghpages_ignores_lektor_dir(
-    publish_ghpages, upstream_repo, work_tree
-):
+def test_GitRepo_publish_ghpages_ignores_lektor_dir(publish_ghpages, upstream_repo, work_tree):
     lektor_dir = work_tree / ".lektor"
     lektor_dir.mkdir()
     lektor_dir.joinpath("ignored").write_text("should not be published")
@@ -415,15 +402,10 @@ def test_GitRepo_publish_ghpages_no_changes(publish_ghpages, upstream_repo):
     for line in publish_ghpages(upstream_repo.url, "gh-pages", "example.com"):
         print(line)
     assert upstream_repo.ls_files("gh-pages") == {"CNAME"}
-    assert any(
-        "No changes" in line
-        for line in publish_ghpages(upstream_repo.url, "gh-pages", "example.com")
-    )
+    assert any("No changes" in line for line in publish_ghpages(upstream_repo.url, "gh-pages", "example.com"))
 
 
-def test_GitRepo_publish_ghpages_discard_history(
-    publish_ghpages, upstream_repo, work_tree
-):
+def test_GitRepo_publish_ghpages_discard_history(publish_ghpages, upstream_repo, work_tree):
     for line in publish_ghpages(upstream_repo.url, "gh-pages", "example.com"):
         print(line)
     assert upstream_repo.ls_files("gh-pages") == {"CNAME"}
@@ -466,9 +448,7 @@ def ghp_publisher(env, output_path):
     ],
 )
 @pytest.mark.skipif(not locate_executable("git"), reason="no git")
-def test_GithubPagesPublisher_publish(
-    ghp_publisher, output_path, mocker, target_url, publish_args, warns
-):
+def test_GithubPagesPublisher_publish(ghp_publisher, output_path, mocker, target_url, publish_args, warns):
     GitRepo = mocker.patch("lektor_ng.publisher.GitRepo", spec_set=True)
     repo = mocker.Mock(spec_set=dir(GitRepo))
     repo.publish_ghpages.return_value = iter(["Published!"])
@@ -553,9 +533,7 @@ def test_GithubPagesPublisher_parse_url(ghp_publisher, target_url, expected):
 def test_GithubPagesPublisher_parse_url_warns_on_default_master_branch(ghp_publisher):
     target_url = "ghpages://owner/owner.github.io"
     with pytest.deprecated_call():
-        push_url, branch, cname, preserve_history, warnings = ghp_publisher._parse_url(
-            target_url
-        )
+        push_url, branch, cname, preserve_history, warnings = ghp_publisher._parse_url(target_url)
     assert (push_url, branch, cname, preserve_history) == (
         "ssh://git@github.com/owner/owner.github.io.git",
         "master",
@@ -604,9 +582,7 @@ def test_GithubPagesPublisher_parse_url_failures(ghp_publisher, target_url, expe
         ),
     ],
 )
-def test_GithubPagesPublisher_parse_credentials(
-    ghp_publisher, credentials, target_url, expected
-):
+def test_GithubPagesPublisher_parse_credentials(ghp_publisher, credentials, target_url, expected):
     assert ghp_publisher._parse_credentials(credentials, target_url) == expected
 
 

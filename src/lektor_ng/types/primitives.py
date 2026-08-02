@@ -1,6 +1,5 @@
 import re
-from datetime import date
-from datetime import datetime
+from datetime import date, datetime
 
 from babel.dates import get_timezone
 from markupsafe import Markup

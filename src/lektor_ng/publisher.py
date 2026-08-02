@@ -6,28 +6,14 @@ import io
 import os
 import posixpath
 import urllib.parse
-from collections.abc import Callable
-from collections.abc import Generator
-from collections.abc import Iterable
-from collections.abc import Iterator
-from collections.abc import Mapping
-from collections.abc import Sequence
-from contextlib import AbstractContextManager
-from contextlib import contextmanager
-from contextlib import ExitStack
-from contextlib import suppress
+from collections.abc import Callable, Generator, Iterable, Iterator, Mapping, Sequence
+from contextlib import AbstractContextManager, ExitStack, contextmanager, suppress
 from ftplib import Error as FTPError
 from inspect import cleandoc
 from pathlib import Path
-from subprocess import CalledProcessError
-from subprocess import CompletedProcess
-from subprocess import DEVNULL
-from subprocess import PIPE
-from subprocess import STDOUT
+from subprocess import DEVNULL, PIPE, STDOUT, CalledProcessError, CompletedProcess
 from tempfile import TemporaryDirectory
-from typing import Any
-from typing import NoReturn
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, NoReturn
 from urllib.parse import urlsplit
 from warnings import warn
 
@@ -35,15 +21,10 @@ from werkzeug.datastructures import MultiDict
 
 from lektor_ng.compat import werkzeug_urls_URL
 from lektor_ng.exception import LektorException
-from lektor_ng.utils import bool_from_string
-from lektor_ng.utils import locate_executable
-from lektor_ng.utils import portable_popen
-
+from lektor_ng.utils import bool_from_string, locate_executable, portable_popen
 
 if TYPE_CHECKING:  # pragma: no cover
-    from _typeshed import StrOrBytesPath
-    from _typeshed import StrPath
-
+    from _typeshed import StrOrBytesPath, StrPath
     from lektor.environment import Environment
 
 
@@ -77,9 +58,7 @@ def _ssh_key_file(credentials: Mapping[str, str] | None) -> Iterator[StrPath | N
 
 
 @contextmanager
-def _ssh_command(
-    credentials: Mapping[str, str] | None, port: int | None = None
-) -> Iterator[str | None]:
+def _ssh_command(credentials: Mapping[str, str] | None, port: int | None = None) -> Iterator[str | None]:
     with _ssh_key_file(credentials) as key_file:
         args = []
         if port:
@@ -197,9 +176,7 @@ class Command(AbstractContextManager["Command"]):
         else:
             self._output = None
 
-    def _communicate(
-        self, input: str | None, capture_stdout: bool, capture: bool
-    ) -> Iterator[str] | None:
+    def _communicate(self, input: str | None, capture_stdout: bool, capture: bool) -> Iterator[str] | None:
         proc = self._cmd
         try:
             if capture_stdout:
@@ -253,7 +230,7 @@ class Command(AbstractContextManager["Command"]):
         """
         return self._cmd.returncode
 
-    def __exit__(self, *__: Any) -> None:
+    def __exit__(self, *__: object) -> None:
         self.close()
 
     def __iter__(self) -> Generator[str, None, CompletedProcess[str]]:
@@ -343,9 +320,7 @@ class FtpConnection:
         credentials = credentials or {}
         url = urlsplit(target_url)
         if url.hostname is None:
-            raise PublishError(
-                "No host name was specified in the target URL ({target_url})"
-            )
+            raise PublishError("No host name was specified in the target URL ({target_url})")
         self.con = self.make_connection()
         self.url = url
         self.username = credentials.get("username") or url.username
@@ -664,11 +639,7 @@ class GitRepo(AbstractContextManager["GitRepo"]):
         environ = {**os.environ, "GIT_WORK_TREE": str(work_tree)}
 
         for what, default in [("NAME", "Lektor Bot"), ("EMAIL", "bot@getlektor.com")]:
-            value = (
-                environ.get(f"GIT_AUTHOR_{what}")
-                or environ.get(f"GIT_COMMITTER_{what}")
-                or default
-            )
+            value = environ.get(f"GIT_AUTHOR_{what}") or environ.get(f"GIT_COMMITTER_{what}") or default
             for key in f"GIT_AUTHOR_{what}", f"GIT_COMMITTER_{what}":
                 environ[key] = environ.get(key) or value
 
@@ -679,7 +650,7 @@ class GitRepo(AbstractContextManager["GitRepo"]):
 
             self._exit_stack = stack.pop_all()
 
-    def __exit__(self, *__: Any) -> None:
+    def __exit__(self, *__: object) -> None:
         self._exit_stack.close()
 
     def _popen(self, args: Sequence[str], **kwargs: Any) -> Command:
@@ -695,9 +666,7 @@ class GitRepo(AbstractContextManager["GitRepo"]):
         capture_stdout: bool = False,
     ) -> Command:
         """Run a git subcommand."""
-        return self._popen(
-            args, check=check, input=input, capture_stdout=capture_stdout
-        )
+        return self._popen(args, check=check, input=input, capture_stdout=capture_stdout)
 
     def run(
         self,
@@ -707,9 +676,7 @@ class GitRepo(AbstractContextManager["GitRepo"]):
         capture_stdout: bool = False,
     ) -> CompletedProcess[str]:
         """Run a git subcommand and wait for completion."""
-        return self._popen(
-            args, check=check, input=input, capture_stdout=capture_stdout, capture=False
-        ).result()
+        return self._popen(args, check=check, input=input, capture_stdout=capture_stdout, capture=False).result()
 
     def set_ssh_credentials(self, credentials: Mapping[str, str]) -> None:
         """Set up git ssh credentials.
@@ -744,9 +711,7 @@ class GitRepo(AbstractContextManager["GitRepo"]):
         This creates file named ``filename`` with content ``content`` in the git
         index.
         """
-        oid = self.run(
-            "hash-object", "-w", "--stdin", input=content, capture_stdout=True
-        ).stdout.strip()
+        oid = self.run("hash-object", "-w", "--stdin", input=content, capture_stdout=True).stdout.strip()
         self.run("update-index", "--add", "--cacheinfo", "100644", oid, filename)
 
     def publish_ghpages(
@@ -775,24 +740,18 @@ class GitRepo(AbstractContextManager["GitRepo"]):
                 yield f"Creating new branch {branch}"
 
         # At this point, the index is still empty. Add all but .lektor dir to index
-        yield from _prefix_output(
-            self.popen("add", "--force", "--all", "--", ".", ":(exclude).lektor")
-        )
+        yield from _prefix_output(self.popen("add", "--force", "--all", "--", ".", ":(exclude).lektor"))
         if cname is not None:
             self.add_to_index("CNAME", f"{cname}\n")
 
         # Check for changes
-        diff_cmd = self.popen(
-            "diff", "--cached", "--no-renames", "--exit-code", "--quiet", check=False
-        )
+        diff_cmd = self.popen("diff", "--cached", "--no-renames", "--exit-code", "--quiet", check=False)
         yield from _prefix_output(diff_cmd)
         if diff_cmd.returncode == 0:
             yield "No changes to publish☺"
         elif diff_cmd.returncode == 1:
             yield "Creating commit"
-            yield from _prefix_output(
-                self.popen("commit", "--quiet", "--message", "Synchronized build")
-            )
+            yield from _prefix_output(self.popen("commit", "--quiet", "--message", "Synchronized build"))
             push_cmd = ["push", push_url, f"HEAD:{refspec}"]
             if not preserve_history:
                 push_cmd.insert(1, "--force")
@@ -820,9 +779,7 @@ class GithubPagesPublisher(Publisher):
         if not locate_executable("git"):
             self.fail("git executable not found; cannot deploy.")
 
-        push_url, branch, cname, preserve_history, warnings = self._parse_url(
-            target_url
-        )
+        push_url, branch, cname, preserve_history, warnings = self._parse_url(target_url)
         creds = self._parse_credentials(credentials, target_url)
 
         yield from iter(warnings)
@@ -834,9 +791,7 @@ class GithubPagesPublisher(Publisher):
                 repo.set_ssh_credentials(creds)
             yield from repo.publish_ghpages(push_url, branch, cname, preserve_history)
 
-    def _parse_url(
-        self, target_url: str
-    ) -> tuple[str, str, str | None, bool, Sequence[str]]:
+    def _parse_url(self, target_url: str) -> tuple[str, str, str | None, bool, Sequence[str]]:
         url = urlsplit(target_url)
         if not url.hostname:
             self.fail("github owner missing from target URL")
@@ -854,13 +809,9 @@ class GithubPagesPublisher(Publisher):
 
         if not branch:
             if gh_project == f"{gh_owner}.github.io":
-                warnings.extend(
-                    cleandoc(self._EXPLICIT_BRANCH_SUGGESTED_MSG).splitlines()
-                )
+                warnings.extend(cleandoc(self._EXPLICIT_BRANCH_SUGGESTED_MSG).splitlines())
                 warn(
-                    " ".join(
-                        cleandoc(self._DEFAULT_BRANCH_DEPRECATION_MSG).splitlines()
-                    ),
+                    " ".join(cleandoc(self._DEFAULT_BRANCH_DEPRECATION_MSG).splitlines()),
                     # deprecated in version 3.4.0
                     category=FutureWarning,
                     stacklevel=1,
@@ -903,9 +854,7 @@ class GithubPagesPublisher(Publisher):
     """
 
     @staticmethod
-    def _parse_credentials(
-        credentials: Mapping[str, str] | None, target_url: str
-    ) -> Mapping[str, str]:
+    def _parse_credentials(credentials: Mapping[str, str] | None, target_url: str) -> Mapping[str, str]:
         url = urlsplit(target_url)
         creds = dict(credentials or {})
         # Fill in default username/password from target url

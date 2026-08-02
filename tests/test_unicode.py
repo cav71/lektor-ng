@@ -44,7 +44,4 @@ def test_bad_file_ignored(pad, builder):
         assert len(failures) == 1
         exc_info = failures[0]["exc_info"]
         assert exc_info[0] is BuildError
-        assert (
-            "The URL for this record contains non "
-            "ASCII characters" in exc_info[1].message
-        )
+        assert "The URL for this record contains non ASCII characters" in exc_info[1].message

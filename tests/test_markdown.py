@@ -6,17 +6,21 @@ from markupsafe import Markup
 
 import lektor_ng.markdown
 from lektor_ng.context import Context
-from lektor_ng.markdown import controller_class
-from lektor_ng.markdown import get_controller
-from lektor_ng.markdown import make_markdown
-from lektor_ng.markdown import Markdown
-from lektor_ng.markdown import markdown_to_html
-from lektor_ng.markdown import MISTUNE_VERSION
-from lektor_ng.markdown.controller import get_renderer_context
-from lektor_ng.markdown.controller import RendererContext
-from lektor_ng.markdown.controller import RendererHelper
-from lektor_ng.markdown.controller import require_ctx
-from lektor_ng.markdown.controller import UnknownPluginError
+from lektor_ng.markdown import (
+    MISTUNE_VERSION,
+    Markdown,
+    controller_class,
+    get_controller,
+    make_markdown,
+    markdown_to_html,
+)
+from lektor_ng.markdown.controller import (
+    RendererContext,
+    RendererHelper,
+    UnknownPluginError,
+    get_renderer_context,
+    require_ctx,
+)
 from lektor_ng.pluginsystem import Plugin
 
 
@@ -59,9 +63,8 @@ def base_url(record):
 def context(pad, record, base_url):
     if base_url is None:
         base_url = record.url_path
-    with Context(pad=pad) as ctx:
-        with ctx.changed_base_url(base_url):
-            yield ctx
+    with Context(pad=pad) as ctx, ctx.changed_base_url(base_url):
+        yield ctx
 
 
 @pytest.fixture
@@ -475,9 +478,7 @@ def test_field_options_integration(record, field_options):
 # with plugins written for Lektor < 3.4.
 #
 def test_deprecated_ImprovedRenderer(improved_renderer):
-    with pytest.deprecated_call(
-        match=r"lektor_ng\.markdown\.ImprovedRenderer\b.* deprecated"
-    ) as warnings:
+    with pytest.deprecated_call(match=r"lektor_ng\.markdown\.ImprovedRenderer\b.* deprecated") as warnings:
         # pylint: disable-next=import-outside-toplevel,no-name-in-module
         from lektor_ng.markdown import ImprovedRenderer
     assert all(w.filename == __file__ for w in warnings)
@@ -492,9 +493,7 @@ def test_deprecated_ImprovedRenderer_record(record):
         from lektor_ng.markdown import ImprovedRenderer
     improved_renderer = ImprovedRenderer()
 
-    with pytest.deprecated_call(
-        match=r"Use .*Renderer\.lektor\.record instead"
-    ) as warnings:
+    with pytest.deprecated_call(match=r"Use .*Renderer\.lektor\.record instead") as warnings:
         assert improved_renderer.record is record
     assert all(w.filename == __file__ for w in warnings)
 
@@ -506,26 +505,20 @@ def test_deprecated_ImprovedRenderer_meta(renderer_context):
         from lektor_ng.markdown import ImprovedRenderer
     improved_renderer = ImprovedRenderer()
 
-    with pytest.deprecated_call(
-        match=r"Use .*Renderer\.lektor\.meta instead"
-    ) as warnings:
+    with pytest.deprecated_call(match=r"Use .*Renderer\.lektor\.meta instead") as warnings:
         assert improved_renderer.meta is renderer_context.meta
     assert all(w.filename == __file__ for w in warnings)
 
 
 def test_deprecated_MarkdownConfig(improved_renderer):
-    with pytest.deprecated_call(
-        match=r"lektor_ng\.markdown\.MarkdownConfig\b.* deprecated"
-    ) as warnings:
+    with pytest.deprecated_call(match=r"lektor_ng\.markdown\.MarkdownConfig\b.* deprecated") as warnings:
         config = lektor_ng.markdown.MarkdownConfig()
     assert all(w.filename == __file__ for w in warnings)
     assert config.renderer_base is type(improved_renderer)
 
 
 def test_deprecated_escape(improved_renderer):
-    with pytest.deprecated_call(
-        match=r"lektor_ng\.markdown\.escape\b.* deprecated"
-    ) as warnings:
+    with pytest.deprecated_call(match=r"lektor_ng\.markdown\.escape\b.* deprecated") as warnings:
         assert lektor_ng.markdown.escape("<") == "&lt;"
     assert all(w.filename == __file__ for w in warnings)
 

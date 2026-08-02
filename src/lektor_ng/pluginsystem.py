@@ -8,11 +8,9 @@ from importlib import metadata
 from pathlib import Path
 from weakref import ref as weakref
 
-
 from lektor_ng.context import get_ctx
-from lektor_ng.utils import process_extra_flags
-from lektor_ng.utils import split_camel_case
 from lektor_ng.inifile import IniFile
+from lektor_ng.utils import process_extra_flags, split_camel_case
 
 
 def get_plugin(plugin_id_or_class, env=None):
@@ -20,9 +18,7 @@ def get_plugin(plugin_id_or_class, env=None):
     if env is None:
         ctx = get_ctx()
         if ctx is None:
-            raise RuntimeError(
-                "Context is unavailable and no environment was passed to the function."
-            )
+            raise RuntimeError("Context is unavailable and no environment was passed to the function.")
         env = ctx.env
     plugin_id = env.plugin_ids_by_class.get(plugin_id_or_class, plugin_id_or_class)
     try:

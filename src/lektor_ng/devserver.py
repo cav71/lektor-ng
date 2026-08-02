@@ -5,11 +5,9 @@ import threading
 import traceback
 import webbrowser
 from contextlib import ExitStack
-from typing import NamedTuple
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple
 
-from werkzeug.serving import is_running_from_reloader
-from werkzeug.serving import run_simple
+from werkzeug.serving import is_running_from_reloader, run_simple
 
 from lektor_ng.admin import WebAdmin
 from lektor_ng.builder import Builder
@@ -18,10 +16,8 @@ from lektor_ng.reporter import CliReporter
 from lektor_ng.utils import process_extra_flags
 from lektor_ng.watcher import watch_project
 
-
 if TYPE_CHECKING:
     from _typeshed import StrPath
-
     from lektor.environment import Environment
 
 
@@ -61,9 +57,7 @@ class BackgroundBuilder(threading.Thread):
     def build(self, update_source_info_first: bool = False) -> None:
         try:
             db = Database(self.env)
-            builder = Builder(
-                db.new_pad(), self.output_path, extra_flags=self.extra_flags
-            )
+            builder = Builder(db.new_pad(), self.output_path, extra_flags=self.extra_flags)
             if update_source_info_first:
                 builder.update_all_source_infos()
             builder.build_all()
@@ -129,9 +123,7 @@ def run_server(
 
     with ExitStack() as stack:
         if in_main_process:
-            env.plugin_controller.emit(
-                "server-spawn", bindaddr=bindaddr, extra_flags=extra_flags
-            )
+            env.plugin_controller.emit("server-spawn", bindaddr=bindaddr, extra_flags=extra_flags)
             stack.callback(env.plugin_controller.emit, "server-stop")
 
             background_builder = BackgroundBuilder(

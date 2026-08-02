@@ -2,23 +2,18 @@ from __future__ import annotations
 
 import os
 from collections.abc import Generator
-from typing import Any
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import watchfiles
 
 from lektor_ng.utils import get_cache_dir
 
-
 if TYPE_CHECKING:
     from _typeshed import StrPath
-
     from lektor.environment import Environment
 
 
-def watch_project(
-    env: Environment, output_path: StrPath, **kwargs: Any
-) -> Generator[set[watchfiles.FileChange]]:
+def watch_project(env: Environment, output_path: StrPath, **kwargs: Any) -> Generator[set[watchfiles.FileChange]]:
     """Watch project source files for changes.
 
     Returns an generator that yields sets of changes as they are noticed.

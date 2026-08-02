@@ -12,7 +12,6 @@ from werkzeug.datastructures import MultiDict
 
 from lektor_ng.utils import DeprecatedWarning
 
-
 __all__ = ["werkzeug_urls_URL"]
 
 
@@ -122,9 +121,7 @@ class _CompatURL(urllib.parse.SplitResult):
             )
         )
 
-    def join(
-        self, url: str | tuple[str, str, str, str, str], allow_fragments: bool = True
-    ) -> _CompatURL:
+    def join(self, url: str | tuple[str, str, str, str, str], allow_fragments: bool = True) -> _CompatURL:
         if isinstance(url, tuple):
             url = urllib.parse.urlunsplit(url)
         joined = urllib.parse.urljoin(self.geturl(), url, allow_fragments)

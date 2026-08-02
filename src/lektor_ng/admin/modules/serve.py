@@ -8,30 +8,27 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from zlib import adler32
 
-from flask import abort
-from flask import Blueprint
-from flask import current_app
-from flask import render_template
-from flask import request
-from flask import Response
-from flask import send_file
-from flask import url_for
+from flask import (
+    Blueprint,
+    Response,
+    abort,
+    current_app,
+    render_template,
+    request,
+    send_file,
+    url_for,
+)
 from werkzeug.exceptions import NotFound
 from werkzeug.security import safe_join
 from werkzeug.utils import append_slash_redirect
 
-from lektor_ng.admin.context import get_lektor_context
-from lektor_ng.admin.context import LektorApp
-from lektor_ng.admin.context import LektorContext
-from lektor_ng.assets import Asset
-from lektor_ng.assets import Directory
+from lektor_ng.admin.context import LektorApp, LektorContext, get_lektor_context
+from lektor_ng.assets import Asset, Directory
 from lektor_ng.constants import PRIMARY_ALT
 from lektor_ng.db import Record
 
-
 if TYPE_CHECKING:
-    from flask.typing import ResponseReturnValue
-    from flask.typing import ResponseValue
+    from flask.typing import ResponseReturnValue, ResponseValue
 
     from lektor_ng.builder import Artifact
     from lektor_ng.buildfailures import BuildFailure
@@ -70,9 +67,7 @@ class TooldrawerConfig:
         return self.editUrl is not None or self.livereloadConfig is not None
 
 
-def _inject_tooldrawer(
-    html: bytes, tooldrawer_config: TooldrawerConfig | None
-) -> bytes:
+def _inject_tooldrawer(html: bytes, tooldrawer_config: TooldrawerConfig | None) -> bytes:
     """Add "edit pencil" and "livereload" control  buttons to the text of an HTML
     page."""
     if tooldrawer_config:
@@ -99,10 +94,7 @@ def _send_html_for_editing(
     except (FileNotFoundError, IsADirectoryError, PermissionError):
         abort(404)
     html = _inject_tooldrawer(html, tooldrawer_config)
-    check = (
-        adler32(f"{artifact.dst_filename}\0{hash(tooldrawer_config)}".encode())
-        & 0xFFFFFFFF
-    )
+    check = adler32(f"{artifact.dst_filename}\0{hash(tooldrawer_config)}".encode()) & 0xFFFFFFFF
     resp = Response(html, mimetype=mimetype)
     resp.set_etag(f"{st.st_mtime}-{st.st_size}-{check}")
     return resp
@@ -115,9 +107,7 @@ def _deduce_mimetype(filename: Filename) -> str:
     return mimetype
 
 
-def _checked_send_file(
-    filename: Filename, mimetype: str | None = None
-) -> ResponseValue:
+def _checked_send_file(filename: Filename, mimetype: str | None = None) -> ResponseValue:
     """Same as flask.send_file, except raises NotFound on file errors."""
     # NB: flask.send_file interprets relative paths relative to
     # current_app.root_path. We don't want that.
@@ -173,9 +163,7 @@ class ArtifactServer:
             abort(404)
         return index
 
-    def build_primary_artifact(
-        self, source: SourceObject
-    ) -> tuple[Artifact, BuildFailure | None]:
+    def build_primary_artifact(self, source: SourceObject) -> tuple[Artifact, BuildFailure | None]:
         """Build source object, return primary artifact.
 
         If the build was successfull, returns a tuple of (artifact, ``None``).
@@ -196,9 +184,7 @@ class ArtifactServer:
         return artifact, failure
 
     @staticmethod
-    def handle_build_failure(
-        failure: BuildFailure, tooldrawer_config: TooldrawerConfig | None = None
-    ) -> Response:
+    def handle_build_failure(failure: BuildFailure, tooldrawer_config: TooldrawerConfig | None = None) -> Response:
         """Format build failure to an HTML response."""
         html = render_template("build-failure.html", **failure.data).encode("utf-8")
         html = _inject_tooldrawer(html, tooldrawer_config)
@@ -210,9 +196,7 @@ class ArtifactServer:
             # Asset or VirtualSourceObject — not editable
             return None
         record = source.record
-        alt = (
-            record.alt if record.alt not in (PRIMARY_ALT, primary_alternative) else None
-        )
+        alt = record.alt if record.alt not in (PRIMARY_ALT, primary_alternative) else None
         return url_for("url.edit", path=record.path, alt=alt)
 
     def serve_artifact(self, url_path: str) -> ResponseValue:
@@ -222,11 +206,7 @@ class ArtifactServer:
         # requested a URL that actually wants a trailing slash, we
         # append it.  This is consistent with what apache and nginx do
         # and it ensures our relative urls work.
-        if (
-            not url_path.endswith("/")
-            and source.url_path.endswith("/")
-            and source.url_path != "/"
-        ):
+        if not url_path.endswith("/") and source.url_path.endswith("/") and source.url_path != "/":
             return append_slash_redirect(request.environ)
 
         if source.is_hidden:

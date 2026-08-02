@@ -127,9 +127,7 @@ def test_delete_field(scratch_client, scratch_content_path):
     contents_lr = scratch_content_path / "contents.lr"
 
     assert "\nbody:" in contents_lr.read_text()
-    resp = scratch_client.put(
-        "/admin/api/rawrecord?path=%2F", json={"path": "/", "data": {"body": None}}
-    )
+    resp = scratch_client.put("/admin/api/rawrecord?path=%2F", json={"path": "/", "data": {"body": None}})
     assert resp.status_code == 200
     assert "\nbody:" not in contents_lr.read_text()
 
@@ -348,9 +346,7 @@ def test_add_new_record_bad_request(scratch_client, scratch_project, path, id):
     }
 
 
-@pytest.mark.parametrize(
-    "delete_master, expect", [("1", True), (True, True), ("0", False), (False, False)]
-)
+@pytest.mark.parametrize("delete_master, expect", [("1", True), (True, True), ("0", False), (False, False)])
 def test_delete_record(scratch_client, mocker, delete_master, expect):
     delete = mocker.patch.object(EditorSession, "delete")
     params = {"path": "/myobj", "delete_master": delete_master}

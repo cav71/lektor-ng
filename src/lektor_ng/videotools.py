@@ -5,13 +5,9 @@ import subprocess
 from collections import namedtuple
 from datetime import timedelta
 
-from lektor_ng.imagetools import Thumbnail
-from lektor_ng.imagetools import ThumbnailMode
+from lektor_ng.imagetools import Thumbnail, ThumbnailMode
 from lektor_ng.reporter import reporter
-from lektor_ng.utils import get_dependent_url
-from lektor_ng.utils import locate_executable
-from lektor_ng.utils import portable_popen
-
+from lektor_ng.utils import get_dependent_url, locate_executable, portable_popen
 
 THUMBNAIL_FORMATS = frozenset(["jpg", "jpeg", "png"])
 
@@ -364,8 +360,6 @@ def make_video_thumbnail(
             )
             raise RuntimeError(msg)
 
-    ctx.sub_artifact(artifact_name=dst_url_path, sources=[source_video])(
-        build_thumbnail_artifact
-    )
+    ctx.sub_artifact(artifact_name=dst_url_path, sources=[source_video])(build_thumbnail_artifact)
 
     return Thumbnail(dst_url_path, crop_dim.width, crop_dim.height)

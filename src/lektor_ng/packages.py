@@ -7,9 +7,7 @@ import site
 import subprocess
 import sys
 import sysconfig
-from collections.abc import Iterable
-from collections.abc import Iterator
-from collections.abc import Sized
+from collections.abc import Iterable, Iterator, Sized
 from pathlib import Path
 from typing import TYPE_CHECKING
 from venv import EnvBuilder
@@ -17,10 +15,8 @@ from venv import EnvBuilder
 import click
 import requests
 
-
 if TYPE_CHECKING:
     from _typeshed import StrPath
-
     from lektor.environment import Environment  # circ dependency
 else:
     StrPath = object
@@ -62,9 +58,7 @@ def add_package_to_project(project, req):
             version = data["info"]["version"]
         version_info = data["releases"].get(version)
         if version_info is None:
-            raise RuntimeError(
-                f"Latest requested version ({version_hint}) could not be found"
-            )
+            raise RuntimeError(f"Latest requested version ({version_hint}) could not be found")
 
         cfg[f"packages.{canonical_name}"] = version
         cfg.save()

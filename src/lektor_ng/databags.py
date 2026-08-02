@@ -3,13 +3,14 @@ import json
 import os
 from collections import OrderedDict
 
-
 from lektor_ng.context import get_ctx
-from lektor_ng.utils import decode_flat_data
-from lektor_ng.utils import iter_dotted_path_prefixes
-from lektor_ng.utils import merge
-from lektor_ng.utils import resolve_dotted_value
 from lektor_ng.inifile import IniFile
+from lektor_ng.utils import (
+    decode_flat_data,
+    iter_dotted_path_prefixes,
+    merge,
+    resolve_dotted_value,
+)
 
 
 def load_databag(filename):
@@ -36,9 +37,7 @@ class Databags:
         try:
             for filename in os.listdir(self.root_path):
                 if filename.endswith((".ini", ".json")):
-                    self._known_bags.setdefault(filename.rsplit(".", -1)[0], []).append(
-                        filename
-                    )
+                    self._known_bags.setdefault(filename.rsplit(".", -1)[0], []).append(filename)
         except OSError:
             pass
 

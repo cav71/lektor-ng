@@ -2,8 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from lektor_ng.builder import Builder
-from lektor_ng.builder import FileInfo
+from lektor_ng.builder import Builder, FileInfo
 from lektor_ng.project import Project
 from lektor_ng.reporter import NullReporter
 
@@ -302,12 +301,8 @@ def test_slug_contains_slash(pad, builder):
     assert artifact.artifact_name == "extra/long/path/index.html"
 
 
-def test_asseturl_dependency_tracking_integration(
-    scratch_project_data, scratch_pad, scratch_builder
-):
-    scratch_project_data.joinpath("templates/page.html").write_text(
-        "{{ '/asset.txt'|asseturl }}", "utf-8"
-    )
+def test_asseturl_dependency_tracking_integration(scratch_project_data, scratch_pad, scratch_builder):
+    scratch_project_data.joinpath("templates/page.html").write_text("{{ '/asset.txt'|asseturl }}", "utf-8")
     asset_txt = scratch_project_data / "assets/asset.txt"
     asset_txt.parent.mkdir(exist_ok=True)
     asset_txt.write_text("an asset\n", "utf-8")
@@ -381,9 +376,7 @@ def test_second_build_all_builds_nothing(scratch_builder, scratch_project_data):
         child_lr.parent.mkdir()
         child_lr.write_text("_template: child.html\n")
     # Reference siblings
-    scratch_project_data.joinpath("templates/child.html").write_text(
-        "{{ this.get_siblings() }}"
-    )
+    scratch_project_data.joinpath("templates/child.html").write_text("{{ this.get_siblings() }}")
 
     scratch_builder.build_all()
 
@@ -397,9 +390,7 @@ def test_second_build_all_builds_nothing(scratch_builder, scratch_project_data):
         "project",
         pytest.param(
             "symlinked-project",
-            marks=pytest.mark.xfail(
-                reason="FIXME: PathCache.to_source_filename does not cope with symlinks"
-            ),
+            marks=pytest.mark.xfail(reason="FIXME: PathCache.to_source_filename does not cope with symlinks"),
         ),
     ],
 )
@@ -462,9 +453,7 @@ def test_FileInfo_unchanged(env, tmp_path):
     assert not file_info.unchanged(file_info2)
 
 
-def test_filenames_with_AT_do_not_get_built_twice(
-    scratch_builder, scratch_project_data
-):
+def test_filenames_with_AT_do_not_get_built_twice(scratch_builder, scratch_project_data):
     scratch_project_data.joinpath("assets").mkdir()
     scratch_project_data.joinpath("assets/@test").write_text("x")
 

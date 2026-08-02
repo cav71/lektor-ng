@@ -2,15 +2,12 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from enum import IntEnum
-from types import ModuleType
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 
 import PIL.ExifTags
 import PIL.Image
-
 
 __all__ = ["ExifTags", "Transpose", "UnidentifiedImageError"]
 

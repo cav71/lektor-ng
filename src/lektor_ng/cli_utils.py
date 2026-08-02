@@ -8,8 +8,7 @@ from typing import Any
 
 import click
 
-from lektor_ng.i18n import get_default_lang
-from lektor_ng.i18n import is_valid_language
+from lektor_ng.i18n import get_default_lang, is_valid_language
 from lektor_ng.project import Project
 
 
@@ -107,9 +106,7 @@ class Context:
             return self._env
         from lektor_ng.environment import Environment
 
-        env = Environment(
-            self.get_project(), load_plugins=False, extra_flags=extra_flags
-        )
+        env = Environment(self.get_project(), load_plugins=False, extra_flags=extra_flags)
         self._env = env
         return env
 
@@ -143,13 +140,9 @@ class ResolvedPath(click.Path):
     """
 
     def __init__(self, writable=False, file_okay=True):
-        super().__init__(
-            resolve_path=True, allow_dash=False, writable=writable, file_okay=file_okay
-        )
+        super().__init__(resolve_path=True, allow_dash=False, writable=writable, file_okay=file_okay)
 
-    def convert(
-        self, value: Any, param: click.Parameter | None, ctx: click.Context | None
-    ) -> Any:
+    def convert(self, value: Any, param: click.Parameter | None, ctx: click.Context | None) -> Any:
         abspath = Path(value).absolute()
         # fsdecode to ensure that the return value is a str.
         # (with click<8.0.3 Path.convert will return Path if passed a Path)

@@ -6,9 +6,7 @@ from lektor_ng.context import Context
 from lektor_ng.environment import Environment
 from lektor_ng.reporter import BufferReporter
 from lektor_ng.sourceobj import VirtualSourceObject
-from lektor_ng.utils import cleanup_path
-from lektor_ng.utils import cleanup_url_path
-
+from lektor_ng.utils import cleanup_path, cleanup_url_path
 
 # pylint: disable-next=wrong-import-order
 from conftest import restore_import_state  # isort: skip

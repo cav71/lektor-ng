@@ -3,8 +3,7 @@ import os
 import shutil
 import sys
 import textwrap
-from contextlib import contextmanager
-from contextlib import suppress
+from contextlib import contextmanager, suppress
 from pathlib import Path
 
 import pytest
@@ -12,13 +11,13 @@ from _pytest.monkeypatch import MonkeyPatch
 
 import lektor_ng.project
 from lektor_ng.builder import Builder
-from lektor_ng.db import Database
-from lektor_ng.db import Tree
+from lektor_ng.db import Database, Tree
 from lektor_ng.environment import Environment
 from lektor_ng.environment.expressions import Expression
 from lektor_ng.project import Project
 from lektor_ng.reporter import BufferReporter
 from lektor_ng.utils import locate_executable
+
 
 @pytest.fixture(scope="session")
 def top_path():
@@ -95,10 +94,7 @@ def restore_import_state():
     def clone_class(cls):
         return type(cls)(cls.__name__, cls.__bases__, cls.__dict__.copy())
 
-    sys.meta_path[:] = [
-        clone_class(finder) if isinstance(finder, type) else finder
-        for finder in meta_path
-    ]
+    sys.meta_path[:] = [clone_class(finder) if isinstance(finder, type) else finder for finder in meta_path]
 
     try:
         yield

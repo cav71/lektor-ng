@@ -9,21 +9,23 @@ from urllib.parse import urlsplit
 
 import pytest
 
-from lektor_ng.utils import atomic_open
-from lektor_ng.utils import build_url
-from lektor_ng.utils import create_temp
-from lektor_ng.utils import deprecated
-from lektor_ng.utils import is_path_child_of
-from lektor_ng.utils import join_path
-from lektor_ng.utils import magic_split_ext
-from lektor_ng.utils import make_relative_url
-from lektor_ng.utils import parse_path
-from lektor_ng.utils import secure_url
-from lektor_ng.utils import slugify
-from lektor_ng.utils import split_camel_case
-from lektor_ng.utils import unique_everseen
-from lektor_ng.utils import untrusted_to_os_path
-from lektor_ng.utils import Url
+from lektor_ng.utils import (
+    Url,
+    atomic_open,
+    build_url,
+    create_temp,
+    deprecated,
+    is_path_child_of,
+    join_path,
+    magic_split_ext,
+    make_relative_url,
+    parse_path,
+    secure_url,
+    slugify,
+    split_camel_case,
+    unique_everseen,
+    untrusted_to_os_path,
+)
 
 
 @pytest.mark.parametrize(
@@ -35,13 +37,11 @@ from lektor_ng.utils import Url
         ("a@b", "", "a@b"),
         ("a@b", "@c", "a@c"),
         ("a@b/c", "a@b", "a/a@b"),
-        #
         ("/a", "/", "/"),
         ("/a", "/b", "/b"),
         ("a@b", "/", "/"),
         ("a@b", "/c", "/c"),
         ("a@b", "/c@d", "/c@d"),
-        #
         ("blog@archive", "2015", "blog@archive/2015"),
         ("blog@archive/2015", "..", "blog@archive"),
         ("blog@archive/2015", "@archive", "blog@archive"),
@@ -284,11 +284,10 @@ def test_atomic_open(tmp_path):
 def test_atomic_open_exception(tmp_path):
     path = tmp_path / "test.txt"
 
-    with pytest.raises(RuntimeError, match="test"):
-        with atomic_open(path, "w") as fp:
-            fp.write("new")
-            fp.flush()
-            raise RuntimeError("test")
+    with pytest.raises(RuntimeError, match="test"), atomic_open(path, "w") as fp:
+        fp.write("new")
+        fp.flush()
+        raise RuntimeError("test")
     assert len(list(tmp_path.iterdir())) == 0
 
 

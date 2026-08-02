@@ -2,26 +2,22 @@ import os
 import posixpath
 import shutil
 import warnings
-from collections import ChainMap
-from collections import OrderedDict
-from collections.abc import ItemsView
-from collections.abc import KeysView
-from collections.abc import Mapping
-from collections.abc import MutableMapping
-from collections.abc import ValuesView
+from collections import ChainMap, OrderedDict
+from collections.abc import ItemsView, KeysView, Mapping, MutableMapping, ValuesView
 from contextlib import suppress
 from functools import wraps
 from itertools import chain
 
 from lektor_ng.constants import PRIMARY_ALT
 from lektor_ng.metaformat import serialize
-from lektor_ng.utils import atomic_open
-from lektor_ng.utils import cleanup_path
-from lektor_ng.utils import increment_filename
-from lektor_ng.utils import is_valid_id
-from lektor_ng.utils import parse_path
-from lektor_ng.utils import secure_filename
-
+from lektor_ng.utils import (
+    atomic_open,
+    cleanup_path,
+    increment_filename,
+    is_valid_id,
+    parse_path,
+    secure_filename,
+)
 
 implied_keys = {"_id", "_path", "_gid", "_alt", "_source_alt", "_attachment_for"}
 possibly_implied_keys = {"_model", "_template", "_attachment_type"}
@@ -76,17 +72,12 @@ def make_editor_session(pad, path, is_attachment=None, alt=PRIMARY_ALT, datamode
         else:
             is_attachment = bool(all_data.get("_attachment_for"))
     elif bool(all_data.get("_attachment_for")) != is_attachment:
-        raise BadEdit(
-            "The attachment flag passed is conflicting with the "
-            "record's attachment flag."
-        )
+        raise BadEdit("The attachment flag passed is conflicting with the record's attachment flag.")
 
     if exists:
         # XXX: what about changing the datamodel after the fact?
         if datamodel is not None:
-            raise BadEdit(
-                "When editing an existing record, a datamodel must not be provided."
-            )
+            raise BadEdit("When editing an existing record, a datamodel must not be provided.")
         datamodel = pad.db.get_datamodel_for_raw_data(all_data, pad)
     else:
         if datamodel is None:
@@ -308,13 +299,11 @@ class EditorSession:
         files = [self.fs_path]
         if self._master_delete:
             files.append(self.attachment_fs_path)
-            files.extend(
-                self.get_fs_path(alt) for alt in self.pad.db.config.list_alternatives()
-            )
+            files.extend(self.get_fs_path(alt) for alt in self.pad.db.config.list_alternatives())
         for fn in files:
             try:
                 os.unlink(fn)
-            except OSError:  # noqa: PERF203
+            except OSError:
                 pass
 
     def _page_delete_impl(self):
@@ -325,27 +314,23 @@ class EditorSession:
                 shutil.rmtree(directory)
             return
         if self._master_delete:
-            raise BadDelete(
-                "Master deletes of pages require that recursive deleting is enabled."
-            )
+            raise BadDelete("Master deletes of pages require that recursive deleting is enabled.")
 
         for fn in self.fs_path, directory:
             try:
                 os.unlink(fn)
-            except OSError:  # noqa: PERF203
+            except OSError:
                 pass
 
     def _delete_impl(self):
         if self.alt != PRIMARY_ALT:
             if self._master_delete:
                 raise BadDelete(
-                    "Master deletes need to be done from the primary "
-                    f'alt.  Tried to delete from "{self.alt}"'
+                    f'Master deletes need to be done from the primary alt.  Tried to delete from "{self.alt}"'
                 )
             if self._recursive_delete:
                 raise BadDelete(
-                    "Cannot perform recursive delete from a non "
-                    f'primary alt.  Tried to delete from "{self.alt}"'
+                    f'Cannot perform recursive delete from a non primary alt.  Tried to delete from "{self.alt}"'
                 )
 
         if self.is_attachment:
@@ -485,9 +470,7 @@ class EditorData(Mapping):
 
     def __len__(self):
         data = self._data
-        return sum(
-            1 for key in data if key not in implied_keys and data[key] is not None
-        )
+        return sum(1 for key in data if key not in implied_keys and data[key] is not None)
 
     def keys(self, fallback=True):  # pylint: disable=arguments-differ
         return KeysView(self if fallback else self._without_fallback())

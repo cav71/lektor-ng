@@ -5,8 +5,7 @@ import shutil
 import sys
 import threading
 import warnings
-from collections.abc import Callable
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
@@ -16,9 +15,7 @@ from watchfiles import Change
 
 from lektor_ng.environment import Environment
 from lektor_ng.project import Project
-from lektor_ng.watcher import watch_project
-from lektor_ng.watcher import WatchFilter
-
+from lektor_ng.watcher import WatchFilter, watch_project
 
 RunInThread = Callable[[Callable[[], None]], None]
 
@@ -87,9 +84,7 @@ class WatcherTest:
         changed = threading.Event()
 
         def run() -> None:
-            watcher = watch_project(
-                self.env, "non-existant-output-path", stop_event=stop
-            )
+            watcher = watch_project(self.env, "non-existant-output-path", stop_event=stop)
             running.set()
             for _ in watcher:
                 changed.set()
@@ -113,7 +108,7 @@ class WatcherTest:
                 pass
             if not change_seen:
                 break
-            warnings.warn(f"macOS settle loop {n}: {change_seen}")  # noqa: B028
+            warnings.warn(f"macOS settle loop {n}: {change_seen}")
 
 
 @pytest.fixture
@@ -151,15 +146,12 @@ def test_sees_modified_file(watcher_test: WatcherTest, watched_path: Path) -> No
     modified_path = watched_path / "modified"
     modified_path.touch()
 
-    with watcher_test() as change_seen:
-        with modified_path.open("a") as fp:
-            fp.write("addition")
+    with watcher_test() as change_seen, modified_path.open("a") as fp:
+        fp.write("addition")
     assert change_seen
 
 
-def test_sees_file_moved_in(
-    watcher_test: WatcherTest, watched_path: Path, tmp_path: Path
-) -> None:
+def test_sees_file_moved_in(watcher_test: WatcherTest, watched_path: Path, tmp_path: Path) -> None:
     orig_path = tmp_path / "orig_path"
     orig_path.touch()
     final_path = watched_path / "final_path"
@@ -169,9 +161,7 @@ def test_sees_file_moved_in(
     assert change_seen
 
 
-def test_sees_file_moved_out(
-    watcher_test: WatcherTest, watched_path: Path, tmp_path: Path
-) -> None:
+def test_sees_file_moved_out(watcher_test: WatcherTest, watched_path: Path, tmp_path: Path) -> None:
     orig_path = watched_path / "orig_path"
     orig_path.touch()
     final_path = tmp_path / "final_path"
@@ -193,9 +183,7 @@ def test_sees_deleted_directory(watcher_test: WatcherTest, watched_path: Path) -
     assert change_seen
 
 
-def test_sees_file_in_directory_moved_in(
-    watcher_test: WatcherTest, watched_path: Path, tmp_path: Path
-) -> None:
+def test_sees_file_in_directory_moved_in(watcher_test: WatcherTest, watched_path: Path, tmp_path: Path) -> None:
     # We only really care about directories that contain at least a file.
     orig_dir_path = tmp_path / "orig_dir_path"
     orig_dir_path.mkdir()
@@ -207,9 +195,7 @@ def test_sees_file_in_directory_moved_in(
     assert change_seen
 
 
-def test_sees_directory_moved_out(
-    watcher_test: WatcherTest, watched_path: Path, tmp_path: Path
-) -> None:
+def test_sees_directory_moved_out(watcher_test: WatcherTest, watched_path: Path, tmp_path: Path) -> None:
     # We only really care about directories that contain at least one file.
     orig_dir_path = watched_path / "orig_dir_path"
     orig_dir_path.mkdir()
@@ -225,9 +211,8 @@ def test_ignores_opened_file(watcher_test: WatcherTest, watched_path: Path) -> N
     file_path = watched_path / "file"
     file_path.touch()
 
-    with watcher_test() as change_seen:
-        with file_path.open() as fp:
-            fp.read()
+    with watcher_test() as change_seen, file_path.open() as fp:
+        fp.read()
     assert not change_seen
 
 
@@ -238,8 +223,6 @@ def watch_filter(project: Project) -> WatchFilter:
 
 
 @pytest.mark.parametrize("path", [".dotfile", "webpack/node_modules"])
-def test_WatchFilter_false(
-    watch_filter: WatchFilter, path: str, project: Project
-) -> None:
+def test_WatchFilter_false(watch_filter: WatchFilter, path: str, project: Project) -> None:
     abspath = os.path.abspath(os.path.join(project.tree, path))
     assert not watch_filter(Change.added, abspath)

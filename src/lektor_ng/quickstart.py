@@ -6,17 +6,13 @@ from contextlib import contextmanager
 from datetime import datetime
 from functools import partial
 from importlib import import_module
-from subprocess import PIPE
-from subprocess import run
+from subprocess import PIPE, run
 from tempfile import TemporaryDirectory
 
 import click
-from jinja2 import Environment
-from jinja2 import PackageLoader
+from jinja2 import Environment, PackageLoader
 
-from lektor_ng.utils import locate_executable
-from lektor_ng.utils import slugify
-
+from lektor_ng.utils import locate_executable, slugify
 
 pwd = import_module("pwd") if os.name != "nt" else None
 
@@ -99,9 +95,7 @@ class Generator:
             # Use shutil.move here in case we move across a file system
             # boundary.
             for filename in os.listdir(scratch):
-                shutil.move(
-                    os.path.join(scratch, filename), os.path.join(path, filename)
-                )
+                shutil.move(os.path.join(scratch, filename), os.path.join(path, filename))
 
     @staticmethod
     def expand_filename(base, ctx, template_filename):
@@ -150,9 +144,7 @@ def get_default_author_email() -> str | None:
     """
     git = locate_executable("git")
     if git:
-        proc = run(
-            (git, "config", "user.email"), stdout=PIPE, errors="strict", check=False
-        )
+        proc = run((git, "config", "user.email"), stdout=PIPE, errors="strict", check=False)
         if proc.returncode == 0:
             return proc.stdout.strip()
 
@@ -319,9 +311,7 @@ def theme_quickstart(defaults=None, project=None):
     path = defaults.get("path")
     if path is None:
         if project is not None:
-            default_path = os.path.join(
-                project.tree, "themes", f"lektor-theme-{theme_id}"
-            )
+            default_path = os.path.join(project.tree, "themes", f"lektor-theme-{theme_id}")
         else:
             if len(os.listdir(".")) == 0:
                 default_path = os.getcwd()
@@ -374,10 +364,7 @@ def theme_quickstart(defaults=None, project=None):
         # is raised.
         if getattr(exc, "winerror", None) != 1314:
             raise
-        g.warn(
-            "Could not automatically make a symlink to have your example-site"
-            "easily pick up your theme."
-        )
+        g.warn("Could not automatically make a symlink to have your example-siteeasily pick up your theme.")
     os.chdir(theme_dir)
 
     # Sample image

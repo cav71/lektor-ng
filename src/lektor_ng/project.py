@@ -8,11 +8,9 @@ from pathlib import Path
 
 from werkzeug.utils import cached_property
 
-from lektor_ng.inifile import IniFile
 from lektor_ng.environment import Environment
-from lektor_ng.utils import comma_delimited
-from lektor_ng.utils import get_cache_dir
-from lektor_ng.utils import untrusted_to_os_path
+from lektor_ng.inifile import IniFile
+from lektor_ng.utils import comma_delimited, get_cache_dir, untrusted_to_os_path
 
 
 class Project:
@@ -35,10 +33,7 @@ class Project:
         if inifile.is_new:
             return None
 
-        name = (
-            inifile.get("project.name")
-            or os.path.basename(filename).rsplit(".")[0].title()
-        )
+        name = inifile.get("project.name") or os.path.basename(filename).rsplit(".")[0].title()
         path = os.path.join(
             os.path.dirname(filename),
             untrusted_to_os_path(inifile.get("project.path") or "."),
@@ -61,24 +56,18 @@ class Project:
     def from_path(cls, path, extension_required=False):
         """Locates the project for a path."""
         path = os.path.abspath(path)
-        if os.path.isfile(path) and (
-            not extension_required or path.endswith(".lektorproject")
-        ):
+        if os.path.isfile(path) and (not extension_required or path.endswith(".lektorproject")):
             return cls.from_file(path)
 
         try:
-            files = [
-                x for x in os.listdir(path) if x.lower().endswith(".lektorproject")
-            ]
+            files = [x for x in os.listdir(path) if x.lower().endswith(".lektorproject")]
         except OSError:
             return None
 
         if len(files) == 1:
             return cls.from_file(os.path.join(path, files[0]))
 
-        if os.path.isdir(path) and os.path.isfile(
-            os.path.join(path, "content/contents.lr")
-        ):
+        if os.path.isdir(path) and os.path.isfile(os.path.join(path, "content/contents.lr")):
             return cls(
                 name=os.path.basename(path),
                 project_file=None,
@@ -120,9 +109,7 @@ class Project:
         VENV = "venv"  # The new virtual environment-based package cache
         FLAT = "flat"  # No longer used flat-directory package cache
 
-    def get_package_cache_path(
-        self, cache_type: PackageCacheType = PackageCacheType.VENV
-    ) -> Path:
+    def get_package_cache_path(self, cache_type: PackageCacheType = PackageCacheType.VENV) -> Path:
         """The path where plugin packages are stored."""
         if cache_type is self.PackageCacheType.FLAT:
             cache_name = "packages"

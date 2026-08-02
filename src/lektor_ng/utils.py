@@ -14,33 +14,19 @@ import unicodedata
 import urllib.parse
 import uuid
 import warnings
-from collections.abc import Callable
-from collections.abc import Hashable
-from collections.abc import Iterable
-from collections.abc import Iterator
-from contextlib import contextmanager
-from contextlib import suppress
+from collections.abc import Callable, Hashable, Iterable, Iterator
+from contextlib import contextmanager, suppress
 from dataclasses import dataclass
 from datetime import datetime
-from functools import cache
-from functools import wraps
-from pathlib import Path
-from pathlib import PurePosixPath
-from typing import Any
-from typing import ClassVar
-from typing import IO
-from typing import Literal
-from typing import overload
-from typing import TYPE_CHECKING
-from typing import TypeVar
+from functools import cache, wraps
+from pathlib import Path, PurePosixPath
+from typing import IO, TYPE_CHECKING, Any, ClassVar, Literal, TypeVar, overload
 
 from jinja2 import is_undefined
 from markupsafe import Markup
 from slugify import slugify as _slugify
 from werkzeug.http import http_date
-from werkzeug.urls import iri_to_uri
-from werkzeug.urls import uri_to_iri
-
+from werkzeug.urls import iri_to_uri, uri_to_iri
 
 if TYPE_CHECKING:
     from _typeshed import StrPath
@@ -346,11 +332,7 @@ def locate_executable(exe_file, cwd=None, include_bundle_path=True):
 
     extensions = os.environ.get("PATHEXT", "").split(";")
     _, ext = os.path.splitext(exe_file)
-    if (
-        os.name != "nt"
-        and "" not in extensions
-        or any(ext.lower() == extension.lower() for extension in extensions)
-    ):
+    if os.name != "nt" and "" not in extensions or any(ext.lower() == extension.lower() for extension in extensions):
         extensions.insert(0, "")
 
     if resolve:
@@ -430,8 +412,7 @@ class Url(urllib.parse.SplitResult):
             DeprecatedWarning(
                 "Url",
                 reason=(
-                    "Direct construction of a Url instance is deprecated. "
-                    "Use the Url.from_string classmethod instead."
+                    "Direct construction of a Url instance is deprecated. Use the Url.from_string classmethod instead."
                 ),
                 version="3.4.0",
             ),
@@ -535,9 +516,7 @@ def get_dependent_url(url_path, suffix, ext=None):
 _AtomicOpenTextMode = Literal["w", "wt", "tw", "r", "rt", "tr"]
 _AtomicOpenBinaryModeWriting = Literal["wb", "bw"]
 _AtomicOpenBinaryModeReading = Literal["rb", "br"]
-_AtomicOpenMode = (
-    _AtomicOpenTextMode | _AtomicOpenBinaryModeWriting | _AtomicOpenBinaryModeReading
-)
+_AtomicOpenMode = _AtomicOpenTextMode | _AtomicOpenBinaryModeWriting | _AtomicOpenBinaryModeReading
 
 
 @overload
@@ -568,9 +547,7 @@ def atomic_open(
 
 
 @contextmanager
-def atomic_open(
-    filename: StrPath, mode: _AtomicOpenMode = "r", encoding: str | None = None
-) -> Iterator[IO[Any]]:
+def atomic_open(filename: StrPath, mode: _AtomicOpenMode = "r", encoding: str | None = None) -> Iterator[IO[Any]]:
     """Open a file for atomic update.
 
     Perform an "all-or-nothing" write to a file.
@@ -668,12 +645,7 @@ def portable_popen(cmd, *args, **kwargs):
 def is_valid_id(value):
     if value == "":
         return True
-    return (
-        "/" not in value
-        and value.strip() == value
-        and value.split() == [value]
-        and not value.startswith(".")
-    )
+    return "/" not in value and value.strip() == value and value.split() == [value] and not value.startswith(".")
 
 
 def secure_url(url: str) -> str:
@@ -804,9 +776,7 @@ def get_cache_dir():
         return os.path.join(folder, "Lektor", "Cache")
     if sys.platform == "darwin":
         return os.path.join(os.path.expanduser("~/Library/Caches/Lektor"))
-    return os.path.join(
-        os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache")), "lektor"
-    )
+    return os.path.join(os.environ.get("XDG_CACHE_HOME", os.path.expanduser("~/.cache")), "lektor")
 
 
 class URLBuilder:

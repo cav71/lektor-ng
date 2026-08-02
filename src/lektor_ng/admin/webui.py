@@ -3,17 +3,11 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from wsgiref.util import shift_path_info
 
-from flask import Flask
-from flask import request
+from flask import Flask, request
 
-from lektor_ng.admin.context import LektorApp
-from lektor_ng.admin.context import LektorInfo
-from lektor_ng.admin.modules import api
-from lektor_ng.admin.modules import dash
-from lektor_ng.admin.modules import livereload
-from lektor_ng.admin.modules import serve
+from lektor_ng.admin.context import LektorApp, LektorInfo
+from lektor_ng.admin.modules import api, dash, livereload, serve
 from lektor_ng.environment import Environment
-
 
 if TYPE_CHECKING:
     from _typeshed import StrPath
@@ -54,9 +48,7 @@ def make_app(
     admin_app.register_blueprint(api.bp, url_prefix="/api")
 
     # Serve static files from top-level app
-    app = LektorApp(
-        lektor_info, static_url_path=f"{admin_path}/static", static_folder=static_folder
-    )
+    app = LektorApp(lektor_info, static_url_path=f"{admin_path}/static", static_folder=static_folder)
     _common_configuration(app, debug=debug)
     app.register_blueprint(livereload.bp, url_prefix="/__reload__")
     app.register_blueprint(serve.bp)

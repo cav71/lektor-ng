@@ -1,39 +1,24 @@
 import os
 import posixpath
-from collections.abc import Callable
-from collections.abc import Iterator
-from collections.abc import Mapping
+from collections.abc import Callable, Iterator, Mapping
 from contextvars import ContextVar
-from dataclasses import dataclass
-from dataclasses import field
+from dataclasses import dataclass, field
 from functools import wraps
-from typing import Any
-from typing import cast
-from typing import TypeVar
+from typing import Any, TypeVar, cast
 
 import click
 import marshmallow
 import marshmallow_dataclass as mdcls
-from flask import Blueprint
-from flask import current_app
-from flask import jsonify
-from flask import make_response
-from flask import request
-from flask import Response
+from flask import Blueprint, Response, current_app, jsonify, make_response, request
 
-from lektor_ng.admin.context import get_lektor_context
-from lektor_ng.admin.context import LektorContext
+from lektor_ng.admin.context import LektorContext, get_lektor_context
 from lektor_ng.admin.utils import eventstream
 from lektor_ng.constants import PRIMARY_ALT
 from lektor_ng.datamodel import DataModel
 from lektor_ng.db import Record
-from lektor_ng.environment.config import Config
-from lektor_ng.environment.config import ServerInfo
-from lektor_ng.publisher import publish
-from lektor_ng.publisher import PublishError
-from lektor_ng.utils import cleanup_path
-from lektor_ng.utils import is_valid_id
-
+from lektor_ng.environment.config import Config, ServerInfo
+from lektor_ng.publisher import PublishError, publish
+from lektor_ng.utils import cleanup_path, is_valid_id
 
 bp = Blueprint("api", __name__, url_prefix="/admin/api")
 
@@ -108,10 +93,7 @@ def _with_validated(param_type: type) -> Callable[[F], F]:
     def wrap(f: F) -> F:
         @wraps(f)
         def wrapper(*args: Any, **kwargs: Any) -> Response:
-            if (
-                request.method in ("POST", "PUT")
-                and request.mimetype == "application/json"
-            ):
+            if request.method in ("POST", "PUT") and request.mimetype == "application/json":
                 data = request.get_json() or {}
             else:
                 data = request.values
@@ -229,9 +211,7 @@ class _FindParams:
 @_with_validated(_FindParams)
 def find(validated: _FindParams, ctx: LektorContext) -> Response:
     lang = validated.lang or current_app.config.get("lektor.ui_lang", "en")
-    return jsonify(
-        results=ctx.builder.find_files(validated.q, alt=validated.alt, lang=lang)
-    )
+    return jsonify(results=ctx.builder.find_files(validated.q, alt=validated.alt, lang=lang))
 
 
 @bp.route("/browsefs", methods=["POST"])
@@ -305,9 +285,7 @@ def get_new_record_info(validated: _PathAndAlt, ctx: LektorContext) -> Response:
             "can_have_children": tree_item.can_have_children,
             "implied_model": implied_model,
             "available_models": {
-                k: describe_model(v)
-                for k, v in pad.db.datamodels.items()
-                if not v.hidden or k == implied_model
+                k: describe_model(v) for k, v in pad.db.datamodels.items() if not v.hidden or k == implied_model
             },
         }
     )
@@ -337,9 +315,7 @@ def upload_new_attachments(validated: _PathAndAlt, ctx: LektorContext) -> Respon
     buckets = []
     for file in request.files.getlist("file"):
         stored_filename = ts.add_attachment(file.filename, file)
-        buckets.append(
-            {"original_filename": file.filename, "stored_filename": stored_filename}
-        )
+        buckets.append({"original_filename": file.filename, "stored_filename": stored_filename})
 
     return jsonify(
         {
@@ -405,9 +381,7 @@ class _UpdateRawRecordParams:
 
 @bp.route("/rawrecord", methods=["PUT"])
 @_with_validated(_UpdateRawRecordParams)
-def update_raw_record(
-    validated: _UpdateRawRecordParams, ctx: LektorContext
-) -> Response:
+def update_raw_record(validated: _UpdateRawRecordParams, ctx: LektorContext) -> Response:
     ts = ctx.tree.edit(validated.path, alt=validated.alt)
     with ts:
         ts.data.update(validated.data)
@@ -417,11 +391,7 @@ def update_raw_record(
 @bp.route("/servers")
 def get_servers(ctx: LektorContext) -> Response:
     servers = ctx.config.get_servers(public=True)
-    return jsonify(
-        servers=sorted(
-            [x.to_json() for x in servers.values()], key=lambda x: x["name"].lower()
-        )
-    )
+    return jsonify(servers=sorted([x.to_json() for x in servers.values()], key=lambda x: x["name"].lower()))
 
 
 @bp.route("/build", methods=["POST"])

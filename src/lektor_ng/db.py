@@ -10,15 +10,13 @@ import posixpath
 from collections import OrderedDict
 from datetime import timedelta
 from functools import total_ordering
-from itertools import chain
-from itertools import islice
+from itertools import chain, islice
 from operator import methodcaller
 from pathlib import Path
 from typing import TYPE_CHECKING
 from urllib.parse import urljoin
 
-from jinja2 import is_undefined
-from jinja2 import Undefined
+from jinja2 import Undefined, is_undefined
 from jinja2.exceptions import UndefinedError
 from jinja2.utils import LRUCache
 from werkzeug.utils import cached_property
@@ -26,31 +24,30 @@ from werkzeug.utils import cached_property
 from lektor_ng import metaformat
 from lektor_ng.assets import get_asset_root
 from lektor_ng.constants import PRIMARY_ALT
-from lektor_ng.context import Context
-from lektor_ng.context import get_ctx
+from lektor_ng.context import Context, get_ctx
 from lektor_ng.databags import Databags
-from lektor_ng.datamodel import load_datamodels
-from lektor_ng.datamodel import load_flowblocks
+from lektor_ng.datamodel import load_datamodels, load_flowblocks
 from lektor_ng.editor import make_editor_session
 from lektor_ng.filecontents import FileContents
-from lektor_ng.imagetools import get_image_info
-from lektor_ng.imagetools import make_image_thumbnail
-from lektor_ng.imagetools import read_exif
-from lektor_ng.imagetools import ThumbnailMode
-from lektor_ng.sourceobj import DBSourceObject
-from lektor_ng.sourceobj import VirtualSourceObject
-from lektor_ng.utils import cleanup_path
-from lektor_ng.utils import cleanup_url_path
-from lektor_ng.utils import deprecated
-from lektor_ng.utils import fs_enc
-from lektor_ng.utils import locate_executable
-from lektor_ng.utils import make_relative_url
-from lektor_ng.utils import sort_normalize_string
-from lektor_ng.utils import split_virtual_path
-from lektor_ng.utils import untrusted_to_os_path
-from lektor_ng.videotools import get_video_info
-from lektor_ng.videotools import make_video_thumbnail
-
+from lektor_ng.imagetools import (
+    ThumbnailMode,
+    get_image_info,
+    make_image_thumbnail,
+    read_exif,
+)
+from lektor_ng.sourceobj import DBSourceObject, VirtualSourceObject
+from lektor_ng.utils import (
+    cleanup_path,
+    cleanup_url_path,
+    deprecated,
+    fs_enc,
+    locate_executable,
+    make_relative_url,
+    sort_normalize_string,
+    split_virtual_path,
+    untrusted_to_os_path,
+)
+from lektor_ng.videotools import get_video_info, make_video_thumbnail
 
 if TYPE_CHECKING:
     from lektor.environment import Environment
@@ -92,18 +89,14 @@ def get_alts(source=None, fallback=False):
 def _require_ctx(record):
     ctx = get_ctx()
     if ctx is None:
-        raise RuntimeError(
-            "This operation requires a context but none was on the stack."
-        )
+        raise RuntimeError("This operation requires a context but none was on the stack.")
     if ctx.pad is not record.pad:
-        raise RuntimeError(
-            "The context on the stack does not match the pad of the record."
-        )
+        raise RuntimeError("The context on the stack does not match the pad of the record.")
     return ctx
 
 
 @total_ordering
-class _CmpHelper:  # noqa: PLW1641
+class _CmpHelper:
     def __init__(self, value, reverse):
         self.value = value
         self.reverse = reverse
@@ -162,7 +155,7 @@ def save_eval(filter, record):
         return Undefined(e.message)
 
 
-class Expression:  # noqa: PLW1641
+class Expression:
     def __eval__(self, record):
         # pylint: disable=no-self-use
         return record
@@ -249,9 +242,7 @@ class _IsBoolExpr(Expression):
 
     def __eval__(self, record):
         val = self.__expr.__eval__(record)
-        return (
-            not is_undefined(val) and val not in (None, 0, False, "")
-        ) == self.__true
+        return (not is_undefined(val) and val not in (None, 0, False, "")) == self.__true
 
 
 class _Literal(Expression):
@@ -576,9 +567,7 @@ class Page(Record):
                 return path
             return path.rstrip("/") + "/"
         if "." in last_part:
-            raise RuntimeError(
-                "When file extension is provided pagination cannot be used."
-            )
+            raise RuntimeError("When file extension is provided pagination cannot be used.")
         # pagination is enabled
         if self.page_num in (1, None):
             return path.rstrip("/") + "/"
@@ -658,9 +647,7 @@ class Page(Record):
         this_path = self._data["_path"]
         parent_path = posixpath.dirname(this_path)
         if parent_path != this_path:
-            return self.pad.get(
-                parent_path, persist=self.pad.cache.is_persistent(self), alt=self.alt
-            )
+            return self.pad.get(parent_path, persist=self.pad.cache.is_persistent(self), alt=self.alt)
         return None
 
     def _is_hidden_by_parent_config(self) -> bool:
@@ -764,9 +751,7 @@ class Attachment(Record):
     @property
     def parent(self):
         """The associated record for this attachment."""
-        return self.pad.get(
-            self._data["_attachment_for"], persist=self.pad.cache.is_persistent(self)
-        )
+        return self.pad.get(self._data["_attachment_for"], persist=self.pad.cache.is_persistent(self))
 
     @cached_property
     @deprecated(version="3.4.0", stacklevel=2)
@@ -860,9 +845,7 @@ def require_ffmpeg(f):
 
     @functools.wraps(f)
     def wrapper(*args, **kwargs):
-        return Undefined(
-            "Unable to locate ffmpeg or ffprobe executable. Is it installed?"
-        )
+        return Undefined("Unable to locate ffmpeg or ffprobe executable. Is it installed?")
 
     return wrapper
 
@@ -937,10 +920,7 @@ class VideoFrame:
         self.seek = seek
 
     def __str__(self):
-        raise NotImplementedError(
-            "It is currently not possible to use video "
-            "frames directly, use .thumbnail()."
-        )
+        raise NotImplementedError("It is currently not possible to use video frames directly, use .thumbnail().")
 
     __unicode__ = __str__
 
@@ -1010,9 +990,7 @@ class Query:
         """Low level record access."""
         if page_num is Ellipsis:
             page_num = self._page_num
-        return self.pad.get(
-            f"{self.path}/{id}", persist=persist, alt=self.alt, page_num=page_num
-        )
+        return self.pad.get(f"{self.path}/{id}", persist=persist, alt=self.alt, page_num=page_num)
 
     def _matches(self, record):
         if not self._include_hidden and record.is_hidden:
@@ -1041,10 +1019,7 @@ class Query:
             ctx.record_dependency(self.pad.db.to_fs_path(self.path))
 
         for name, _, is_attachment in self.pad.db.iter_items(self.path, alt=self.alt):
-            if not (
-                (is_attachment == self._include_attachments)
-                or (not is_attachment == self._include_pages)
-            ):
+            if not ((is_attachment == self._include_attachments) or (not is_attachment == self._include_pages)):
                 continue
 
             record = self._get(name, persist=False)
@@ -1312,9 +1287,7 @@ class Database:
         rv = cls()
         rv_type = None
 
-        choiceiter = _iter_filename_choices(
-            fn_base, [alt], self.config, fallback=fallback
-        )
+        choiceiter = _iter_filename_choices(fn_base, [alt], self.config, fallback=fallback)
         for fs_path, source_alt, is_attachment in choiceiter:
             # If we already determined what our return value is but the
             # type mismatches what we try now, we have to abort.  Eg:
@@ -1389,9 +1362,7 @@ class Database:
                         except UnicodeError:
                             continue
 
-                    if filename.endswith(
-                        ".lr"
-                    ) or self.env.is_uninteresting_source_name(filename):
+                    if filename.endswith(".lr") or self.env.is_uninteresting_source_name(filename):
                         continue
 
                     # We found an attachment.  Attachments always live
@@ -1402,9 +1373,7 @@ class Database:
                     # We found a directory, let's make sure it contains a
                     # contents.lr file (or a contents+alt.lr file).
                     else:
-                        for content_alt in _iter_content_files(
-                            os.path.join(dir_path, filename), alts
-                        ):
+                        for content_alt in _iter_content_files(os.path.join(dir_path, filename), alts):
                             yield filename, content_alt, False
                             # If we want a single alt, we break here so
                             # that we only produce a single result.
@@ -1452,9 +1421,7 @@ class Database:
         seen.discard(datamodel)
         return iter(seen)
 
-    def get_implied_datamodel(
-        self, path, is_attachment=False, pad=None, datamodel=None
-    ):
+    def get_implied_datamodel(self, path, is_attachment=False, pad=None, datamodel=None):
         """Looks up a datamodel based on the information about the parent
         of a model.
         """
@@ -1482,9 +1449,7 @@ class Database:
             if datamodel is not None:
                 return datamodel
 
-        raise AssertionError(
-            "Did not find an appropriate datamodel. That should never happen."
-        )
+        raise AssertionError("Did not find an appropriate datamodel. That should never happen.")
 
     def get_attachment_type(self, path):
         """Gets the attachment type for a path."""
@@ -1592,10 +1557,7 @@ class Pad:
         """Given a URL this makes it absolute if this is possible."""
         base_url = self.db.config["PROJECT"].get("url")
         if base_url is None:
-            raise RuntimeError(
-                "To use absolute URLs you need to configure "
-                "the URL in the project config."
-            )
+            raise RuntimeError("To use absolute URLs you need to configure the URL in the project config.")
         return urljoin(base_url.rstrip("/") + "/", url.lstrip("/"))
 
     def make_url(self, url, base_url=None, absolute=None, external=None):
@@ -1617,22 +1579,15 @@ class Pad:
         if external:
             external_base_url = self.db.config.base_url
             if external_base_url is None:
-                raise RuntimeError(
-                    "To use absolute URLs you need to "
-                    "configure the URL in the project config."
-                )
+                raise RuntimeError("To use absolute URLs you need to configure the URL in the project config.")
             return urljoin(external_base_url, url.lstrip("/"))
         if absolute:
             return urljoin(self.db.config.base_path, url.lstrip("/"))
         if base_url is None:
-            raise RuntimeError(
-                "Cannot calculate a relative URL if no base URL has been provided."
-            )
+            raise RuntimeError("Cannot calculate a relative URL if no base URL has been provided.")
         return make_relative_url(base_url, url)
 
-    def resolve_url_path(
-        self, url_path, include_invisible=False, include_assets=True, alt_fallback=True
-    ):
+    def resolve_url_path(self, url_path, include_invisible=False, include_assets=True, alt_fallback=True):
         """Given a URL path this will find the correct record which also
         might be an attachment.  If a record cannot be found or is unexposed
         the return value will be `None`.
@@ -1685,9 +1640,7 @@ class Pad:
         main project asset tree.
         """
         env = self.env
-        asset_paths = (
-            Path(root, "assets") for root in chain([env.root_path], env.theme_paths)
-        )
+        asset_paths = (Path(root, "assets") for root in chain([env.root_path], env.theme_paths))
         return get_asset_root(self, asset_paths)
 
     @property
@@ -1721,9 +1674,7 @@ class Pad:
 
         if pieces[0].isdigit():
             if len(pieces) == 1:
-                return self.get(
-                    record._data["_path"], alt=record.alt, page_num=int(pieces[0])
-                )
+                return self.get(record._data["_path"], alt=record.alt, page_num=int(pieces[0]))
             return None
 
         resolver = self.env.virtual_sources.get(pieces[0])
@@ -1744,9 +1695,7 @@ class Pad:
         if virt_markers == 1:
             if page_num is not None:
                 raise RuntimeError(
-                    "Cannot use both virtual paths and "
-                    "explicit page number lookups.  You "
-                    "need to one or the other."
+                    "Cannot use both virtual paths and explicit page number lookups.  You need to one or the other."
                 )
             if not allow_virtual:
                 return None
@@ -1797,10 +1746,7 @@ class Pad:
         if rv is not None:
             if rv["_source_alt"] == alt:
                 return True
-            if fallback or (
-                rv["_source_alt"] == PRIMARY_ALT
-                and alt == self.config.primary_alternative
-            ):
+            if fallback or (rv["_source_alt"] == PRIMARY_ALT and alt == self.config.primary_alternative):
                 return True
             return False
 
@@ -1836,9 +1782,7 @@ class Pad:
         # do some unexpected things.
         if alt is None:
             alt = PRIMARY_ALT
-        return Query(
-            path="/" + (path or "").strip("/"), pad=self, alt=alt
-        ).include_hidden(True)
+        return Query(path="/" + (path or "").strip("/"), pad=self, alt=alt).include_hidden(True)
 
 
 class TreeItem:
@@ -1960,9 +1904,7 @@ class TreeItem:
         }
         return sorted(names, key=lambda name: name.lower())
 
-    def iter_children(
-        self, include_attachments=True, include_pages=True, order_by=None
-    ):
+    def iter_children(self, include_attachments=True, include_pages=True, order_by=None):
         """Iterates over all children"""
         children = (
             self.tree.get(posixpath.join(self.path, name), persist=False)
@@ -2080,11 +2022,7 @@ class Tree:
             # Alternatives are configured
             alts = [PRIMARY_ALT]
             alts.append(config.primary_alternative)
-            alts.extend(
-                alt
-                for alt in config.list_alternatives()
-                if alt != config.primary_alternative
-            )
+            alts.extend(alt for alt in config.list_alternatives() if alt != config.primary_alternative)
             for alt in alts:
                 alt_info[alt] = {
                     "is_primary_overlay": alt == config.primary_alternative,
@@ -2111,15 +2049,11 @@ class Tree:
             alts[alt] = Alt(alt, record, **alt_info)
         return TreeItem(self, path, alts, primary_record)
 
-    def iter_children(
-        self, path=None, include_attachments=True, include_pages=True, order_by=None
-    ):
+    def iter_children(self, path=None, include_attachments=True, include_pages=True, order_by=None):
         """Iterates over all children below a path"""
         # XXX: this method is unused?
         path = "/" + (path or "").strip("/")
-        return self.get(path, persist=False).iter_children(
-            include_attachments, include_pages, order_by
-        )
+        return self.get(path, persist=False).iter_children(include_attachments, include_pages, order_by)
 
     def get_children(
         self,
@@ -2133,9 +2067,7 @@ class Tree:
         """Returns a slice of children."""
         # XXX: this method is unused?
         path = "/" + (path or "").strip("/")
-        return self.get(path, persist=False).get_children(
-            offset, limit, include_attachments, include_pages, order_by
-        )
+        return self.get(path, persist=False).get_children(offset, limit, include_attachments, include_pages, order_by)
 
     def edit(self, path, is_attachment=None, alt=PRIMARY_ALT, datamodel=None):
         """Edits a record by path."""

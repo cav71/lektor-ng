@@ -3,10 +3,10 @@ import textwrap
 
 import pytest
 from iniconfig import IniConfig
-from lektor_ng.inifile import IniFile
 
 import lektor_ng.quickstart
 from lektor_ng.cli import cli
+from lektor_ng.inifile import IniFile
 
 
 @pytest.fixture(scope="session")
@@ -28,18 +28,14 @@ def can_symlink(tmp_path_factory):
 @pytest.fixture
 def default_author(mocker):
     author = "J. Random Hacker"
-    mocker.patch.object(
-        lektor_ng.quickstart, "get_default_author", spec=True, return_value=author
-    )
+    mocker.patch.object(lektor_ng.quickstart, "get_default_author", spec=True, return_value=author)
     return author
 
 
 @pytest.fixture
 def default_author_email(mocker):
     email = "jrh@example.org"
-    mocker.patch.object(
-        lektor_ng.quickstart, "get_default_author_email", spec=True, return_value=email
-    )
+    mocker.patch.object(lektor_ng.quickstart, "get_default_author_email", spec=True, return_value=email)
     return email
 
 
@@ -97,10 +93,7 @@ def test_new_plugin(project_cli_runner):
     assert setup.get("metadata", "author") == "Author Name"
     assert setup.get("metadata", "author_email") == "author@email.com"
     assert setup.get("options", "py_modules") == "lektor_plugin_name"
-    assert (
-        setup.get("options.entry_points", "lektor.plugins")
-        == "plugin-name = lektor_plugin_name:PluginNamePlugin"
-    )
+    assert setup.get("options.entry_points", "lektor.plugins") == "plugin-name = lektor_plugin_name:PluginNamePlugin"
 
     # plugin.py
     plugin_expected = textwrap.dedent(
@@ -175,9 +168,7 @@ def test_new_plugin_path(project_cli_runner):
     result = project_cli_runner.invoke(
         cli,
         ["dev", "new-plugin"],
-        input=_pack_lines(
-            "Plugin Name", "path", "Author Name", "author@email.com", "y"
-        ),
+        input=_pack_lines("Plugin Name", "path", "Author Name", "author@email.com", "y"),
     )
     assert "Create Plugin?" in result.output
     assert result.exit_code == 0
@@ -232,9 +223,7 @@ def test_new_theme(project_cli_runner, can_symlink):
     result = project_cli_runner.invoke(
         cli,
         ["dev", "new-theme"],
-        input=_pack_lines(
-            "Lektor Theme Name", "", "Author Name", "author@email.com", "y"
-        ),
+        input=_pack_lines("Lektor Theme Name", "", "Author Name", "author@email.com", "y"),
     )
     assert "Create Theme?" in result.output
     assert result.exit_code == 0
@@ -247,10 +236,7 @@ def test_new_theme(project_cli_runner, can_symlink):
         "themes",
     }
     if can_symlink:
-        assert (
-            os.readlink(os.path.join(path, "example-site/themes/lektor-theme-name"))
-            == "../../../lektor-theme-name"
-        )
+        assert os.readlink(os.path.join(path, "example-site/themes/lektor-theme-name")) == "../../../lektor-theme-name"
 
     theme_inifile = IniFile(os.path.join(path, "theme.ini"))
     assert theme_inifile["theme.name"] == "Lektor Theme Name"
@@ -282,9 +268,7 @@ def test_new_theme_abort_cancel(project_cli_runner):
     assert result.exit_code == 1
 
 
-def test_new_theme_name_only(
-    project_cli_runner, can_symlink, default_author, default_author_email
-):
+def test_new_theme_name_only(project_cli_runner, can_symlink, default_author, default_author_email):
     result = project_cli_runner.invoke(
         cli,
         ["dev", "new-theme"],
@@ -301,10 +285,7 @@ def test_new_theme_name_only(
         "themes",
     }
     if can_symlink:
-        assert (
-            os.readlink(os.path.join(path, "example-site/themes/lektor-theme-name"))
-            == "../../../lektor-theme-name"
-        )
+        assert os.readlink(os.path.join(path, "example-site/themes/lektor-theme-name")) == "../../../lektor-theme-name"
 
     theme_inifile = IniFile(os.path.join(path, "theme.ini"))
     assert theme_inifile["theme.name"] == "Lektor Name Theme"

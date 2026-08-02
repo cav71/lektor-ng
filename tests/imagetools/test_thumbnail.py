@@ -14,20 +14,21 @@ from pytest import approx
 
 from lektor_ng.context import Context
 from lektor_ng.db import Image
-from lektor_ng.imagetools.thumbnail import _compute_cropbox
-from lektor_ng.imagetools.thumbnail import _convert_icc_profile_to_srgb
-from lektor_ng.imagetools.thumbnail import _create_artifact
-from lektor_ng.imagetools.thumbnail import _create_thumbnail
-from lektor_ng.imagetools.thumbnail import _get_thumbnail_url_path
-from lektor_ng.imagetools.thumbnail import compute_dimensions
-from lektor_ng.imagetools.thumbnail import CropBox
-from lektor_ng.imagetools.thumbnail import get_image_info
-from lektor_ng.imagetools.thumbnail import ImageSize
-from lektor_ng.imagetools.thumbnail import make_image_thumbnail
-from lektor_ng.imagetools.thumbnail import Thumbnail
-from lektor_ng.imagetools.thumbnail import ThumbnailMode
-from lektor_ng.imagetools.thumbnail import ThumbnailParams
-
+from lektor_ng.imagetools.thumbnail import (
+    CropBox,
+    ImageSize,
+    Thumbnail,
+    ThumbnailMode,
+    ThumbnailParams,
+    _compute_cropbox,
+    _convert_icc_profile_to_srgb,
+    _create_artifact,
+    _create_thumbnail,
+    _get_thumbnail_url_path,
+    compute_dimensions,
+    get_image_info,
+    make_image_thumbnail,
+)
 
 HERE = Path(__file__).parent
 DEMO_PROJECT = HERE / "../demo-project/content"
@@ -125,12 +126,10 @@ def test_ThumbnailParams_get_tag(format, width, height, quality, crop, expected)
         (20, 100, 50, 100, ImageSize(20, 40)),
         (200, 200, 50, 100, ImageSize(100, 200)),
         (200, 500, 50, 100, ImageSize(200, 400)),
-        #
         (None, 50, 50, 100, ImageSize(25, 50)),
         (20, None, 50, 100, ImageSize(20, 40)),
         (None, 200, 50, 100, ImageSize(100, 200)),
         (200, None, 50, 100, ImageSize(200, 400)),
-        #
         (None, 49, 50, 100, ImageSize(25, 49)),
         (None, 51, 50, 100, ImageSize(26, 51)),
     ],
@@ -327,9 +326,7 @@ def ctx(builder):
         ("/test.jpg", {"width": 440}, (400, 300), "/test.jpg"),
     ],
 )
-def test_make_image_thumbnail(
-    ctx, source_url_path, kwargs, expected_size, thumbnail_url_path, dummy_jpg_path
-):
+def test_make_image_thumbnail(ctx, source_url_path, kwargs, expected_size, thumbnail_url_path, dummy_jpg_path):
     thumbnail = make_image_thumbnail(ctx, dummy_jpg_path, source_url_path, **kwargs)
     assert (thumbnail.width, thumbnail.height) == expected_size
     assert thumbnail.url_path == thumbnail_url_path
@@ -372,9 +369,7 @@ def dummy_svg_file(tmp_path):
 
 def test_make_image_thumbnail_svg(ctx, dummy_svg_file):
     svg_file = dummy_svg_file(width="400px", height="300px")
-    thumbnail = make_image_thumbnail(
-        ctx, svg_file, "/urlpath/dummy.svg", width=80, height=60
-    )
+    thumbnail = make_image_thumbnail(ctx, svg_file, "/urlpath/dummy.svg", width=80, height=60)
     assert (thumbnail.width, thumbnail.height) == (80, 60)
     assert thumbnail.url_path == "/urlpath/dummy.svg"
     assert len(ctx.sub_artifacts) == 0
@@ -412,10 +407,7 @@ class TestArtifactDependencyTracking:
     def build_page(builder) -> list[str]:
         _, build_state = builder.build(builder.pad.root)
         assert len(build_state.failed_artifacts) == 0
-        return [
-            os.path.basename(artifact.dst_filename)
-            for artifact in build_state.updated_artifacts
-        ]
+        return [os.path.basename(artifact.dst_filename) for artifact in build_state.updated_artifacts]
 
     def test(self, scratch_builder):
         built = self.build_page(scratch_builder)
