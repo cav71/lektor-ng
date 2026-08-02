@@ -75,6 +75,7 @@ jobs:
       - name: Run Python checks (tests+coverage)
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+        shell: bash
         run: |
           mkdir -p ${OUTDIR}
           echo "$GITHUB_DUMP" > ${OUTDIR}/github.json
