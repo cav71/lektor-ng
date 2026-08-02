@@ -39,7 +39,7 @@ jobs:
 
     steps:
       # https://github.com/actions/checkout
-      - name: Checkout
+      - name: Checkout ${{ matrix.os }}
         uses: actions/checkout@v7
         with:
           # WARNING!! this is important
@@ -81,15 +81,6 @@ jobs:
               --junitxml=$OUTDIR/junit/junit.xml --html=$OUTDIR/junit/junit.html --self-contained-html \
             tests
 
-      - name: Packaging
-        if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
-        shell: bash
-        env:
-          OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
-        run: |
-            uv run ./support/builder.py beta
-            mkdir -p $OUTDIR && cp dist/*.whl $OUTDIR
-
       - name: Archive artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -109,6 +100,7 @@ jobs:
       id-token: write
     steps:
       # retrieve your distributions here
-  
+      - name: Packaging
+        run: uv run ./support/builder.py beta
       - name: Publish package distributions to PyPI
         uses: pypa/gh-action-pypi-publish@release/v1
