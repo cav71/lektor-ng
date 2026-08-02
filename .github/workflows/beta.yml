@@ -83,6 +83,13 @@ jobs:
               --junitxml=$OUTDIR/junit/junit.xml --html=$OUTDIR/junit/junit.html --self-contained-html \
             tests
 
+      - name: Create wheel
+        env:
+          OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+        run:
+          uv run support/builder.py beta
+          mv dist $OUTDIR
+
       - name: Archive artifacts
         uses: actions/upload-artifact@v7
         with:
@@ -113,6 +120,8 @@ jobs:
         run: |
           ls -l
           find .
+          echo "1. => ${{ env.TARGETPY }} - ${{ env.TARGETOS }}"
+          echo "2. => ${TARGETPY} - ${TARGETOS}"
       # retrieve your distributions here
       # - name: Packaging
       #   run: |
