@@ -70,7 +70,7 @@ jobs:
           uv sync --no-managed-python
 
       - name: Run Python checks (format)
-        run: uv run ruff format --check
+        run: uv run ruff --verbose format --check
 
       - name: Run Python checks (tests+coverage)
         env:
