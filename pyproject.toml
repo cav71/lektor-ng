@@ -5,8 +5,8 @@ build-backend = "hatchling.build"
 [project]
 name = "lektor-ng"
 version = "0.0.0"
-
 description = "A fork of a static content management system (Lektor)."
+readme = "README.md"
 
 authors = [
     { name = "A. Cavallo", email = "a.cavallo@cavallinux.eu" },
