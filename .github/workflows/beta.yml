@@ -46,13 +46,6 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
-      # - name: Dump ENV
-      #   shell: bash
-      #   run: |
-      #     echo "=== GITHUB_DUMP ==="
-      #     echo "$GITHUB_DUMP" | python -m json.tool 
-      #     echo "=== END GITHUB_DUMP ==="
-
       # https://github.com/actions/setup-python
       - name: Install Python ${{ matrix.python-version }}
         uses: actions/setup-python@v7
