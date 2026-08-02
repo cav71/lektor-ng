@@ -34,9 +34,8 @@ jobs:
     strategy:
       matrix:
         #os: [ubuntu-latest, macos-latest, windows-latest]
-        #python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
+        python-version: ["3.10", "3.11", "3.12", "3.13", "3.14"]
         os: [ubuntu-latest]
-        python-version: ["3.10", "3.14"]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -56,7 +55,7 @@ jobs:
       #     echo "=== END GITHUB_DUMP ==="
 
       # https://github.com/actions/setup-python
-      - name: Setup Python toolchain for ${{ matrix.python-version }}
+      - name: Install Python ${{ matrix.python-version }}
         uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
@@ -65,13 +64,15 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v9.0.0
 
-      - name: Python dependencies
+      - name: Create venv
         shell: bash
         run: |
           uv sync --no-managed-python
 
-      - name: Run Python checks (tests)
-        shell: bash
+      - name: Run Python checks (format)
+        run: uv run ruff format --check
+
+      - name: Run Python checks (tests+coverage)
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
@@ -83,7 +84,8 @@ jobs:
               --junitxml=$OUTDIR/junit/junit.xml --html=$OUTDIR/junit/junit.html --self-contained-html \
             tests
 
-      - name: Create wheel
+      - name: Create wheel (only on ${{matrix.os}}, ${{matrix.python-version}})
+        if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
@@ -100,7 +102,7 @@ jobs:
         if: always()
 
   pypi-publish:
-    name: upload release to PyPI
+    name: upload beta to PyPI
     runs-on: ubuntu-latest
     needs: betas
     # Specifying a GitHub environment is optional, but strongly encouraged
@@ -116,18 +118,8 @@ jobs:
           path: |
             build/qa-${{ env.TARGETPY }}-${{ env.TARGETOS }}
 
-      - name: Packaging
+      - name: Extract packages
         run: |
-          ls -l
-          find .
-          echo "1. => ${{ env.TARGETPY }} - ${{ env.TARGETOS }}"
-          echo "2. => ${TARGETPY} - ${TARGETOS}"
-      # retrieve your distributions here
-      # - name: Packaging
-      #   run: |
-      #     echo "Shell $SHELL"
-      #     echo "I'm in $(pwd)"
-      #     ls -l
-      #     python ./support/builder.py beta
+          mv build/qa-${{ env.TARGETPY }}-${{ env.TARGETOS }}/dist .
       # - name: Publish package distributions to PyPI
       #   uses: pypa/gh-action-pypi-publish@release/v1
