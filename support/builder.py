@@ -353,7 +353,7 @@ def main() -> None:
 
         # replace @version@ and @hash@
         for path in args.paths:
-            log.debug("fixing %s", path)
+            log.info("fixing %s", path)
             save(path)
             replacer(path, {"version": gdata.version_string(), "sha": gdata.sha})
 
