@@ -86,7 +86,7 @@ jobs:
       - name: Create wheel
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
-        run:
+        run: |
           uv run support/builder.py beta
           mv dist $OUTDIR
 
