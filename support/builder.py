@@ -111,7 +111,8 @@ class Git:
     def default(self):
         return (
             self.runner(["symbolic-ref", "refs/remotes/origin/HEAD", "--short"], capture=True)
-            .strip().rpartition("/")[2]
+            .strip()
+            .rpartition("/")[2]
         )
 
     def branch(self):

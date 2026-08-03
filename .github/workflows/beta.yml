@@ -8,7 +8,6 @@ on:
 concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
-  PACKAGE: lektor_ng
   PYTHONPATH: src
   GITHUB_DUMP: |
     {
@@ -37,6 +36,13 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Dump ENV
+        shell: bash
+        run: |
+          echo "=== GITHUB_DUMP ==="
+          echo "$GITHUB_DUMP" | python -m json.tool 
+          echo "=== END GITHUB_DUMP ==="
+
       # https://github.com/actions/checkout
       - name: Checkout
         uses: actions/checkout@v7
@@ -71,7 +77,7 @@ jobs:
           mkdir -p ${OUTDIR}
           echo "$GITHUB_DUMP" > ${OUTDIR}/github.json
           uv run pytest -vvs -l \
-              --cov=${{ env.PACKAGE }} \
+              --cov=$(basename src/*) \
               --cov-report=html:$OUTDIR/coverage --cov-report=xml:$OUTDIR/coverage.xml \
               --junitxml=$OUTDIR/junit/junit.xml --html=$OUTDIR/junit/junit.html --self-contained-html \
             tests
