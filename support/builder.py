@@ -26,6 +26,7 @@ from collections.abc import Callable, Generator
 from enum import StrEnum, auto
 from pathlib import Path
 from typing import Any, TypedDict
+from urllib.parse import quote
 
 
 class Releases(TypedDict):
@@ -370,7 +371,14 @@ def main() -> None:
     if (version := gdata.version_string()) in pypi.get("versions", []):
         args.error(f"version '{version}' already present in pypi")
 
-    variables = {"version": gdata.version_string(), "sha": gdata.sha, "branch": gdata.branch, "mode": args.mode}
+    variables = {
+        "version": gdata.version_string(),
+        "sha": gdata.sha,
+        "branch": gdata.branch,
+        "mode": args.mode,
+        "qbranch": quote(gdata.branch),
+    }
+
     if args.dump:
         print(f"version_string: {gdata.version_string()}")
         print(f"{gdata=}")
