@@ -370,7 +370,7 @@ def main() -> None:
     if (version := gdata.version_string()) in pypi.get("versions", []):
         args.error(f"version '{version}' already present in pypi")
 
-    variables = {"version": gdata.version_string(), "sha": gdata.sha, "branch": gdata.branch}
+    variables = {"version": gdata.version_string(), "sha": gdata.sha, "branch": gdata.branch, "mode": args.mode}
     if args.dump:
         print(f"version_string: {gdata.version_string()}")
         print(f"{gdata=}")
