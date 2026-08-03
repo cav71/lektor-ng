@@ -399,7 +399,8 @@ def main() -> None:
         # below only optional
         "branch": gdata.branch,
         "mode": args.mode,
-    }.update(gitdump_to_shields(args.gitdump))
+    }
+    variables.update(gitdump_to_shields(args.gitdump))
 
     if args.dump:
         print(f"version_string: {gdata.version_string()}")
