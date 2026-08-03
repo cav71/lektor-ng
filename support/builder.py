@@ -20,6 +20,7 @@ import shutil
 import subprocess
 import sys
 import tomllib
+import collections
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Generator
@@ -56,6 +57,20 @@ def relative_to(path: Path | None, cwd: Path | None = None) -> Path | None:
     with contextlib.suppress(ValueError):
         return path.relative_to(cwd or Path.cwd())
     return path
+
+
+def rget(data: dict, key: str) -> str | None:
+    stack = collections.deque(key.split("."))
+    value = None
+    cur = data
+    while stack:
+        node = stack.popleft()
+        if node in cur:
+            value = cur[node]
+            cur = cur[node]
+        else:
+            return None
+    return value
 
 
 def cache(name: bool | None | str = None):
@@ -264,8 +279,9 @@ def process_checkout(
     sha = (gitdump or {}).get("sha") or (git.sha() if git else None)
     log.debug("got sha '%s'", sha)
 
-    branch = (gitdump or {}).get("ref") or (git.branch() if git else None)
-    log.debug("got branch '%s'", branch)
+    branch = rget(gitdump, "ref") or (git.branch() if git else None)
+    default_branch = rget(gitdump, "event.repository.default_branch") or (git.default() if git else None)
+    log.debug("got branch '%s' (default %s)", branch, default_branch)
     branch = parse_ref(branch, git.default() if git else None)
 
     return GData(
