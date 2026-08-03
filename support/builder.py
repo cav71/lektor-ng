@@ -25,8 +25,8 @@ import urllib.request
 from collections.abc import Callable, Generator
 from enum import StrEnum, auto
 from pathlib import Path
+from types import SimpleNamespace
 from typing import Any, TypedDict
-from urllib.parse import quote
 
 
 class Releases(TypedDict):
@@ -259,6 +259,28 @@ def pypi_parse_releases(name: str, data: dict[str, Any] | None = None) -> Releas
     return releases
 
 
+def gitdump_to_shields(gitdump):
+    if not gitdump:
+        return {}
+
+    workflow_ref = (
+        rget(gitdump, "workflow_ref") or ""
+    )  # cav71/lektor-ng/.github/workflows/beta.yml@refs/heads/beta/0.0.0
+    actionlink = ""
+    expr = re.compile(
+        r"^(?P<owner>[^/]+)/(?P<project>[^/]+)/[.]github/workflows/(?P<target>[^@]+)@refs/heads/(?P<branch>.+)"
+    )
+    if match := expr.search(workflow_ref):
+        data = SimpleNamespace(**match.groupdict())
+        actionlink = f"{data.owner}/{data.project}/{data.target}?branch={data.branch.replace('/', '%2F')}"
+        actionurl = f"{data.target}?branch={data.branch.replace('/', '%2F')}"
+
+    return {
+        "actionlink": actionlink,
+        "actionurl": actionurl,
+    }
+
+
 def replacer(path: Path, variables: dict) -> None:
     txt = path.read_text()
     for key, value in variables.items():
@@ -374,10 +396,10 @@ def main() -> None:
     variables = {
         "version": gdata.version_string(),
         "sha": gdata.sha,
+        # below only optional
         "branch": gdata.branch,
         "mode": args.mode,
-        "qbranch": quote(gdata.branch),
-    }
+    }.update(gitdump_to_shields(args.gitdump))
 
     if args.dump:
         print(f"version_string: {gdata.version_string()}")
