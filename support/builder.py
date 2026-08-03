@@ -108,6 +108,12 @@ class Git:
             Runner(exe=["git", "--git-dir", f"{worktree}/.git"], verbose=verbose),
         )
 
+    def default(self):
+        return (
+            self.runner(["symbolic-ref", "refs/remotes/origin/HEAD", "--short"], capture=True)
+            .strip().rpartition("/")[2]
+        )
+
     def branch(self):
         return self.runner(["branch", "--show-current"], capture=True).strip()
 
@@ -122,6 +128,7 @@ class GData:
     version: str
     mode: ReleaseMode
     number: int | None = None
+    branch: str | None = None
 
     # ref: str  # refs/heads/beta/0.0.2
     # rev: str  # 33eebf5
@@ -172,20 +179,19 @@ def backups() -> Generator[Callable[[Path | str], tuple[Path, Path]], None, None
             shutil.move(backup, original)
 
 
-# def parse_ref(ref: str, default_branch: str) -> tuple[ReleaseMode, str | None]:
-#     # ref is:
-#     #   refs/heads/beta/0.0.0
-#     #   refs/heads/main
-#     #   refs/tags/v0.0.0
-#     # returns -> (kind, branch_version)
-#
-#     if match := re.search(r"refs/tags/v(?P<version>\d+([.]\d+)*)", ref):
-#         return ("release", match.group("version"))
-#     elif match := re.search(r"refs/heads/beta/(?P<version>\d+([.]\d+)*)", ref):
-#         return ("beta", match.group("version"))
-#     elif ref == f"refs/heads/{default_branch}":
-#         return ("main", None)
-#     raise RuntimeError(f"cannot parse {ref=}")
+def parse_ref(ref: str, default_branch: str | None) -> tuple[ReleaseMode, str | None]:
+    # ref is:
+    #   refs/heads/main
+    #   refs/heads/beta/0.0.0
+    #   refs/tags/v0.0.0
+    # returns -> "beta" | "main" | None
+    if match := re.search(r"refs/tags/v(?P<version>\d+([.]\d+)*)", ref):
+        return None
+    elif match := re.search(r"(refs/heads/)?beta/(?P<version>\d+([.]\d+)*)", ref):
+        return f"beta/{match.group('version')}"
+    elif ref == f"refs/heads/{default_branch}":
+        return default_branch
+    raise RuntimeError(f"cannot parse {ref=}")
 
 
 @cache("pypi-data")
@@ -253,13 +259,20 @@ def process_checkout(
 
     name = pyproject["project"]["name"]
     version = pyproject["project"]["version"]
+
     sha = (gitdump or {}).get("sha") or (git.sha() if git else None)
+    log.debug("got sha '%s'", sha)
+
+    branch = (gitdump or {}).get("ref") or (git.branch() if git else None)
+    log.debug("got branch '%s'", branch)
+    branch = parse_ref(branch, git.default() if git else None)
 
     return GData(
         name=name,
         sha=sha,
         version=version,
         mode=str(mode),
+        branch=branch,
     )
 
 
@@ -301,7 +314,10 @@ def parse_arguments():
         args.error(f"cannot parse pyproject file {args.pyprojectpath}")
 
     # GITDUMP
-    args.gitdump = json.loads(args.gitdump) if args.gitdump else None
+    if args.gitdump:
+        args.gitdump = Path(args.gitdump[1:]).read_text() if args.gitdump.startswith("@") else args.gitdump
+        args.gitdump = json.loads(args.gitdump)
+
     log.info(
         "%sloading github data from GITHUB_DUMP or --gitdump",
         "" if args.gitdump else "not ",
@@ -325,17 +341,23 @@ def main() -> None:
     log.info("git client using worktree %s", git.worktree)
     log.info("current working dir '%s'", workdir)
 
-    gdata = process_checkout(args.mode, args.pyproject, args.gitdump, git)
-
     name = args.pyproject["project"]["name"]
     log.info("loading pypi data for '%s'", name)
+
+    gdata = process_checkout(args.mode, args.pyproject, args.gitdump, git)
     pypi: Releases = pypi_parse_releases(name) or {}
     if args.mode in {"beta", "post"}:
         last = max(pypi.get(f"{args.mode}s", {}).get(gdata.version, [-1]))
         gdata.number = last + 1
+    gdata.branch = git.branch()
+
     if (version := gdata.version_string()) in pypi.get("versions", []):
         args.error(f"version '{version}' already present in pypi")
 
+    variables = {
+        "version": gdata.version_string(),
+        "sha": gdata.sha,
+    }
     if args.dump:
         print(f"{gdata=}")
         print(f"version_string: {gdata.version_string()}")
@@ -355,7 +377,7 @@ def main() -> None:
         for path in args.paths:
             log.info("fixing %s", path)
             save(path)
-            replacer(path, {"version": gdata.version_string(), "sha": gdata.sha})
+            replacer(path, variables)
 
         # building wheel
         log.info("building wheel package in %s", args.pyprojectpath.parent)
