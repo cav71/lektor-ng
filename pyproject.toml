@@ -79,6 +79,7 @@ dev = [                         # generally useful during development
     "pytest-html",
     "pytest-mock",
     "pytest>=6",
+    "pre-commit",
     "ruff",
     "mypy",
 ]

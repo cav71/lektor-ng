@@ -20,7 +20,6 @@ import shutil
 import subprocess
 import sys
 import tomllib
-import collections
 import urllib.error
 import urllib.request
 from collections.abc import Callable, Generator
@@ -371,11 +370,7 @@ def main() -> None:
     if (version := gdata.version_string()) in pypi.get("versions", []):
         args.error(f"version '{version}' already present in pypi")
 
-    variables = {
-        "version": gdata.version_string(),
-        "sha": gdata.sha,
-        "branch": gdata.branch
-    }
+    variables = {"version": gdata.version_string(), "sha": gdata.sha, "branch": gdata.branch}
     if args.dump:
         print(f"version_string: {gdata.version_string()}")
         print(f"{gdata=}")
