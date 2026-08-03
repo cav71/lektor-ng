@@ -374,13 +374,16 @@ def main() -> None:
     variables = {
         "version": gdata.version_string(),
         "sha": gdata.sha,
+        "branch": gdata.branch
     }
     if args.dump:
-        print(f"{gdata=}")
         print(f"version_string: {gdata.version_string()}")
+        print(f"{gdata=}")
+        print(f"{variables=}")
         return
 
     log.info("gdata (%s) = %s", gdata.version_string(), gdata)
+    log.info("variables: %s", variables)
     with backups() as save:
         # fix pyproject
         log.debug("fixing %s", args.pyprojectpath)
