@@ -282,7 +282,7 @@ def process_checkout(
     branch = rget(gitdump, "ref") or (git.branch() if git else None)
     default_branch = rget(gitdump, "event.repository.default_branch") or (git.default() if git else None)
     log.debug("got branch '%s' (default %s)", branch, default_branch)
-    branch = parse_ref(branch, git.default() if git else None)
+    branch = parse_ref(branch, default_branch)
 
     return GData(
         name=name,
