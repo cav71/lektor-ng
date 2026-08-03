@@ -21,7 +21,9 @@ env:
       "ref": "${{ github.ref }}",
       "sha": "${{ github.sha }}",
       "run_number": "${{ github.run_number }}",
-      "ref_name": "${{ github.ref_name }}"
+      "ref_name": "${{ github.ref_name }}",
+      "repository": "${{ github.repository }}",
+      "workflow_ref": "${{ github.workflow_ref }}"
     }
   TARGETPY: "3.14"
   TARGETOS: "ubuntu-latest"
