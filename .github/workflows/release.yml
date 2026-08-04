@@ -9,7 +9,8 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 
 env:
   PYTHONPATH: src
-  GITHUB_DUMP: |
+  GITHUB_DUMP: ${{ toJson(github) }}
+  _GITHUB_DUMP: |
     {
       "event": {
         "repository": {
