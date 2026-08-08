@@ -50,67 +50,67 @@ jobs:
           echo "$X" | python -m json.tool 
           echo "=== END GITHUB ==="
 
-#       # https://github.com/actions/checkout
-#       - name: Checkout
-#         uses: actions/checkout@v7
-#         with:
-#           # WARNING!! this is important
-#           fetch-depth: 0
-#           ref: ${{ github.event.pull_request.head.sha }}
-# 
-#       # https://github.com/actions/setup-python
-#       - name: Install Python ${{ matrix.python-version }}
-#         uses: actions/setup-python@v7
-#         with:
-#           python-version: ${{ matrix.python-version }}
-# 
-#       # https://github.com/astral-sh/setup-uv
-#       - name: Install uv
-#         uses: astral-sh/setup-uv@v9.0.0
-# 
-#       - name: Create venv
-#         shell: bash
-#         run: |
-#           uv sync --no-managed-python
-# 
-#       - name: Run Python checks (format)
-#         run: uv run ruff --verbose format --check
-# 
-#       - name: Run Python checks (tests+coverage)
-#         env:
-#           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
-#         shell: bash
-#         run: |
-#           mkdir -p ${OUTDIR}
-#           echo "$GITHUB_DUMP" > ${OUTDIR}/github.json
-#           uv run pytest -vvs -l \
-#               --cov=$(basename src/*) \
-#               --cov-report=html:$OUTDIR/coverage --cov-report=xml:$OUTDIR/coverage.xml \
-#               --junitxml=$OUTDIR/junit/junit.xml --html=$OUTDIR/junit/junit.html --self-contained-html \
-#             tests
-# 
-#       - name: Create wheel (only on ${{ env.TARGETPY }}, ${{ env.TARGETOS }})
-#         if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
-#         env:
-#           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
-#         run: |
-#           uv run support/builder.py beta src/lektor_ng/__init__.py README.md
-#           mv dist $OUTDIR
-# 
-#       # https://github.com/codecov/codecov-action
-#       - name: Upload coverage reports to Codecov
-#         uses: codecov/codecov-action@v7
-#         if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
-#         with:
-#           files: build/qa-${{ matrix.python-version }}-${{ matrix.os}}/coverage.xml
-#           token: ${{ secrets.CODECOV_TOKEN }}
-#           verbose: true # optional (default = false)
-# 
-#       - name: Archive artifacts
-#         uses: actions/upload-artifact@v7
-#         with:
-#           name: qa-results-${{ matrix.python-version }}-${{ matrix.os }}
-#           path: |
-#             build/qa-${{ matrix.python-version }}-${{ matrix.os}}
-#         # Use always() to always run this step to publish test results when there are test failures
-#         if: always()
+      # https://github.com/actions/checkout
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # WARNING!! this is important
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      # https://github.com/actions/setup-python
+      - name: Install Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # https://github.com/astral-sh/setup-uv
+      - name: Install uv
+        uses: astral-sh/setup-uv@v9.0.0
+
+      - name: Create venv
+        shell: bash
+        run: |
+          uv sync --no-managed-python
+
+      - name: Run Python checks (format)
+        run: uv run ruff --verbose format --check
+
+      - name: Run Python checks (tests+coverage)
+        env:
+          OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+        shell: bash
+        run: |
+          mkdir -p ${OUTDIR}
+          echo "$GITHUB_DUMP" > ${OUTDIR}/github.json
+          uv run pytest -vvs -l \
+              --cov=$(basename src/*) \
+              --cov-report=html:$OUTDIR/coverage --cov-report=xml:$OUTDIR/coverage.xml \
+              --junitxml=$OUTDIR/junit/junit.xml --html=$OUTDIR/junit/junit.html --self-contained-html \
+            tests
+
+      - name: Create wheel (only on ${{ env.TARGETPY }}, ${{ env.TARGETOS }})
+        if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
+        env:
+          OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+        run: |
+          uv run support/builder.py release src/lektor_ng/__init__.py README.md
+          mv dist $OUTDIR
+
+      # https://github.com/codecov/codecov-action
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v7
+        if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
+        with:
+          files: build/qa-${{ matrix.python-version }}-${{ matrix.os}}/coverage.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true # optional (default = false)
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: qa-results-${{ matrix.python-version }}-${{ matrix.os }}
+          path: |
+            build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+        # Use always() to always run this step to publish test results when there are test failures
+        if: always()

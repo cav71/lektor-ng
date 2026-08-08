@@ -19,6 +19,7 @@ import re
 import shutil
 import subprocess
 import sys
+import textwrap
 import tomllib
 import urllib.error
 import urllib.request
@@ -27,6 +28,10 @@ from enum import StrEnum, auto
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Any, TypedDict
+
+log = logging.getLogger(__name__)
+
+CACHEDIR: Path | None = None
 
 
 class Releases(TypedDict):
@@ -37,10 +42,13 @@ class Releases(TypedDict):
     category: dict[str, dict[str, str]]
 
 
-log = logging.getLogger(__name__)
+class PyprojectBase(TypedDict):
+    name: str
+    version: str
 
 
-CACHEDIR: Path | None = None
+class Pyproject(TypedDict):
+    project: PyprojectBase
 
 
 class ReleaseMode(StrEnum):
@@ -48,49 +56,6 @@ class ReleaseMode(StrEnum):
     RELEASE = auto()
     POST = auto()
     TRANS = auto()
-
-
-def relative_to(path: Path | None, cwd: Path | None = None) -> Path | None:
-    if not path:
-        return None
-    path = path.resolve()
-    with contextlib.suppress(ValueError):
-        return path.relative_to(cwd or Path.cwd())
-    return path
-
-
-def rget(data: dict, key: str) -> str | None:
-    stack = collections.deque(key.split("."))
-    value = None
-    cur = data
-    while stack:
-        node = stack.popleft()
-        if node in cur:
-            value = cur[node]
-            cur = cur[node]
-        else:
-            return None
-    return value
-
-
-def cache(name: bool | None | str = None):
-    def _cache(fn):
-        @functools.wraps(fn)
-        def _cache1(*args, **kwargs):
-            nonlocal name
-            if name is False:
-                return fn(*args, **kwargs)
-            name = fn.__name__ if name in {True, None, ""} else name
-            if CACHEDIR and (path := (CACHEDIR / name)).exists():
-                return json.loads(path.read_text())
-            data = fn(*args, **kwargs)
-            if CACHEDIR:
-                (CACHEDIR / name).write_text(json.dumps(data))
-            return data
-
-        return _cache1
-
-    return _cache
 
 
 @dc.dataclass
@@ -128,6 +93,7 @@ class Git:
             self.runner(["symbolic-ref", "refs/remotes/origin/HEAD", "--short"], capture=True)
             .strip()
             .rpartition("/")[2]
+            .rpartition("/")[2]
         )
 
     def branch(self):
@@ -161,15 +127,48 @@ class GData:
 
     def version_string(self):
         if self.mode == ReleaseMode.BETA:
-            return f"{self.version}b{self.number}"
+            return f"{self.version}b{self.number or 0}"
         elif self.mode == ReleaseMode.RELEASE:
             return self.version
         elif self.mode == ReleaseMode.POST:
-            return f"{self.version}.post{self.number}"
+            return f"{self.version}.post{self.number or 0}"
         elif self.mode == ReleaseMode.TRANS:
             return f"{self.version}.x{self.sha[:7]}"
         else:
             raise RuntimeError(f"cannot process {self.mode}")
+
+
+def indent(txt, pre):
+    return pre + textwrap.dedent(txt).replace("\n", f"\n{pre}")
+
+
+def relative_to(path: Path | None, cwd: Path | None = None) -> Path | None:
+    if not path:
+        return None
+    path = path.resolve()
+    with contextlib.suppress(ValueError):
+        return path.relative_to(cwd or Path.cwd())
+    return path
+
+
+def cache(name: bool | None | str = None):
+    def _cache(fn):
+        @functools.wraps(fn)
+        def _cache1(*args, **kwargs):
+            nonlocal name
+            if name is False:
+                return fn(*args, **kwargs)
+            name = fn.__name__ if name in {True, None, ""} else name
+            if CACHEDIR and (path := (CACHEDIR / name)).exists():
+                return json.loads(path.read_text())
+            data = fn(*args, **kwargs)
+            if CACHEDIR:
+                (CACHEDIR / name).write_text(json.dumps(data))
+            return data
+
+        return _cache1
+
+    return _cache
 
 
 @contextlib.contextmanager
@@ -195,19 +194,81 @@ def backups() -> Generator[Callable[[Path | str], tuple[Path, Path]], None, None
             shutil.move(backup, original)
 
 
-def parse_ref(ref: str, default_branch: str | None) -> tuple[ReleaseMode, str | None]:
+def rget(data: dict | None, key: str) -> str | None:
+    if not data:
+        return None
+    stack = collections.deque(key.split("."))
+    value = None
+    cur = data
+    while stack:
+        node = stack.popleft()
+        if node in cur:
+            value = cur[node]
+            cur = cur[node]
+        else:
+            return None
+    return value
+
+
+def parse_ref(ref: str, default_branch: str) -> tuple[str | None, str | None]:
     # ref is:
     #   refs/heads/main
     #   refs/heads/beta/0.0.0
     #   refs/tags/v0.0.0
     # returns -> "beta" | "main" | None
-    if match := re.search(r"refs/tags/v(?P<version>\d+([.]\d+)*)", ref):
-        return None
-    elif match := re.search(r"(refs/heads/)?beta/(?P<version>\d+([.]\d+)*)", ref):
-        return f"beta/{match.group('version')}"
-    elif ref == f"refs/heads/{default_branch}":
-        return default_branch
-    raise RuntimeError(f"cannot parse {ref=}")
+    if ref == f"refs/heads/{default_branch}":
+        return default_branch, None
+    expr = re.compile(r"^refs/heads/(?P<kind>[^/]+)/(?P<version>\d+([.]\d+)*)$")
+    if match := expr.search(ref):
+        return match.group("kind"), match.group("version")
+    return None, None
+
+
+def get_gdata(
+    mode: ReleaseMode,
+    pyproject: dict[str, Any],
+    gitdump: dict[str, Any] | None = None,
+    git: Git | None = None,
+) -> GData:
+
+    name = pyproject["project"]["name"]
+    version = pyproject["project"]["version"]
+
+    sha = rget(gitdump, "sha") or (git and git.sha())
+    log.debug("got sha '%s'", sha)
+
+    branch = rget(gitdump, "ref") or (git and git.branch())
+    default_branch = rget(gitdump, "event.repository.default_branch") or (git and git.default())
+    log.debug("got branch '%s' (default %s)", branch, default_branch)
+
+    if not (branch and default_branch):
+        branch = None
+    else:
+        branch = parse_ref(branch, default_branch)
+
+    return GData(
+        name=name,
+        sha=sha,
+        version=version,
+        mode=str(mode),
+        branch=branch,
+    )
+
+
+def make_gitdump(git: Git, pyproject: dict) -> dict:
+    breakpoint()
+    return {
+        "event": {
+            "repository": {
+                "default_branch": "main",
+                "master_branch": "main",
+            }
+        },
+        "workflow_ref": "cav71/lektor-ng/.github/workflows/release.yml@refs/heads/release/0.0.0",
+        "workflow_sha": "46522458c1b16d72624e8ac30d6c7e65d6838756",
+        "ref": "refs/heads/release/0.0.0",
+        "sha": "46522458c1b16d72624e8ac30d6c7e65d6838756",
+    }
 
 
 @cache("pypi-data")
@@ -288,33 +349,6 @@ def replacer(path: Path, variables: dict) -> None:
     path.write_text(txt)
 
 
-def process_checkout(
-    mode: ReleaseMode,
-    pyproject: dict[str, Any],
-    gitdump: dict[str, Any] | None = None,
-    git: Git | None = None,
-) -> GData:
-
-    name = pyproject["project"]["name"]
-    version = pyproject["project"]["version"]
-
-    sha = (gitdump or {}).get("sha") or (git.sha() if git else None)
-    log.debug("got sha '%s'", sha)
-
-    branch = rget(gitdump, "ref") or (git.branch() if git else None)
-    default_branch = rget(gitdump, "event.repository.default_branch") or (git.default() if git else None)
-    log.debug("got branch '%s' (default %s)", branch, default_branch)
-    branch = parse_ref(branch, default_branch)
-
-    return GData(
-        name=name,
-        sha=sha,
-        version=version,
-        mode=str(mode),
-        branch=branch,
-    )
-
-
 def parse_arguments():
     global CACHEDIR
     parser = argparse.ArgumentParser()
@@ -325,8 +359,10 @@ def parse_arguments():
     parser.add_argument("-n", "--dry-run", dest="dryrun", action="store_true")
     parser.add_argument("-c", "--cache", type=Path)
     parser.add_argument("--dump", action="store_true")
+
     parser.add_argument("--pyproject", type=Path, default=Path("pyproject.toml"))
-    parser.add_argument("--gitdump", default=os.getenv("GITHUB_DUMP"))
+    parser.add_argument("--pypidata", type=Path)
+    parser.add_argument("--gitdump", type=Path)
 
     parser.add_argument("mode", choices=list(map(str, ReleaseMode)))
     parser.add_argument("paths", nargs="*", type=lambda p: relative_to(Path(p)))
@@ -344,23 +380,23 @@ def parse_arguments():
 
     # PYPROJECT
     args.pyprojectpath = relative_to(args.pyproject.resolve())
+    log.info("loading pyproject from %s", args.pyprojectpath)
     if not args.pyprojectpath.exists():
         args.error(f"file not present {args.pyprojectpath}")
-    try:
-        log.info("loading pyproject from '%s'", args.pyprojectpath)
-        args.pyproject = tomllib.loads(args.pyprojectpath.read_text())
-    except tomllib.TOMLDecodeError:
-        args.error(f"cannot parse pyproject file {args.pyprojectpath}")
+    args.pyproject = tomllib.loads(args.pyprojectpath.read_text())
 
     # GITDUMP
     if args.gitdump:
-        args.gitdump = Path(args.gitdump[1:]).read_text() if args.gitdump.startswith("@") else args.gitdump
-        args.gitdump = json.loads(args.gitdump)
+        log.info("loading gitdump info from %s", args.gitdump)
+        args.gitdump = json.loads(args.gitdump.read_text())
+    elif os.getenv("GITHUB_DUMP"):
+        log.info("loading gitdump info from GITHUB_DUMP")
+        args.gitdump = json.loads(os.getenv("GITHUB_DUMP"))
 
-    log.info(
-        "%sloading github data from GITHUB_DUMP or --gitdump",
-        "" if args.gitdump else "not ",
-    )
+    # PYPI
+    if args.pypidata:
+        log.info("loading pypi data from %s", args.pypidata)
+        args.pypidata = json.loads(args.pypidata.read_text())
 
     return args
 
@@ -381,10 +417,11 @@ def main() -> None:
     log.info("current working dir '%s'", workdir)
 
     name = args.pyproject["project"]["name"]
-    log.info("loading pypi data for '%s'", name)
+    log.info("project name'%s'", name)
 
-    gdata = process_checkout(args.mode, args.pyproject, args.gitdump, git)
+    gdata = get_gdata(args.mode, args.pyproject, args.gitdump, git)
     pypi: Releases = pypi_parse_releases(name) or {}
+
     if args.mode in {"beta", "post"}:
         last = max(pypi.get(f"{args.mode}s", {}).get(gdata.version, [-1]))
         gdata.number = last + 1
@@ -403,9 +440,11 @@ def main() -> None:
     variables.update(gitdump_to_shields(args.gitdump))
 
     if args.dump:
+        print("gdata:")
+        print(f"{indent(json.dumps(gdata.__dict__, indent=2, sort_keys=1), '| ')}")
+        print("variables:")
+        print(f"{indent(json.dumps(variables, indent=2, sort_keys=1), '| ')}")
         print(f"version_string: {gdata.version_string()}")
-        print(f"{gdata=}")
-        print(f"{variables=}")
         return
 
     log.info("gdata (%s) = %s", gdata.version_string(), gdata)
