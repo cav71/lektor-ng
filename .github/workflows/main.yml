@@ -84,6 +84,15 @@ jobs:
               --junitxml=$OUTDIR/junit/junit.xml --html=$OUTDIR/junit/junit.html --self-contained-html \
             tests
 
+      - name: Create wheel (only on ${{ env.TARGETPY }}, ${{ env.TARGETOS }})
+        if: ${{ (matrix.python-version == env.TARGETPY) && (matrix.os == env.TARGETOS) }}
+        env:
+          OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+        run: |
+          uv tool run --from git+https://github.com/cav71/action-python-project builder \
+            beta README.md src/lektor_ng/__init__.py
+          mv dist $OUTDIR
+
       # https://github.com/codecov/codecov-action
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v7
