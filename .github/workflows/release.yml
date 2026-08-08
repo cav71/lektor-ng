@@ -40,15 +40,10 @@ jobs:
     steps:
       - name: Dump ENV
         shell: bash
-        env: 
-          X: ${{ toJson(github) }}
         run: |
           echo "=== GITHUB_DUMP ==="
           echo "$GITHUB_DUMP" | python -m json.tool 
           echo "=== END GITHUB_DUMP ==="
-          echo "=== GITHUB ==="
-          echo "$X" | python -m json.tool 
-          echo "=== END GITHUB ==="
 
       # https://github.com/actions/checkout
       - name: Checkout
@@ -94,7 +89,7 @@ jobs:
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
-          uv run support/builder.py release src/lektor_ng/__init__.py README.md
+          uv run support/builder.py --post-if-released release src/lektor_ng/__init__.py README.md
           mv dist $OUTDIR
 
       # https://github.com/codecov/codecov-action
