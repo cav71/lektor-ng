@@ -52,6 +52,7 @@ class Pyproject(TypedDict):
 
 
 class ReleaseMode(StrEnum):
+    UNDEFINED = auto()
     BETA = auto()
     RELEASE = auto()
     POST = auto()
@@ -242,7 +243,7 @@ def get_gdata(
     log.debug("got branch '%s' (default %s)", branch, default_branch)
 
     if not (branch and default_branch):
-        branch = None
+        branch = None, None
     else:
         branch = parse_ref(branch, default_branch)
 
@@ -250,25 +251,9 @@ def get_gdata(
         name=name,
         sha=sha,
         version=version,
-        mode=str(mode),
-        branch=branch,
+        mode=mode,
+        branch=branch[0],
     )
-
-
-def make_gitdump(git: Git, pyproject: dict) -> dict:
-    breakpoint()
-    return {
-        "event": {
-            "repository": {
-                "default_branch": "main",
-                "master_branch": "main",
-            }
-        },
-        "workflow_ref": "cav71/lektor-ng/.github/workflows/release.yml@refs/heads/release/0.0.0",
-        "workflow_sha": "46522458c1b16d72624e8ac30d6c7e65d6838756",
-        "ref": "refs/heads/release/0.0.0",
-        "sha": "46522458c1b16d72624e8ac30d6c7e65d6838756",
-    }
 
 
 @cache("pypi-data")
@@ -358,6 +343,7 @@ def parse_arguments():
     group.add_argument("-q", "--quiet", dest="loglevel", action="append_const", const=-1)
     parser.add_argument("-n", "--dry-run", dest="dryrun", action="store_true")
     parser.add_argument("-c", "--cache", type=Path)
+    parser.add_argument("--post-if-released", action="store_true")
     parser.add_argument("--dump", action="store_true")
 
     parser.add_argument("--pyproject", type=Path, default=Path("pyproject.toml"))
@@ -422,14 +408,23 @@ def main() -> None:
     gdata = get_gdata(args.mode, args.pyproject, args.gitdump, git)
     pypi: Releases = pypi_parse_releases(name) or {}
 
-    if args.mode in {"beta", "post"}:
+    # if the --post-if-released and we're releasing, we swicth to a post
+    if (version := gdata.version_string()) in pypi.get("versions", []):
+        if args.mode == ReleaseMode.RELEASE and args.post_if_released:
+            log.info("switching to post release")
+            args.mode = ReleaseMode.POST
+            gdata.mode = args.mode
+        else:
+            log.info("version '%s' already present in pypi", version)
+
+    # fixing gdata structure
+    if args.mode in {ReleaseMode.BETA, ReleaseMode.POST}:
         last = max(pypi.get(f"{args.mode}s", {}).get(gdata.version, [-1]))
         gdata.number = last + 1
+
     gdata.branch = git.branch()
 
-    if (version := gdata.version_string()) in pypi.get("versions", []):
-        args.error(f"version '{version}' already present in pypi")
-
+    # variable substitutions
     variables = {
         "version": gdata.version_string(),
         "sha": gdata.sha,
@@ -441,14 +436,19 @@ def main() -> None:
 
     if args.dump:
         print("gdata:")
-        print(f"{indent(json.dumps(gdata.__dict__, indent=2, sort_keys=1), '| ')}")
+        print(f"{indent(json.dumps(gdata.__dict__, indent=2, sort_keys=True), '| ')}")
         print("variables:")
-        print(f"{indent(json.dumps(variables, indent=2, sort_keys=1), '| ')}")
+        print(f"{indent(json.dumps(variables, indent=2, sort_keys=True), '| ')}")
         print(f"version_string: {gdata.version_string()}")
         return
 
+    # pypi releases are invariant
+    if (version := gdata.version_string()) in pypi.get("versions", []):
+        args.error(f"version '{version}' already present in pypi")
+
     log.info("gdata (%s) = %s", gdata.version_string(), gdata)
     log.info("variables: %s", variables)
+
     with backups() as save:
         # fix pyproject
         log.debug("fixing %s", args.pyprojectpath)
