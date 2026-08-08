@@ -90,7 +90,8 @@ jobs:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
           uv tool run --from git+https://github.com/cav71/action-python-project builder \
-            beta README.md src/lektor_ng/__init__.py
+            release --post-if-released \
+            README.md src/lektor_ng/__init__.py
           mv dist $OUTDIR
 
       # https://github.com/codecov/codecov-action

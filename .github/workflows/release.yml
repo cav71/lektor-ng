@@ -89,7 +89,8 @@ jobs:
         env:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
-          uv run support/builder.py --post-if-released release src/lektor_ng/__init__.py README.md
+          uv tool run --from git+https://github.com/cav71/action-python-project builder \
+            ${{ github.ref_name }} README.md src/lektor_ng/__init__.py
           mv dist $OUTDIR
 
       # https://github.com/codecov/codecov-action
