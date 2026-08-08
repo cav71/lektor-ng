@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "lektor-ng"
-version = "0.0.0"
+version = "0.0.1"
 description = "A fork of a static content management system (Lektor)."
 readme = "README.md"
 
