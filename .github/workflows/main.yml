@@ -53,7 +53,7 @@ jobs:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Setting up env
+      - name: Antonio's project handler
         uses: cav71/action-python-project@main
         with:
           python-version: ${{ matrix.python-version }}
