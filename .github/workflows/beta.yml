@@ -40,15 +40,10 @@ jobs:
     steps:
       - name: Dump ENV
         shell: bash
-        env: 
-          X: ${{ toJson(github) }}
         run: |
           echo "=== GITHUB_DUMP ==="
           echo "$GITHUB_DUMP" | python -m json.tool 
           echo "=== END GITHUB_DUMP ==="
-          echo "=== GITHUB ==="
-          echo "$X" | python -m json.tool 
-          echo "=== END GITHUB ==="
 
       # https://github.com/actions/checkout
       - name: Checkout
