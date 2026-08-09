@@ -12,4 +12,4 @@ Aims:
 - lint and code coverage.
 
 
-Rev. @sha@ | @branch@
+Rev. @sha7@ | @branch@
