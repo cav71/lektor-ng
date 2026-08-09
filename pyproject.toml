@@ -65,7 +65,7 @@ optional-dependencies.ipython = [
 ]
 
 [project.scripts]
-lektor-ng = "lektor.cli:main"
+lektor-ng = "lektor_ng.cli:main"
 
 [dependency-groups]
 dev = [                         # generally useful during development
