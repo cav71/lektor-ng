@@ -6,7 +6,8 @@
 
 A fork of the [lektor](https://www.getlektor.com) project.
 
-Aims:
+TODO:
+- remove inifile dependecy.
 - drop the front end to focus on the build part.
 - release early release often process.
 - lint and code coverage.

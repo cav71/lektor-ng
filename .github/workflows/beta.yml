@@ -61,15 +61,26 @@ jobs:
 
       # https://github.com/astral-sh/setup-uv
       - name: Install uv
-        uses: astral-sh/setup-uv@v9.0.0
+        uses: astral-sh/setup-uv@v10.0.1
 
       - name: Create venv
         shell: bash
         run: |
           uv sync --no-managed-python
 
-      - name: Run Python checks (format)
-        run: uv run ruff --verbose format --check
+      - name: Run Python checks (ruff+format)
+        run: uv run ruff format --exit-non-zero-on-format src tests
+
+      - name: Run Python checks (ruff+check)
+        run: uv run ruff check --fix --exit-non-zero-on-fix --show-fixes src tests
+
+      - name: Run Python checks (mypy)
+        shell: bash
+        env:
+          OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
+        run: |
+          uv run mypy src tests \
+            --no-incremental --xslt-html-report $OUTDIR/mypy
 
       - name: Run Python checks (tests+coverage)
         env:
@@ -90,7 +101,8 @@ jobs:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
           uv tool run --from git+https://github.com/cav71/action-python-project builder \
-            ${{ github.ref_name }} README.md src/lektor_ng/__init__.py
+            beta \
+            README.md src/lektor_ng/__init__.py
           mv dist $OUTDIR
 
       # https://github.com/codecov/codecov-action

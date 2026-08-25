@@ -55,6 +55,7 @@ dependencies = [
     "pip",
     "python-slugify",
     "requests",
+    "sqlalchemy",
     "tzdata; sys_platform == 'win32'",
     "watchfiles>=0.12",
     "Werkzeug>=2.1.0",
@@ -73,6 +74,7 @@ dev = [                         # generally useful during development
     "hatchling",
     "iniconfig",
     "iniconfig",
+    "pre-commit",
     "pylint==4.0.4",
     "pytest-click",
     "pytest-cov",
@@ -95,3 +97,9 @@ line-length = 120
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
+
+[tool.pytest.ini_options]
+markers = [
+    "requiresinternet: use internet connection.",
+    "slowtest: slow tests.",
+]
