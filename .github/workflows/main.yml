@@ -101,7 +101,7 @@ jobs:
           OUTDIR: build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         run: |
           uv tool run --from git+https://github.com/cav71/action-python-project builder \
-            release --post-if-released \
+            beta \
             README.md src/lektor_ng/__init__.py
           mv dist $OUTDIR
 
@@ -122,3 +122,25 @@ jobs:
             build/qa-${{ matrix.python-version }}-${{ matrix.os}}
         # Use always() to always run this step to publish test results when there are test failures
         if: always()
+
+  pypi-publish:
+    name: upload beta to PyPI
+    runs-on: ubuntu-latest
+    needs: build
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v8
+        with:
+          name: qa-results-${{ env.TARGETPY }}-${{ env.TARGETOS }}
+          path: |
+            build/qa-${{ env.TARGETPY }}-${{ env.TARGETOS }}
+
+      - name: Extract packages
+        run: |
+          mv build/qa-${{ env.TARGETPY }}-${{ env.TARGETOS }}/dist .
+
+      - name: Publish package distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
