@@ -75,6 +75,7 @@ dev = [                         # generally useful during development
     "hatchling",
     "iniconfig",
     "iniconfig",
+    "lxml",
     "pre-commit",
     "pylint==4.0.4",
     "pytest-click",
