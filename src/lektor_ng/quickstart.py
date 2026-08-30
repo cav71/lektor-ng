@@ -2,6 +2,7 @@ import getpass
 import os
 import re
 import shutil
+import sys
 from contextlib import contextmanager
 from datetime import datetime
 from functools import partial
@@ -124,15 +125,18 @@ class Generator:
 
 def get_default_author() -> str:
     """Attempt to guess an the name of the current user."""
-    if pwd is not None:
-        try:
-            pw_gecos = pwd.getpwuid(os.getuid()).pw_gecos
-        except KeyError:
-            pass
-        else:
-            full_name = pw_gecos.split(",", 1)[0].strip()
-            if full_name:
-                return full_name
+    if sys.platform == "win32":
+        return getpass.getuser()
+    import pwd
+
+    try:
+        pw_gecos = pwd.getpwuid(os.getuid()).pw_gecos
+    except KeyError:
+        pass
+    else:
+        full_name = pw_gecos.split(",", 1)[0].strip()
+        if full_name:
+            return full_name
 
     return getpass.getuser()
 
