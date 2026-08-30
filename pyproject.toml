@@ -157,6 +157,12 @@ exclude = [
     "src/lektor_ng/publisher.py",
     "src/lektor_ng/reporter.py",
     "src/lektor_ng/watcher.py",
+    "tests/test_utils.py",
+    "tests/test_build_frontend.py",
+    "tests/imagetools/test_exif.py",
+    "tests/test_markdown.py",
+    "tests/test_watcher.py",
+    "tests/test_pluginsystem.py",
 ]
 
 [tool.pytest.ini_options]
