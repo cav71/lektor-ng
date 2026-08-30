@@ -3,7 +3,6 @@ import os
 import sys
 from itertools import chain
 from pathlib import Path
-from typing import TypeVar
 from lektor_ng.project import Project
 from lektor_ng import cli_utils
 import click
@@ -13,10 +12,8 @@ from lektor_ng.cli_utils import (
 )
 from lektor_ng.version import get_version
 
-T = TypeVar("T")
 
-
-def add_options(fn: T) -> T:
+def add_options(fn):
     fn = click.argument(
         "project_path",
         type=lambda p: Path(p).expanduser().resolve(),

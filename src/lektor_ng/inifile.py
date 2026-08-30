@@ -79,7 +79,7 @@ class IniFile:
                 result[option] = self.config[section][option]
         return result
 
-    def get_int(self, name: str, default: Any = None) -> bool | None:
+    def get_int(self, name: str, default: Any = None) -> int | None:
         value = self.get(name, default)
         if value is None:
             return None

@@ -133,6 +133,32 @@ exclude = [
     "tests/test_urls.py",
 ]
 
+[tool.mypy]
+exclude = [
+    "src/lektor_ng/__main__.py",
+    "src/lektor_ng/admin/modules/api.py",
+    "src/lektor_ng/admin/modules/livereload.py",
+    "src/lektor_ng/build_programs.py",
+    "src/lektor_ng/cli/cli_old.py",
+    "src/lektor_ng/context.py",
+    "src/lektor_ng/datamodel.py",
+    "src/lektor_ng/db.py",
+    "src/lektor_ng/devcli.py",
+    "src/lektor_ng/devserver.py",
+    "src/lektor_ng/environment/__init__.py",
+    "src/lektor_ng/imagetools/exif.py",
+    "src/lektor_ng/imagetools/thumbnail.py",
+    "src/lektor_ng/markdown/__init__.py",
+    "src/lektor_ng/markdown/controller.py",
+    "src/lektor_ng/markdown/mistune0.py",
+    "src/lektor_ng/markdown/mistune2.py",
+    "src/lektor_ng/packages.py",
+    "src/lektor_ng/pluginsystem.py",
+    "src/lektor_ng/publisher.py",
+    "src/lektor_ng/reporter.py",
+    "src/lektor_ng/watcher.py",
+]
+
 [tool.pytest.ini_options]
 markers = [
     "requiresinternet: use internet connection.",
