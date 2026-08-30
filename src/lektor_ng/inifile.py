@@ -46,7 +46,7 @@ class IniFile:
         while section.endswith("."):
             section, option = section[:-1], f".{option}"
         if not section:
-            return self.config[GLOBAL_NAME][option] if option in self.config[GLOBAL_NAME] else default
+            return self.config[GLOBAL_NAME].get(option, default)
         if section not in self.sections():
             return default
         return self.config[section].get(option, default)

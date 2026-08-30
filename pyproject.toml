@@ -66,7 +66,8 @@ optional-dependencies.ipython = [
 ]
 
 [project.scripts]
-lektor-ng = "lektor_ng.cli:main"
+lektor-ng = "lektor_ng.cli.cli_old:main"
+lektor-build = "lektor_ng.cli.build:main"
 
 [dependency-groups]
 dev = [                         # generally useful during development
@@ -98,8 +99,42 @@ line-length = 120
 quote-style = "double"
 indent-style = "space"
 
+[tool.ruff.lint]
+exclude = [
+    "src/lektor_ng/cli/build.py",
+    "src/lektor_ng/datamodel.py",
+    "src/lektor_ng/db.py",
+    "src/lektor_ng/devserver.py",
+    "src/lektor_ng/editor.py",
+    "src/lektor_ng/environment/*",
+    "src/lektor_ng/imagetools/*",
+    "src/lektor_ng/publisher.py",
+    "src/lektor_ng/quickstart.py",
+    "src/lektor_ng/types/base.py",
+    "src/lektor_ng/types/multi.py",
+    "src/lektor_ng/types/primitives.py",
+    "src/lektor_ng/admin/modules/api.py",
+    "src/lektor_ng/markdown/controller.py",
+    "src/lektor_ng/markdown/controller.py",
+    "src/lektor_ng/markdown/mistune2.py",
+    "src/lektor_ng/metaformat.py",
+    "src/lektor_ng/reporter.py",
+    "src/lektor_ng/utils.py",
+    "tests/admin/test_serve.py",
+    "tests/admin/test_webui.py",
+    "tests/imagetools/test_exif.py",
+    "tests/imagetools/test_exif.py",
+    "tests/test_buildfailures.py",
+    "tests/test_editor.py",
+    "tests/test_environment.py",
+    "tests/test_pluginsystem.py",
+    "tests/test_publisher.py",
+    "tests/test_urls.py",
+]
+
 [tool.pytest.ini_options]
 markers = [
     "requiresinternet: use internet connection.",
     "slowtest: slow tests.",
+    "toremove: test to refactor out.",
 ]

@@ -139,8 +139,15 @@ class ResolvedPath(click.Path):
     See https://github.com/pallets/click/issues/2466
     """
 
-    def __init__(self, writable=False, file_okay=True):
-        super().__init__(resolve_path=True, allow_dash=False, writable=writable, file_okay=file_okay)
+    def __init__(self, writable=False, file_okay=True, exists=False):
+        super().__init__(
+            resolve_path=True,
+            allow_dash=False,
+            writable=writable,
+            exists=exists,
+            file_okay=file_okay,
+            dir_okay=not file_okay,
+        )
 
     def convert(self, value: Any, param: click.Parameter | None, ctx: click.Context | None) -> Any:
         abspath = Path(value).absolute()

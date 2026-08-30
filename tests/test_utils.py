@@ -312,9 +312,8 @@ def test_atomic_open_respects_umask(tmp_path, umask):
 
 @pytest.mark.parametrize("mode", ["a", "w+", "x", "rw", "foo"])
 def test_atomic_open_raises_on_bad_mode(tmp_path, mode):
-    with pytest.raises(ValueError, match="mode"):
-        with atomic_open(tmp_path / "file.txt", mode):
-            pass
+    with pytest.raises(ValueError, match="mode"), atomic_open(tmp_path / "file.txt", mode):
+        pass
 
 
 def test_create_temp(tmp_path):

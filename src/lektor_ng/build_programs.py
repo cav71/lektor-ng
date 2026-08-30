@@ -242,9 +242,8 @@ class AttachmentBuildProgram(BuildProgram):
             self.declare_artifact(self.source.url_path, sources=list(self.source.iter_source_filenames()))
 
     def build_artifact(self, artifact):
-        with artifact.open("wb") as df:
-            with open(self.source.attachment_filename, "rb") as sf:
-                shutil.copyfileobj(sf, df)
+        with artifact.open("wb") as df, open(self.source.attachment_filename, "rb") as sf:
+            shutil.copyfileobj(sf, df)
 
 
 @buildprogram(File)
@@ -253,9 +252,8 @@ class FileAssetBuildProgram(BuildProgram):
         self.declare_artifact(self.source.artifact_name, sources=[self.source.source_filename])
 
     def build_artifact(self, artifact):
-        with artifact.open("wb") as df:
-            with open(self.source.source_filename, "rb") as sf:
-                shutil.copyfileobj(sf, df)
+        with artifact.open("wb") as df, open(self.source.source_filename, "rb") as sf:
+            shutil.copyfileobj(sf, df)
 
 
 @buildprogram(Directory)

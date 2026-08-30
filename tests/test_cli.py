@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from lektor_ng.builder import Builder
-from lektor_ng.cli import cli
+from lektor_ng.cli.cli_old import cli
 from lektor_ng.devserver import run_server
 from lektor_ng.project import Project
 from lektor_ng.publisher import publish

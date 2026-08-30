@@ -5,7 +5,7 @@ import pytest
 from iniconfig import IniConfig
 
 import lektor_ng.quickstart
-from lektor_ng.cli import cli
+from lektor_ng.cli.cli_old import cli
 from lektor_ng.inifile import IniFile
 
 

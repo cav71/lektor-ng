@@ -12,7 +12,7 @@ from unittest import mock
 
 import pytest
 
-from lektor_ng.cli import cli
+from lektor_ng.cli.cli_old import cli
 from lektor_ng.context import Context
 from lektor_ng.packages import add_package_to_project
 from lektor_ng.pluginsystem import (

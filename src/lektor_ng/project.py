@@ -53,6 +53,14 @@ class Project:
         )
 
     @classmethod
+    def from_path2(cls, path: Path) -> list[Project] | None:
+        if not path.is_dir():
+            return cls.from_file(str(path))
+        if len(paths := list(path.glob("*.lektorproject"))) > 1:
+            raise RuntimeError(f"multiple project files: {paths}")
+        return cls.from_file(str(paths[0]))
+
+    @classmethod
     def from_path(cls, path, extension_required=False):
         """Locates the project for a path."""
         path = os.path.abspath(path)
