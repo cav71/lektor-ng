@@ -25,8 +25,8 @@ lint:  ## run all formatter/lint
 	@uv run ruff check --fix src tests
 
 
-.PHONY: backward
-backward:  ## run the build with the old and new cli
+.PHONY: release
+release:  ## make sure the old and the new lektor produce the same output
 	@rm -rf build/site.old
 	@uv run python -m lektor_ng.cli.cli_old --project ../../website build --output-path build/site.old
 	@rm -rf build/site.new

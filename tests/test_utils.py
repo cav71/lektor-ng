@@ -13,6 +13,7 @@ from lektor_ng.utils import (
     Url,
     atomic_open,
     build_url,
+    cleanup_path,
     create_temp,
     deprecated,
     is_path_child_of,
@@ -26,6 +27,28 @@ from lektor_ng.utils import (
     unique_everseen,
     untrusted_to_os_path,
 )
+
+
+@pytest.mark.parametrize(
+    "path, expected",
+    [
+        ("", "/"),
+        ("/", "/"),
+        ("/foo", "/foo"),
+        ("//foo", "/foo"),
+        ("///foo", "/foo"),
+        ("/foo/", "/foo"),
+        ("/////foo/", "/foo"),
+        ("/////foo////", "/foo"),
+        ("/////foo/.///", "/foo"),
+        ("/////foo/..///", "/"),
+        (".", "/"),
+        ("/foo/./bar/", "/foo/bar"),
+        ("/foo/../bar/", "/bar"),
+    ],
+)
+def test_cleanup_path(path, expected):
+    assert cleanup_path(path) == expected
 
 
 @pytest.mark.parametrize(
