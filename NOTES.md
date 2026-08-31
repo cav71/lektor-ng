@@ -4,6 +4,30 @@
 
 ## Internals
 
+### rendering page
+```
+contents.lr file
+    ↓
+Database.load_raw_data() → metaformat.tokenize()
+    ↓
+Raw dict data
+    ↓
+Pad.instance_from_data() → Datamodel.process_raw_data()
+    ↓
+Page/Record object (this)
+    ↓
+PageBuildProgram.build_artifact()
+    ↓
+artifact.render_template_into()
+    ↓
+Environment.render_template() → Jinja2 render
+    ↓
+HTML output file
+```
+
+
+## Commands
+
 ### Help
 
 Old way:
@@ -32,12 +56,3 @@ New way:
 ```
 PYTHONPATH=src python -m lektor_ng.cli.build ../../website --output-path ../../build/site
 ```
-
-
-Running the server:
-```
-PYTHONPATH=src python -m lektor_ng.cli --project ../../website  server --output-path ../../build/site
-```
-src/lektor_ng/cli.py:server_cmd
-
-src/lektor_ng/cli_utils.py:Context <- this is the initial context

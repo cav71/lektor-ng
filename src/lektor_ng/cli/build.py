@@ -70,7 +70,6 @@ def add_options(fn):
     return fn
 
 
-# TypeError: main() missing 7 required positional arguments: 'output_path', 'watch', 'prune', 'verbosity', 'source_info_only', 'buildstate_path', and 'extra_flags'
 @click.command()
 @add_options
 def main(

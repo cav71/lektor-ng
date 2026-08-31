@@ -23,3 +23,12 @@ tests-all:  ## run all tests (slow+internet)
 lint:  ## run all formatter/lint
 	@uv run ruff format src tests
 	@uv run ruff check --fix src tests
+
+
+.PHONY: backward
+backward:  ## run the build with the old and new cli
+	@rm -rf build/site.old
+	@uv run python -m lektor_ng.cli.cli_old --project ../../website build --output-path build/site.old
+	@rm -rf build/site.new
+	@uv run python -m lektor_ng.cli.build --output-path build/site.new ../../website
+	@./support/differ-sites.py build/site.old build/site.new && echo "$(GREEN)OK$(CLR)" || { echo "$(RED)FAILED$(CLR)"; exit 1; }
