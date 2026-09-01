@@ -6,11 +6,16 @@
 
 A fork of the [lektor](https://www.getlektor.com) project.
 
-TODO:
-- remove inifile dependecy.
-- drop the front end to focus on the build part.
-- release early release often process.
-- lint and code coverage.
+GOALS
+- ~~release early release often process.~~
+- lint and code coverage. (on-going)
+- ~~remove inifile dependecy.~~
+- ignore the front end to focus on the build part.
+- dismantle current cli -> separate scripts (eg. instead `lektor build` -> `lektor-build`).
+- support pydantic for all validated data (eg. configs).
+- refactor the plugin system.
+- refactor theme support.
+- replace the internal ORM.
 
 
 Rev. @sha7@ | @branch@

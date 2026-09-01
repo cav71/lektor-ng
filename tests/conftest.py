@@ -18,7 +18,16 @@ from lektor_ng.project import Project
 from lektor_ng.reporter import BufferReporter
 from lektor_ng.utils import locate_executable
 
+## shared test code
+ROOT = Path(__file__).parent
 
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from aaasupport.loaders import resolver  # noqa: F401
+
+
+# TO BE REVIEWED
 @pytest.fixture(scope="session")
 def top_path():
     return Path(__file__).parent.parent
