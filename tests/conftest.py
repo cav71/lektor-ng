@@ -24,7 +24,12 @@ ROOT = Path(__file__).parent
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from aaasupport.loaders import resolver  # noqa: F401
+from aaasupport.loaders import finder, mfinder  # noqa: F401
+
+
+@pytest.fixture(scope="session")
+def datadir():
+    return ROOT / "data"
 
 
 # TO BE REVIEWED
