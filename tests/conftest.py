@@ -108,7 +108,7 @@ def restore_import_state():
     def clone_class(cls):
         return type(cls)(cls.__name__, cls.__bases__, cls.__dict__.copy())
 
-    sys.meta_path[:] = [clone_class(finder) if isinstance(finder, type) else finder for finder in meta_path]
+    sys.meta_path[:] = [clone_class(findr) if isinstance(findr, type) else findr for findr in meta_path]
 
     try:
         yield
