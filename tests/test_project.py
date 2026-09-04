@@ -11,7 +11,7 @@ def test_Project_get_output_path(tmp_path: Path) -> None:
     project_file = tmp_path / "test.lektorproject"
     project_file.touch()
     project = Project.from_file(project_file)
-    assert Path(project.get_output_path()).parts[-2:] == ("builds", project.id)
+    assert project and Path(project.get_output_path()).parts[-2:] == ("builds", project.id)
 
 
 def test_Project_get_output_path_is_relative_to_project_file(tmp_path: Path) -> None:
@@ -28,7 +28,7 @@ def test_Project_get_output_path_is_relative_to_project_file(tmp_path: Path) -> 
     )
 
     project = Project.from_file(project_file)
-    assert project.get_output_path() == str(tmp_path / "htdocs")
+    assert project and project.get_output_path() == str(tmp_path / "htdocs")
 
 
 def test_project_discovery(demo_projects):

@@ -51,9 +51,9 @@ class Project:
         return IniFile(self.project_file)
 
     @classmethod
-    def from_file(cls, filename: str):
+    def from_file(cls, filename: str | Path) -> Project | None:
         """Reads a project from a project file."""
-        inifile = IniFile(filename)
+        inifile = IniFile(str(filename))
         if inifile.is_new:
             return None
 
@@ -77,7 +77,7 @@ class Project:
         )
 
     @classmethod
-    def from_path(cls, path: Path, extension_required=False) -> list[Project] | None:
+    def from_path(cls, path: Path, extension_required=False) -> Project | None:
         path = Path(path)
         if not path.is_dir():
             if extension_required and path.suffix != ".lektorproject":
