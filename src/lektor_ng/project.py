@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import dataclasses as dc
 import hashlib
 import os
 import sys
@@ -13,13 +14,36 @@ from lektor_ng.inifile import IniFile
 from lektor_ng.utils import comma_delimited, get_cache_dir, untrusted_to_os_path
 
 
+@dc.dataclass
 class Project:
-    def __init__(self, name, project_file, tree, themes=None):
-        self.name = name
-        self.project_file = project_file
-        self.tree = os.path.normpath(tree)
-        self.themes = themes or []
-        self.id = hashlib.md5(self.tree.encode("utf-8")).hexdigest()
+    name: str
+    config: Path
+    root: Path
+    themes: list[str] = dc.field(default_factory=list)
+
+    def __post_init__(self):
+        self.id = hashlib.md5(str(self.tree).encode("utf-8")).hexdigest()
+
+    @property
+    def tree(self):
+        return str(self.root)
+
+    @property
+    def project_file(self):
+        return str(self.config)
+
+    @classmethod
+    def discover(cls, base: Path | None = None) -> None | Project:
+        """Auto discovers the closest project."""
+        top = Path.cwd()
+        here = (base.relative_to(top) if base else top).resolve()
+        while True:
+            if project := cls.from_path(here, extension_required=True):
+                return project
+            if here == top:
+                break
+            here = here.parent
+        return None
 
     def open_config(self):
         if self.project_file is None:
@@ -27,7 +51,7 @@ class Project:
         return IniFile(self.project_file)
 
     @classmethod
-    def from_file(cls, filename):
+    def from_file(cls, filename: str):
         """Reads a project from a project file."""
         inifile = IniFile(filename)
         if inifile.is_new:
@@ -47,57 +71,22 @@ class Project:
 
         return cls(
             name=name,
-            project_file=filename,
-            tree=path,
+            config=Path(filename),
+            root=Path(path),
             themes=themes,
         )
 
     @classmethod
-    def from_path2(cls, path: Path) -> list[Project] | None:
+    def from_path(cls, path: Path, extension_required=False) -> list[Project] | None:
+        path = Path(path)
         if not path.is_dir():
+            if extension_required and path.suffix != ".lektorproject":
+                return None
             return cls.from_file(str(path))
+
         if len(paths := list(path.glob("*.lektorproject"))) > 1:
             raise RuntimeError(f"multiple project files: {paths}")
-        return cls.from_file(str(paths[0]))
-
-    @classmethod
-    def from_path(cls, path, extension_required=False):
-        """Locates the project for a path."""
-        path = os.path.abspath(path)
-        if os.path.isfile(path) and (not extension_required or path.endswith(".lektorproject")):
-            return cls.from_file(path)
-
-        try:
-            files = [x for x in os.listdir(path) if x.lower().endswith(".lektorproject")]
-        except OSError:
-            return None
-
-        if len(files) == 1:
-            return cls.from_file(os.path.join(path, files[0]))
-
-        if os.path.isdir(path) and os.path.isfile(os.path.join(path, "content/contents.lr")):
-            return cls(
-                name=os.path.basename(path),
-                project_file=None,
-                tree=path,
-            )
-        return None
-
-    @classmethod
-    def discover(cls, base=None):
-        """Auto discovers the closest project."""
-        if base is None:
-            base = os.getcwd()
-        here = base
-        while 1:
-            project = cls.from_path(here, extension_required=True)
-            if project is not None:
-                return project
-            node = os.path.dirname(here)
-            if node == here:
-                break
-            here = node
-        return None
+        return cls.from_file(str(paths[0])) if paths else None
 
     @property
     def project_path(self):

@@ -102,7 +102,7 @@ def main(
     from lektor_ng.builder import Builder
     from lektor_ng.reporter import CliReporter
 
-    project = Project.from_path2(project_path)
+    project = Project.from_path(project_path)
 
     output_path = output_path or os.getenv("LEKTOR_BUILD_OUTPUT_PATH") or project.get_output_path()
 

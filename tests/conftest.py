@@ -32,6 +32,18 @@ def datadir():
     return ROOT / "data"
 
 
+@pytest.fixture(scope="function")
+def demo_projects(finder, tmp_path):  # noqa: F811
+    def _callme(name):
+        shutil.copytree(finder.lookup(name), tmp_path / name, dirs_exist_ok=True)
+        return tmp_path / name
+
+    try:
+        yield _callme
+    finally:
+        shutil.rmtree(tmp_path, ignore_errors=True)
+
+
 # TO BE REVIEWED
 @pytest.fixture(scope="session")
 def top_path():
