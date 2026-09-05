@@ -105,10 +105,10 @@ def project_info_data(project_cli_runner):
     project = Project.from_path(root)
     return {
         "name": "Demo Project",
-        "project_file": root / "Website.lektorproject",
-        "tree": root,
+        "project_file": str(root / "Website.lektorproject"),
+        "tree": str(root),
         # punt on computing these independently
-        "output_path": project.get_output_path(),
+        "output_path": str(project.get_output_path()),
         "package_cache": str(project.get_package_cache_path()),
     }
 
