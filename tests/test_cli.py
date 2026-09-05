@@ -37,7 +37,7 @@ def test_alias(project_cli_runner):
     assert "Name: Demo Project" in result.output
 
 
-@pytest.mark.skip(reason="test")
+# HERE
 def test_dev_cmd_alias(isolated_cli_runner):
     result = isolated_cli_runner.invoke(cli, ["dev", "s"])  # short for 'shell'
     assert result.exit_code == 2
