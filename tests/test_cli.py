@@ -12,8 +12,6 @@ from lektor_ng.devserver import run_server
 from lektor_ng.project import Project
 from lektor_ng.publisher import publish
 
-pytestmark = pytest.mark.skipif(True, reason="RE-ENABLE!")
-
 
 def test_build_abort_in_existing_nonempty_dir(project_cli_runner):
     os.mkdir("build_dir")
