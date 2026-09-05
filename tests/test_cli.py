@@ -101,12 +101,12 @@ def test_deploy_extra_flag(project_cli_runner, mocker):
 
 @pytest.fixture
 def project_info_data(project_cli_runner):
-    tree_dir = os.getcwd()
-    project = Project.from_path(tree_dir)
+    root = Path.cwd()
+    project = Project.from_path(root)
     return {
         "name": "Demo Project",
-        "project_file": os.path.join(tree_dir, "Website.lektorproject"),
-        "tree": tree_dir,
+        "project_file": root / "Website.lektorproject",
+        "tree": root,
         # punt on computing these independently
         "output_path": project.get_output_path(),
         "package_cache": str(project.get_package_cache_path()),
