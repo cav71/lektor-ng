@@ -151,7 +151,6 @@ def deployable_project_data(scratch_project_data):
     return scratch_project_data
 
 
-@pytest.mark.skip(reason="test")
 @pytest.mark.parametrize(
     "subcommand, to_mock, param_name",
     [
