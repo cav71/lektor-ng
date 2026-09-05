@@ -113,7 +113,6 @@ def project_info_data(project_cli_runner):
     }
 
 
-@pytest.mark.skip(reason="test")
 def test_project_info(project_cli_runner, project_info_data):
     result = project_cli_runner.invoke(cli, ["project-info"])
     for heading, key in [
@@ -126,7 +125,6 @@ def test_project_info(project_cli_runner, project_info_data):
         assert f"{heading}: {project_info_data[key]}\n" in result.stdout
 
 
-@pytest.mark.skip(reason="test")
 @pytest.mark.parametrize(
     "flag",
     ["--name", "--project-file", "--tree", "--output-path", "--package-cache"],
@@ -138,7 +136,6 @@ def test_project_info_path_flags(project_cli_runner, flag, project_info_data):
     assert result.stdout.rstrip() == project_info_data[info_key]
 
 
-@pytest.mark.skip(reason="test")
 def test_project_info_json(project_cli_runner):
     project = Project.from_path(os.getcwd())
     result = project_cli_runner.invoke(cli, ["project-info", "--json"])
