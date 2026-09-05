@@ -37,38 +37,30 @@ def test_alias(project_cli_runner):
     assert "Name: Demo Project" in result.output
 
 
-# HERE
-@pytest.mark.skip(reason="test")
 def test_dev_cmd_alias(isolated_cli_runner):
     result = isolated_cli_runner.invoke(cli, ["dev", "s"])  # short for 'shell'
     assert result.exit_code == 2
     assert "Error: Could not automatically discover a project" in result.output
 
 
-@pytest.mark.skip(reason="test")
 def test_alias_multiple_matches(project_cli_runner):
     result = project_cli_runner.invoke(cli, ["p"])  # short for 'project-info' & 'plugins'
     assert result.exit_code == 2
     assert "Error: Too many matches" in result.output
 
 
-@pytest.mark.skip(reason="test")
 def test_alias_no_matches(project_cli_runner):
     result = project_cli_runner.invoke(cli, ["z"])
     assert result.exit_code == 2
     assert "Error: No such command" in result.output
 
 
-# HERE
-@pytest.mark.skip(reason="test")
 def test_build_no_project(isolated_cli_runner):
     result = isolated_cli_runner.invoke(cli, ["build"])
     assert result.exit_code == 2
     assert "Could not automatically discover a project" in result.output
 
 
-# HERE
-@pytest.mark.skip(reason="test")
 def test_build(project_cli_runner):
     result = project_cli_runner.invoke(cli, ["build"])
     assert "files or folders already exist" not in result.output  # No warning on fresh build
@@ -101,14 +93,14 @@ def test_deploy_extra_flag(project_cli_runner, mocker):
 
 @pytest.fixture
 def project_info_data(project_cli_runner):
-    root = Path.cwd()
-    project = Project.from_path(root)
+    tree_dir = os.getcwd()
+    project = Project.from_path(tree_dir)
     return {
         "name": "Demo Project",
-        "project_file": str(root / "Website.lektorproject"),
-        "tree": str(root),
+        "project_file": os.path.join(tree_dir, "Website.lektorproject"),
+        "tree": tree_dir,
         # punt on computing these independently
-        "output_path": str(project.get_output_path()),
+        "output_path": project.get_output_path(),
         "package_cache": str(project.get_package_cache_path()),
     }
 
@@ -136,8 +128,6 @@ def test_project_info_path_flags(project_cli_runner, flag, project_info_data):
     assert result.stdout.rstrip() == project_info_data[info_key]
 
 
-# HERE
-@pytest.mark.skip(reason="test")
 def test_project_info_json(project_cli_runner):
     project = Project.from_path(os.getcwd())
     result = project_cli_runner.invoke(cli, ["project-info", "--json"])
