@@ -84,7 +84,6 @@ def test_build(project_cli_runner):
     assert result.exit_code == 0
 
 
-@pytest.mark.skip(reason="test")
 def test_build_extra_flag(project_cli_runner, mocker):
     mock_builder = mocker.patch("lektor_ng.builder.Builder")
     mock_builder.return_value.build_all.return_value = 0
