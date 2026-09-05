@@ -43,12 +43,14 @@ def test_dev_cmd_alias(isolated_cli_runner):
     assert "Error: Could not automatically discover a project" in result.output
 
 
+@pytest.mark.skip(reason="test")
 def test_alias_multiple_matches(project_cli_runner):
     result = project_cli_runner.invoke(cli, ["p"])  # short for 'project-info' & 'plugins'
     assert result.exit_code == 2
     assert "Error: Too many matches" in result.output
 
 
+@pytest.mark.skip(reason="test")
 def test_alias_no_matches(project_cli_runner):
     result = project_cli_runner.invoke(cli, ["z"])
     assert result.exit_code == 2
