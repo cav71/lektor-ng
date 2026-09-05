@@ -51,21 +51,18 @@ def test_alias_multiple_matches(project_cli_runner):
     assert "Error: Too many matches" in result.output
 
 
-@pytest.mark.skip(reason="test")
 def test_alias_no_matches(project_cli_runner):
     result = project_cli_runner.invoke(cli, ["z"])
     assert result.exit_code == 2
     assert "Error: No such command" in result.output
 
 
-@pytest.mark.skip(reason="test")
 def test_build_no_project(isolated_cli_runner):
     result = isolated_cli_runner.invoke(cli, ["build"])
     assert result.exit_code == 2
     assert "Could not automatically discover a project" in result.output
 
 
-@pytest.mark.skip(reason="test")
 def test_build(project_cli_runner):
     result = project_cli_runner.invoke(cli, ["build"])
     assert "files or folders already exist" not in result.output  # No warning on fresh build
