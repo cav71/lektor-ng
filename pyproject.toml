@@ -82,6 +82,7 @@ dev = [                         # generally useful during development
     "pytest-cov",
     "pytest-html",
     "pytest-mock",
+    "pytest-timeout",
     "pytest>=6",
     "pre-commit",
     "ruff",
