@@ -92,7 +92,6 @@ def test_build_extra_flag(project_cli_runner, mocker):
     assert mock_builder.call_args[1]["extra_flags"] == ("webpack",)
 
 
-@pytest.mark.skip(reason="test")
 def test_deploy_extra_flag(project_cli_runner, mocker):
     mock_publish = mocker.patch("lektor_ng.publisher.publish")
     result = project_cli_runner.invoke(cli, ["deploy", "-f", "draft"])
