@@ -102,7 +102,6 @@ def test_deploy_extra_flag(project_cli_runner, mocker):
     assert mock_publish.call_args[1]["extra_flags"] == ("draft",)
 
 
-@pytest.mark.skip(reason="test")
 @pytest.fixture
 def project_info_data(project_cli_runner):
     tree_dir = os.getcwd()
@@ -149,7 +148,6 @@ def test_project_info_json(project_cli_runner):
     assert json.loads(result.stdout) == project.to_json()
 
 
-@pytest.mark.skip(reason="test")
 @pytest.fixture
 def deployable_project_data(scratch_project_data):
     project_file = next(scratch_project_data.glob("*.lektorproject"))
