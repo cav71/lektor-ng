@@ -38,8 +38,8 @@ class Project:
         top = Path.cwd()
         here = (base.relative_to(top) if base else top).resolve()
         if sys.platform == "win32":
-            print(f"==xyz===> {top=}")
-            print(f"==xyz===> {here=}")
+            print(f"==xyz===> {top=}", file=sys.stderr)
+            print(f"==xyz===> {here=}", file=sys.stderr)
         while True:
             if project := cls.from_path(here, extension_required=True):
                 return project
