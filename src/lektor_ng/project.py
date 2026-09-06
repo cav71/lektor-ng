@@ -38,6 +38,11 @@ class Project:
         top = Path.cwd()
         here = (base.relative_to(top) if base else top).resolve()
         if sys.platform == "win32":
+            raise RuntimeError(f"""
+==xyz===> {base=}
+==xyz===> {top=}
+==xyz===> {here=}
+""")
             print(f"==xyz===> {top=}", file=sys.stderr)
             print(f"==xyz===> {here=}", file=sys.stderr)
         while True:
