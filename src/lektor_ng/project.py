@@ -35,7 +35,7 @@ class Project:
     @classmethod
     def discover(cls, base: Path | None = None) -> None | Project:
         """Auto discovers the closest project."""
-        top = Path.cwd()
+        top = Path.cwd().resolve()
         here = (base.relative_to(top) if base else top).resolve()
         import inspect
 
@@ -45,7 +45,12 @@ class Project:
         skip = {
             ("test_project_discovery", 41),
         }
-        if sys.platform == "win32" and (name, lineno) not in skip:
+        cond = (
+            sys.platform == "win32"
+            and (name, lineno) not in skip
+            and ("~" in str(top) or "~" in str(here) or "~" in str(base))
+        )
+        if cond:
             raise RuntimeError(f"""
 ==xyz===> {name}:{lineno}
 ==xyz===> {base=}
