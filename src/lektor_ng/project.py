@@ -37,8 +37,12 @@ class Project:
         """Auto discovers the closest project."""
         top = Path.cwd()
         here = (base.relative_to(top) if base else top).resolve()
+        import inspect
+
+        caller_frame = inspect.stack()[1]
         if sys.platform == "win32":
             raise RuntimeError(f"""
+==xyz===> {caller_frame.function}:{caller_frame.lineno}
 ==xyz===> {base=}
 ==xyz===> {top=}
 ==xyz===> {here=}
