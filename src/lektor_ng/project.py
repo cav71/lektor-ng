@@ -23,6 +23,8 @@ class Project:
 
     def __post_init__(self):
         self.id = hashlib.md5(str(self.tree).encode("utf-8")).hexdigest()
+        self.root = self.root.resolve()
+        self.config = self.config.resolve()
 
     @property
     def tree(self):
