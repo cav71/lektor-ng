@@ -93,7 +93,7 @@ def test_deploy_extra_flag(project_cli_runner, mocker):
 
 @pytest.fixture
 def project_info_data(project_cli_runner):
-    tree_dir = os.getcwd()
+    tree_dir = os.path.realpath(os.getcwd())
     project = Project.from_path(tree_dir)
     return {
         "name": "Demo Project",
