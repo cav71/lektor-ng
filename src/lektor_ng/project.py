@@ -37,6 +37,9 @@ class Project:
         """Auto discovers the closest project."""
         top = Path.cwd()
         here = (base.relative_to(top) if base else top).resolve()
+        if sys.platform == "win32":
+            print(f"==xyz===> {top=}")
+            print(f"==xyz===> {here=}")
         while True:
             if project := cls.from_path(here, extension_required=True):
                 return project
