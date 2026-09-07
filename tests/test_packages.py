@@ -5,6 +5,7 @@ import sys
 import sysconfig
 from pathlib import Path
 from subprocess import PIPE, run
+from unittest import mock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -189,5 +190,6 @@ def test_load_packages_reinstall_wipes_cache(env: Environment, cache_type: Packa
     cache_path = project.get_package_cache_path(cache_type)
     cache_path.mkdir(parents=True, exist_ok=False)
 
-    load_packages(env, reinstall=True)
+    with mock.patch("click.echo"):
+        load_packages(env, reinstall=True)
     assert not cache_path.exists()
