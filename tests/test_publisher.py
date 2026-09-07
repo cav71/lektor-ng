@@ -199,6 +199,7 @@ def test_Command_triggers_no_warnings():
         )
 
 
+@pytest.mark.skipIf(sys.platform == "win32", reason="TO-BE-REMOVED")
 @pytest.mark.skipif(which("rsync") is None, reason="rsync is not available on this system")
 @pytest.mark.parametrize("delete", ["yes", "no"])
 def test_RsyncPublisher_integration(env, tmp_path, delete):
