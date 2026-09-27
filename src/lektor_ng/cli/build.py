@@ -121,25 +121,25 @@ def main(
 
     # TODO re-instate load_plugins
     from ..pluginsystem import initialize_plugins
+    from lektor_ng.cli.build_service import EventPublisher
 
     initialize_plugins(env)
+    event_publisher = EventPublisher(stream)
 
     with CliReporter(env, verbosity=verbosity):
         builds = ["first"]
         if watch:
             from lektor_ng.watcher import watch_project
 
-            if stream:
-                from lektor_ng.cli.build_service import EventPublisher
-                ev = EventPublisher(stream)
-                click.secho(f"Publishing events @ {ev.address}", fg="cyan")
-                ev.thread.start()
+            if event_publisher.start():
+                click.secho(f"Publishing events @ {event_publisher}", fg="cyan")
 
             click.secho("Watching for file system changes", fg="cyan")
             builds = chain(builds, watch_project(env, output_path, raise_interrupt=False))
 
         success = False
-        for _ in builds:
+        for xxx in builds:
+            print("=>", len(xxx), xxx)
             builder = Builder(
                 env.new_pad(),
                 output_path,

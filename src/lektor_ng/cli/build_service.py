@@ -16,10 +16,10 @@ app = Flask(__name__)
 
 @dc.dataclass
 class EventPublisher:
-    address : str | tuple[str, int]
+    address : str | tuple[str, int] | None = None
     thread: threading.Thread | None = None
 
-    def __post_init__(self):
+    def _target(self):
         kwargs = {}
         if isinstance(self.address, str):
             sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -36,7 +36,18 @@ class EventPublisher:
         else:
             kwargs = {"port": self.address[1], "host": self.address[0], "debug": False}
             target = app.run
+        return target, kwargs
+
+    def start(self) -> threading.Thread | None:
+        if not self.address:
+            return
+        target, kwargs = self._target()
         self.thread = threading.Thread(target=target, kwargs=kwargs, daemon=True)
+        self.thread.start()
+        return self.thread
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}(address={self.address})"
 
 
 def event_producer():
