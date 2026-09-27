@@ -21,8 +21,9 @@ tests-all:  ## run all tests (slow+internet)
 
 .PHONY: lint
 lint:  ## run all formatter/lint
-	@uv run ruff format src tests
-	@uv run ruff check --fix src tests
+	uv run ruff format src tests
+	uv run ruff check --fix src tests
+	uv run mypy src tests
 
 
 .PHONY: release

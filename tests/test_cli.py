@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 
 from lektor_ng.builder import Builder
+from lektor_ng.cli.build import main as build
 from lektor_ng.cli.cli_old import cli
 from lektor_ng.devserver import run_server
 from lektor_ng.project import Project
@@ -18,7 +19,8 @@ def test_build_abort_in_existing_nonempty_dir(project_cli_runner):
     os.mkdir("build_dir")
     with open("build_dir/test", "w", encoding="utf-8"):
         pass
-    result = project_cli_runner.invoke(cli, ["build", "-O", "build_dir"], input="n\n")
+
+    result = project_cli_runner.invoke(build, ["-O", "build_dir", "."], input="n\n")
     assert "Aborted!" in result.output
     assert result.exit_code == 1
 
@@ -27,7 +29,8 @@ def test_build_continue_in_existing_nonempty_dir(project_cli_runner):
     os.mkdir("build_dir")
     with open("build_dir/test", "w", encoding="utf-8"):
         pass
-    result = project_cli_runner.invoke(cli, ["build", "-O", "build_dir"], input="y\n")
+
+    result = project_cli_runner.invoke(build, ["-O", "build_dir", "."], input="y\n")
     assert "Finished prune" in result.output
     assert result.exit_code == 0
 
@@ -63,7 +66,7 @@ def test_build_no_project(isolated_cli_runner):
 
 
 def test_build(project_cli_runner):
-    result = project_cli_runner.invoke(cli, ["build"])
+    result = project_cli_runner.invoke(build, ["."])
     assert "files or folders already exist" not in result.output  # No warning on fresh build
     assert result.exit_code == 0
     start_matches = re.findall(r"Started build", result.output)
@@ -72,7 +75,7 @@ def test_build(project_cli_runner):
     assert len(finish_matches) == 1
 
     # rebuild
-    result = project_cli_runner.invoke(cli, ["build"])
+    result = project_cli_runner.invoke(build, ["."])
     assert "files or folders already exist" not in result.output  # No warning on repeat build
     assert result.exit_code == 0
 
@@ -80,7 +83,7 @@ def test_build(project_cli_runner):
 def test_build_extra_flag(project_cli_runner, mocker):
     mock_builder = mocker.patch("lektor_ng.builder.Builder")
     mock_builder.return_value.build_all.return_value = 0
-    result = project_cli_runner.invoke(cli, ["build", "-f", "webpack"])
+    result = project_cli_runner.invoke(build, ["-f", "webpack", "."])
     assert result.exit_code == 0
     assert mock_builder.call_args[1]["extra_flags"] == ("webpack",)
 

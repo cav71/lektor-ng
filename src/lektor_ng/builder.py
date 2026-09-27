@@ -1189,6 +1189,13 @@ class Builder:
 
     def build(self, source, path_cache=None):
         """Given a source object, builds it."""
+        from lektor_ng.db import Record
+        from lektor_ng.sourceobj import SourceObject
+
+        # TODO verify this will hold
+        if not isinstance(source, (Record, SourceObject)):
+            raise TypeError(f"found object {type(source)}")
+
         build_state = self.new_build_state(path_cache=path_cache)
         with reporter.process_source(source):
             prog = self.get_build_program(source, build_state)

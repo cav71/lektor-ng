@@ -5,7 +5,7 @@ repos:
         name: ruff-check
         description: "Run 'ruff' for extremely fast Python linting"
         language: system
-        entry: ruff check --force-exclude
+        entry: ruff check --force-exclude --fix --exit-non-zero-on-fix
         types_or: [python, pyi]
       
       - id: ruff-format
