@@ -3,6 +3,8 @@ import os
 import sys
 from itertools import chain
 from pathlib import Path
+
+from lektor_ng.cli import options
 from lektor_ng.project import Project
 from lektor_ng import cli_utils
 import click
@@ -67,6 +69,12 @@ def add_options(fn):
         help="The output path.",
     )(fn)
 
+    fn = click.option(
+        "--stream",
+        type=options.Listener(),
+        help="start sse stream to push out changes"
+    )(fn)
+
     return fn
 
 
@@ -81,6 +89,7 @@ def main(
     buildstate_path,
     extra_flags,
     project_path,
+    stream,
 ):
     """Builds the entire project into the final artifacts.
 
@@ -119,6 +128,12 @@ def main(
         builds = ["first"]
         if watch:
             from lektor_ng.watcher import watch_project
+
+            if stream:
+                from lektor_ng.cli.build_service import EventPublisher
+                ev = EventPublisher(stream)
+                click.secho(f"Publishing events @ {ev.address}", fg="cyan")
+                ev.thread.start()
 
             click.secho("Watching for file system changes", fg="cyan")
             builds = chain(builds, watch_project(env, output_path, raise_interrupt=False))
