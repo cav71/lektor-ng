@@ -69,11 +69,7 @@ def add_options(fn):
         help="The output path.",
     )(fn)
 
-    fn = click.option(
-        "--stream",
-        type=options.Listener(),
-        help="start sse stream to push out changes"
-    )(fn)
+    fn = click.option("--stream", type=options.Listener(), help="start sse stream to push out changes")(fn)
 
     return fn
 
@@ -124,22 +120,23 @@ def main(
     from lektor_ng.cli.build_service import EventPublisher
 
     initialize_plugins(env)
-    event_publisher = EventPublisher(stream)
+    event_publisher = stream and EventPublisher(stream)
 
     with CliReporter(env, verbosity=verbosity):
         builds = ["first"]
         if watch:
             from lektor_ng.watcher import watch_project
 
-            if event_publisher.start():
+            if stream and event_publisher.start():
                 click.secho(f"Publishing events @ {event_publisher}", fg="cyan")
 
-            click.secho("Watching for file system changes", fg="cyan")
+            rlick.secho("Watching for file system changes", fg="cyan")
             builds = chain(builds, watch_project(env, output_path, raise_interrupt=False))
 
         success = False
-        for xxx in builds:
-            print("=>", len(xxx), xxx)
+        for _ in builds:
+            if stream:
+                event_publisher.update()
             builder = Builder(
                 env.new_pad(),
                 output_path,

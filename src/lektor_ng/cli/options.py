@@ -1,11 +1,12 @@
 import click
 
+
 class Listener(click.ParamType):
-    name = 'listener'
+    name = "listener"
 
     def convert(self, value, param, ctx):
-        if value.startswith('unix:'):
-            return value[len('unix:'):]
+        if value.startswith("unix:"):
+            return value[len("unix:") :]
 
         if value.isdigit():
             return ("127.0.0.1", int(value))
